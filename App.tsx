@@ -1,18 +1,11 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  Text,
-} from 'react-native';
+import React from "react";
 
-function App(): JSX.Element {
+import RootNavigator from './src/navigation';
 
+export default function App() {
   return (
-    <SafeAreaView>
-      <Text>
-        시발
-      </Text>
-    </SafeAreaView>
+    <>
+      <RootNavigator />
+    </>
   );
 }
-
-export default App;
