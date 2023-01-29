@@ -7,9 +7,11 @@ export type DetailsScreenRouteProp = RouteProp<
 >;
 
 export type BottomTabNavigatorParamList = {
-    HomeStack: HomeStackNavigatorParamList;
-    Feed: undefined;
-    Settings: undefined;
+    홈: HomeStackNavigatorParamList;
+    책: undefined;
+    음악: undefined;
+    활동: undefined;
+    설정: undefined;
   };
 
 export type HomeStackNavigatorParamList = {
@@ -20,13 +22,13 @@ export type HomeStackNavigatorParamList = {
     };
   };
 
-
-import type { CompositeNavigationProp, RouteProp, } from '@react-navigation/native';
+  import type { CompositeNavigationProp, RouteProp, } from '@react-navigation/native';
   // rest of the import statements remains same
   
-  export type HomeScreenNavigationProp = CompositeNavigationProp<
+  export type HomeScreenNavigationProp = 
+  CompositeNavigationProp<
     NativeStackNavigationProp<HomeStackNavigatorParamList, 'Details'>,
-    BottomTabNavigationProp<BottomTabNavigatorParamList, 'Feed'>
+    BottomTabNavigationProp<BottomTabNavigatorParamList, '활동'>
   >;
-  
+
   // rest of the code remains the same

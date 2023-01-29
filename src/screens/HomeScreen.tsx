@@ -66,7 +66,7 @@ const HomeScreen = () => {
   return (
     <View style={{ flex: 1, paddingTop: 10 }}>
       <Pressable
-      onPress={() => navigation.navigate('Feed')}
+      onPress={() => navigation.navigate('활동')}
       style={{
         padding: 8,
         borderWidth: 1,
