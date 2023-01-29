@@ -11,7 +11,7 @@ const SettingsScreen = () => {
           나
         </Text>
         <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image source={require('../assets/image/user.png')} style={{ width: 60, height: 60, borderRadius: 60 }}/>
+          <Image source={require('../assets/image/user.png')} style={{ width: 60, height: 60, borderRadius: 10 }}/>
           <Text style={{ fontWeight: "bold", fontSize: 30, paddingHorizontal: 12, paddingVertical: 12 }}>
             김다운
           </Text>
@@ -28,7 +28,7 @@ const SettingsScreen = () => {
           인형
         </Text>
         <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image source={require('../assets/image/doll.png')} style={{ width: 60, height: 60, borderRadius: 60 }}/>
+          <Image source={require('../assets/image/doll.png')} style={{ width: 60, height: 60, borderRadius: 10 }}/>
           <Text style={{ fontWeight: "bold", fontSize: 30, paddingHorizontal: 12, paddingVertical: 12 }}>
             딸기
           </Text>

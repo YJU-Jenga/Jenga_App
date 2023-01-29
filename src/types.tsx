@@ -8,8 +8,7 @@ export type DetailsScreenRouteProp = RouteProp<
 
 export type BottomTabNavigatorParamList = {
     홈: HomeStackNavigatorParamList;
-    책: undefined;
-    음악: undefined;
+    책과음악: undefined;
     활동: undefined;
     설정: undefined;
   };
