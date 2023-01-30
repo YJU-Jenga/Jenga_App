@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const SettingsScreen = () => {
 
   return (
-    <View style={{ flex: 1, paddingTop: 10 }}>
+    <View style={{ flex: 1, paddingTop: 10, backgroundColor: 'white' }}>
       <View>
         <Text style={{ color: '#939393', fontSize: 20, paddingHorizontal: 12, paddingVertical: 10 }}>
           나

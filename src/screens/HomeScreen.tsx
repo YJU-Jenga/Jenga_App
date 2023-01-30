@@ -1,84 +1,21 @@
-import { StyleSheet, View, Text, Pressable, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Pressable, FlatList, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 
-// after other import statements
-
-// import HomeScreenNavigationProp
-import { HomeScreenNavigationProp } from '../types';
-
-const DATA = [
-  {
-    id: 1,
-    name: 'Luke Skywalker',
-    birth_year: '19BBY',
-  },
-  {
-    id: 2,
-    name: 'C-3PO',
-    birth_year: '112BBY',
-  },
-  {
-    id: 3,
-    name: 'R2-D2',
-    birth_year: '33BBY',
-  },
-  {
-    id: 4,
-    name: 'Darth Vader',
-    birth_year: '41.9BBY',
-  },
-  {
-    id: 5,
-    name: 'Leia Organa',
-    birth_year: '19BBY',
-  },
-];
 
 const HomeScreen = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-
-  const renderListItems = ({ item } : any) => {
-    return (
-      <Pressable
-        onPress={() =>
-          navigation.navigate('Details', {
-            name: item.name,
-            birthYear: item.birth_year,
-          })
-        }
-      >
-        <Text
-          style={{ fontSize: 18, paddingHorizontal: 12, paddingVertical: 12 }}
-        >
-          {item.name}
-        </Text>
-        <View
-          style={{
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: '#ccc',
-          }}
-        />
-      </Pressable>
-    );
-  };
-
   return (
-    <View style={{ flex: 1, paddingTop: 10 }}>
-      <Pressable
-      onPress={() => navigation.navigate('활동')}
-      style={{
-        padding: 8,
-        borderWidth: 1,
-        borderRadius: 4,
-        borderColor: 'red',
-        margin: 12,
-        alignItems: 'center',
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: '600' }}>Go to Feed screen</Text>
-    </Pressable>
-      <FlatList data={DATA} renderItem={renderListItems} />
+    <View style={{ flex: 1, paddingTop: 10, justifyContent: 'center', alignContent: 'center', backgroundColor: 'white' }}>
+      <Text style={{ fontSize: 50 }}>
+          🍓
+      </Text>
+      <Text style={{ fontSize: 50, fontWeight: 'bold' }}>
+          안녕 다운!
+      </Text>
+      <Image source={require('../assets/image/mic2.png')} style={{ width: 100, height: 100, borderRadius: 60 }}/>
+      <Text style={{ fontSize: 20 }}>
+          인형 이름을 말해주세요
+      </Text>
     </View>
   );
 };
