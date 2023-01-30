@@ -17,7 +17,9 @@ const BottomTabs = () => {
       <Tab.Screen
         name="홈"
         component={HomeStackNavigator}
-        options={{ headerShown: false }}
+        options={{ 
+          headerShown: false,
+         }}
       />
       <Tab.Screen name="책과음악" component={BookScreen} />
       <Tab.Screen name="활동" component={LogsScreen} />
