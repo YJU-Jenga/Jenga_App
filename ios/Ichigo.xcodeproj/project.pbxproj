@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* IchigoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* IchigoTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		26869005E6B19AFBFC7D40E8 /* libPods-Ichigo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C2D7AA00B9A5FCE89DB5AB10 /* libPods-Ichigo.a */; };
+		58B79EB92992C17F001681EC /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58B79EB82992C17F001681EC /* SplashScreen.storyboard */; };
 		65A727D05A9AE3B15DE02843 /* libPods-Ichigo-IchigoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CCF2ED1ED1944FCE42BCEF /* libPods-Ichigo-IchigoTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -33,10 +33,10 @@
 		13B07F961A680F5B00A75B9A /* Ichigo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ichigo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Ichigo/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = Ichigo/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Ichigo/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Ichigo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Ichigo/main.m; sourceTree = "<group>"; };
 		1F48519B1EEFD9F7025FCE29 /* Pods-Ichigo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo.debug.xcconfig"; path = "Target Support Files/Pods-Ichigo/Pods-Ichigo.debug.xcconfig"; sourceTree = "<group>"; };
+		58B79EB82992C17F001681EC /* SplashScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SplashScreen.storyboard; sourceTree = "<group>"; };
 		72F9D3DF63604C64B4F49401 /* Pods-Ichigo-IchigoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo-IchigoTests.debug.xcconfig"; path = "Target Support Files/Pods-Ichigo-IchigoTests/Pods-Ichigo-IchigoTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Ichigo/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8B12D6A2FE7BB63B18520EFA /* Pods-Ichigo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo.release.xcconfig"; path = "Target Support Files/Pods-Ichigo/Pods-Ichigo.release.xcconfig"; sourceTree = "<group>"; };
@@ -88,7 +88,6 @@
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -116,6 +115,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				58B79EB82992C17F001681EC /* SplashScreen.storyboard */,
 				13B07FAE1A68108700A75B9A /* Ichigo */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* IchigoTests */,
@@ -243,7 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				58B79EB92992C17F001681EC /* SplashScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,7 +3,7 @@ import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs/lib/typescr
 
 export type DetailsScreenRouteProp = RouteProp<
   HomeStackNavigatorParamList,
-  'Details'
+  'Login'
 >;
 
 export type BottomTabNavigatorParamList = {
@@ -15,11 +15,12 @@ export type BottomTabNavigatorParamList = {
 };
 
 export type HomeStackNavigatorParamList = {
-  Home: undefined;
-  Details: {
-    name: string;
-    birthYear: string;
-  };
+  Home: any;
+  // Details: {
+  //   name: string;
+  //   birthYear: string;
+  // };
+  Login: any;
 };
 
 import type {
@@ -29,7 +30,7 @@ import type {
 // rest of the import statements remains same
 
 export type HomeScreenNavigationProp = CompositeNavigationProp<
-  NativeStackNavigationProp<HomeStackNavigatorParamList, 'Details'>,
+  NativeStackNavigationProp<HomeStackNavigatorParamList, 'Login'>,
   BottomTabNavigationProp<BottomTabNavigatorParamList, '활동'>
 >;
 

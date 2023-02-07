@@ -9,6 +9,7 @@ import BookScreen from '../screens/BookScreen';
 import MusicScreen from '../screens/MusicScreen';
 import RecordScreen from '../screens/RecordScreen';
 import LogsScreen from '../screens/LogsScreen';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 

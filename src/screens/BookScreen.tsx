@@ -1,21 +1,32 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, SafeAreaView, Text, Image} from 'react-native';
 
 interface books {
   id: number;
   title: string;
   author: string;
+  imgSrc: string;
 }
 
 const BookScreen = () => {
   const data: Array<books> = [
-    {id: 1, title: '빡빡이 대머리', author: '김종율'},
-    {id: 2, title: '볼살 통통이', author: '하예진'},
-    {id: 3, title: '뭘봐 돼지야', author: '김돼지'},
-    {id: 4, title: '저 안봤는데용', author: '하예진'},
+    {
+      id: 1,
+      title: '스웩 넘치는 일상',
+      author: '김냥냥',
+      imgSrc: './../scpark.jpeg',
+    },
+    {id: 2, title: '볼살 통통이', author: '하예진', imgSrc: './../scpark.jpeg'},
+    {id: 3, title: '뭘봐 돼지야', author: '김돼지', imgSrc: './../scpark.jpeg'},
+    {
+      id: 4,
+      title: '저 안봤는데용',
+      author: '하예진',
+      imgSrc: './../scpark.jpeg',
+    },
   ];
   return (
-    <View style={{flex: 1, paddingTop: 12, paddingHorizontal: 10}}>
+    <SafeAreaView style={{flex: 1, paddingTop: 12, paddingHorizontal: 10}}>
       <Text
         style={{
           fontSize: 24,
@@ -72,11 +83,22 @@ const BookScreen = () => {
         인기 있는 책
       </Text>
 
-      <View style={{flex: 3}}>
+      <View style={{flex: 4}}>
         {data.map(v => {
           return (
-            <View style={{flexDirection: 'row', width: '100%'}} key={v.id}>
-              <View
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+                marginStart: 20,
+                marginTop: 7,
+              }}
+              key={v.id}>
+              <Image
+                style={{width: 40, height: 40}}
+                source={require('./../scpark.jpeg')}
+              />
+              {/* <View
                 style={{
                   flexDirection: 'row',
                   marginTop: 10,
@@ -88,7 +110,7 @@ const BookScreen = () => {
                   backgroundColor: 'black',
                   borderRadius: 20,
                 }}
-              />
+              /> */}
               <View style={{flexDirection: 'column', marginStart: 8}}>
                 <Text style={{fontSize: 16}}>{v.title}</Text>
                 <Text style={{fontSize: 12}}>{v.author}</Text>
@@ -97,7 +119,7 @@ const BookScreen = () => {
           );
         })}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
