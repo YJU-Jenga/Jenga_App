@@ -2,13 +2,14 @@ import * as React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 
 import {BottomTabNavigatorParamList} from '../types';
-import HomeStackNavigator from './HomeStack';
+// import HomeStackNavigator from './HomeStack';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import BookScreen from '../screens/BookScreen';
 import MusicScreen from '../screens/MusicScreen';
 import RecordScreen from '../screens/RecordScreen';
 import LogsScreen from '../screens/LogsScreen';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 

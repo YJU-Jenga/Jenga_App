@@ -1,20 +1,49 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Button,
+  SafeAreaView,
+} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const SettingsScreen = () => {
-
+function SettingsScreen({navigation}) {
   return (
-    <View style={{ flex: 1, paddingTop: 10, backgroundColor: 'white' }}>
+    <SafeAreaView style={{flex: 1, paddingTop: 10, backgroundColor: 'white'}}>
       <View>
-        <Text style={{ color: '#939393', fontSize: 20, paddingHorizontal: 12, paddingVertical: 10 }}>
+        <Text
+          style={{
+            color: '#939393',
+            fontSize: 20,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+          }}>
           나
         </Text>
-        <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image source={require('../assets/image/user.png')} style={{ width: 60, height: 60, borderRadius: 10 }}/>
-          <Text style={{ fontWeight: "bold", fontSize: 30, paddingHorizontal: 12, paddingVertical: 12 }}>
+        <View style={{flexDirection: 'row', padding: 10}}>
+          <Image
+            source={require('../assets/image/user.png')}
+            style={{width: 60, height: 60, borderRadius: 10}}
+          />
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 30,
+              paddingHorizontal: 12,
+              paddingVertical: 12,
+            }}>
             김다운
           </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Login', {msg: 'From Screen 1'})}
+            style={{
+              paddingVertical: 5,
+              paddingHorizontal: 10,
+            }}>
+            <Text>Click Me!</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <View
@@ -24,12 +53,27 @@ const SettingsScreen = () => {
         }}
       />
       <View>
-        <Text style={{ color: '#939393', fontSize: 20, paddingHorizontal: 12, paddingVertical: 10 }}>
+        <Text
+          style={{
+            color: '#939393',
+            fontSize: 20,
+            paddingHorizontal: 12,
+            paddingVertical: 10,
+          }}>
           인형
         </Text>
-        <View style={{ flexDirection: 'row', padding: 10 }}>
-          <Image source={require('../assets/image/doll.png')} style={{ width: 60, height: 60, borderRadius: 10 }}/>
-          <Text style={{ fontWeight: "bold", fontSize: 30, paddingHorizontal: 12, paddingVertical: 12 }}>
+        <View style={{flexDirection: 'row', padding: 10}}>
+          <Image
+            source={require('../assets/image/doll.png')}
+            style={{width: 60, height: 60, borderRadius: 10}}
+          />
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 30,
+              paddingHorizontal: 12,
+              paddingVertical: 12,
+            }}>
             딸기
           </Text>
         </View>
@@ -41,10 +85,17 @@ const SettingsScreen = () => {
         }}
       />
       <View>
-        <Text style={{ fontSize: 20, paddingHorizontal: 12, paddingTop: 12 }}>
+        <Text style={{fontSize: 20, paddingHorizontal: 12, paddingTop: 12}}>
           알림
         </Text>
-        <Text style={{ color: '#939393', fontSize: 18, paddingHorizontal: 12, paddingBottom: 12, paddingTop: 3 }}>
+        <Text
+          style={{
+            color: '#939393',
+            fontSize: 18,
+            paddingHorizontal: 12,
+            paddingBottom: 12,
+            paddingTop: 3,
+          }}>
           알림을 허용합니다
         </Text>
       </View>
@@ -55,10 +106,17 @@ const SettingsScreen = () => {
         }}
       />
       <View>
-        <Text style={{ fontSize: 20, paddingHorizontal: 12, paddingTop: 12 }}>
+        <Text style={{fontSize: 20, paddingHorizontal: 12, paddingTop: 12}}>
           언어
         </Text>
-        <Text style={{ color: '#939393', fontSize: 18, paddingHorizontal: 12, paddingBottom: 12, paddingTop: 3 }}>
+        <Text
+          style={{
+            color: '#939393',
+            fontSize: 18,
+            paddingHorizontal: 12,
+            paddingBottom: 12,
+            paddingTop: 3,
+          }}>
           언어를 설정하세요
         </Text>
       </View>
@@ -68,15 +126,24 @@ const SettingsScreen = () => {
           borderColor: '#ccc',
         }}
       />
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <TouchableOpacity activeOpacity={0.8} style={{ width: 280, height: 70, backgroundColor: "#fe5746", justifyContent: 'center', alignItems: 'center', borderRadius: 60}}>
-        <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 23 }}>
-          쇼핑하러가기
-        </Text>
-      </TouchableOpacity>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          style={{
+            width: 280,
+            height: 70,
+            backgroundColor: '#fe5746',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 60,
+          }}>
+          <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 23}}>
+            쇼핑하러가기
+          </Text>
+        </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
-};
+}
 
 export default SettingsScreen;
