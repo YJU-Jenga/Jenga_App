@@ -9,6 +9,7 @@ import {
 import {Agenda} from 'react-native-calendars';
 import {Card} from 'react-native-paper';
 import React from 'react';
+import Title from '../components/Title';
 
 interface itemsArray {
   [index: string]: {day: string; height: number; name: string};
@@ -54,26 +55,24 @@ const HomeScreen = () => {
   const renderItem = (item: {name: string}) => {
     return (
       <TouchableOpacity style={styles.item}>
-        <Card>
-          <Card.Content>
-            <View>
-              <Text>{item.name}</Text>
-            </View>
-          </Card.Content>
-        </Card>
+        <View>
+          <Text>{item.name}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
   return (
     <SafeAreaView style={styles.container}>
+      <Title title="Schedule"></Title>
       <Agenda
         items={items}
         loadItemsForMonth={loadItems}
         selected={'2023-02-07'}
         //refreshControl={null}
-        showClosingKnob={true}
+        showClosingKnob={false}
         refreshing={false}
         renderItem={renderItem}
+        theme={{backgroundColor: 'white', calendarBackground: 'white'}}
       />
       <StatusBar />
     </SafeAreaView>
@@ -82,6 +81,9 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: 12,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
   },
   item: {
     flex: 1,

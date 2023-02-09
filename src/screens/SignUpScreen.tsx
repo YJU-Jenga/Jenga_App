@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-const LoginScreen = ({route, navigation}) => {
+const SignUpScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -50,7 +50,7 @@ const LoginScreen = ({route, navigation}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>로그인</Text>
+      <Text style={styles.header}>Sign Up</Text>
 
       <View style={{marginHorizontal: 20, marginTop: 40}}>
         <TextInput
@@ -67,33 +67,15 @@ const LoginScreen = ({route, navigation}) => {
           onChangeText={e => setPassword(e)}
           secureTextEntry={true}
         />
-        <Text
-          style={{
-            fontSize: 15,
-            color: 'pink',
-            marginTop: 3,
-            textAlign: 'right',
-          }}>
-          Forgot Password?
-        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="re-password"
+          value={password}
+          onChangeText={e => setPassword(e)}
+          secureTextEntry={true}
+        />
         <TouchableOpacity
-          style={{
-            borderRadius: 10,
-            // marginHorizontal: 10,
-            backgroundColor: 'pink',
-            paddingVertical: 10,
-            marginTop: 30,
-            marginBottom: 10,
-          }}
-          onPress={handleVerifyLogin}>
-          <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>
-            Sign In
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('signUp', {type: 'myInfo', id: '아이디'})
-          }
+          onPress={() => navigation.navigate('Record', {id: '아이디'})}
           style={{
             borderRadius: 10,
             // marginHorizontal: 10,
@@ -105,22 +87,6 @@ const LoginScreen = ({route, navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-
-      {/* {loading && (
-        <View style={styles.loadingArea}>
-          <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>로딩중...</Text>
-        </View>
-      )}
-
-      <Text style={styles.status}>{status}</Text>
-
-      {showCupom && (
-        <View style={styles.cupomArea}>
-          <Text style={styles.cupomTitle}>로그인성공함 </Text>
-          <Text style={styles.cupomCode}>123</Text>
-        </View>
-      )} */}
     </SafeAreaView>
   );
 };
@@ -183,4 +149,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignUpScreen;

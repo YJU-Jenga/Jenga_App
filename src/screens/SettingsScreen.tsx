@@ -6,46 +6,51 @@ import {
   Image,
   Button,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import Title from '../components/Title';
 
 function SettingsScreen({navigation}) {
   return (
-    <SafeAreaView style={{flex: 1, paddingTop: 10, backgroundColor: 'white'}}>
-      <View>
+    <SafeAreaView style={{flex: 1, paddingTop: 12, paddingHorizontal: 10}}>
+      <Title title="Setting"></Title>
+      <Text
+        style={{
+          color: '#939393',
+          fontSize: 20,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+        }}>
+        나
+      </Text>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('info', {type: 'myInfo', id: '아이디'})
+        }
+        activeOpacity={0.8}
+        style={{flexDirection: 'row', padding: 10}}>
+        <Image
+          source={require('../assets/image/user.png')}
+          style={{width: 60, height: 60, borderRadius: 10}}
+        />
         <Text
           style={{
-            color: '#939393',
-            fontSize: 20,
+            fontWeight: 'bold',
+            fontSize: 30,
             paddingHorizontal: 12,
-            paddingVertical: 10,
+            paddingVertical: 12,
           }}>
-          나
+          김다운
         </Text>
-        <View style={{flexDirection: 'row', padding: 10}}>
-          <Image
-            source={require('../assets/image/user.png')}
-            style={{width: 60, height: 60, borderRadius: 10}}
-          />
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 30,
-              paddingHorizontal: 12,
-              paddingVertical: 12,
-            }}>
-            김다운
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Login', {msg: 'From Screen 1'})}
+        {/* <TouchableOpacity
+            onPress={() => navigation.navigate('info', {id: '아이디'})}
             style={{
               paddingVertical: 5,
               paddingHorizontal: 10,
             }}>
-            <Text>Click Me!</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <Text>딸기</Text>
+          </TouchableOpacity> */}
+      </TouchableOpacity>
       <View
         style={{
           borderWidth: StyleSheet.hairlineWidth,

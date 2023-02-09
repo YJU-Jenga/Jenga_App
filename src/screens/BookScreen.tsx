@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, SafeAreaView, Text, Image} from 'react-native';
+import Title from '../components/Title';
 
 interface books {
   id: number;
@@ -26,16 +27,14 @@ const BookScreen = () => {
     },
   ];
   return (
-    <SafeAreaView style={{flex: 1, paddingTop: 12, paddingHorizontal: 10}}>
-      <Text
-        style={{
-          fontSize: 24,
-          fontWeight: '800',
-          marginStart: 25,
-          marginTop: 30,
-        }}>
-        듣고 있는 책
-      </Text>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingTop: 12,
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+      }}>
+      <Title title="Sounds"></Title>
 
       <View style={{alignItems: 'center', flex: 2}}>
         <View
