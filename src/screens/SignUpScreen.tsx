@@ -10,10 +10,12 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import {TouchableHighlight} from 'react-native-gesture-handler';
 
 const SignUpScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
 
   const [status, setStatus] = React.useState('');
   const [showCupom, setShowCupom] = React.useState(false);
@@ -50,7 +52,7 @@ const SignUpScreen = ({route, navigation}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Sign Up</Text>
+      <Text style={styles.header}>Create account</Text>
 
       <View style={{marginHorizontal: 20, marginTop: 40}}>
         <TextInput
@@ -60,6 +62,7 @@ const SignUpScreen = ({route, navigation}) => {
           onChangeText={e => setEmail(e)}
           keyboardType="email-address"
         />
+
         <TextInput
           style={styles.input}
           placeholder="password"
@@ -69,9 +72,9 @@ const SignUpScreen = ({route, navigation}) => {
         />
         <TextInput
           style={styles.input}
-          placeholder="re-password"
-          value={password}
-          onChangeText={e => setPassword(e)}
+          placeholder="confirm password"
+          value={confirmPassword}
+          onChangeText={e => setConfirmPassword(e)}
           secureTextEntry={true}
         />
         <TouchableOpacity

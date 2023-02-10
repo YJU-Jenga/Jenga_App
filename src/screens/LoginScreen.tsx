@@ -1,15 +1,20 @@
 import React from 'react';
 import {
   SafeAreaView,
-  Button,
   Text,
   TextInput,
   View,
   StyleSheet,
-  ActivityIndicator,
   Alert,
   TouchableOpacity,
 } from 'react-native';
+import {
+  WhiteSpace,
+  WingBlank,
+  Flex,
+  InputItem,
+  Button,
+} from '@ant-design/react-native';
 
 const LoginScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
@@ -40,9 +45,11 @@ const LoginScreen = ({route, navigation}) => {
 
       if (json.status === 'ok') {
         setStatus('로그인 성공');
+        console.log('로그인 성공');
         setShowCupom(true);
       } else {
         setStatus('로그인 실패');
+        console.log('로그인 실패');
         Alert.alert(`다시 입력하세요`);
       }
       setLoading(false);
@@ -50,60 +57,57 @@ const LoginScreen = ({route, navigation}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>로그인</Text>
+      {/* <View
+        style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
+      <View>
+        <Text style={styles.header}>로그인</Text>
+        <WingBlank size="lg">
+          <Flex direction="column">
+            <InputItem
+              clear
+              value={email}
+              onChange={e => setEmail(e)}
+              placeholder="Id"
+            />
+            <InputItem
+              type="password"
+              clear
+              value={password}
+              onChangeText={e => setPassword(e)}
+              placeholder="Password"
+            />
+          </Flex>
 
-      <View style={{marginHorizontal: 20, marginTop: 40}}>
-        <TextInput
-          style={styles.input}
-          placeholder="id"
-          value={email}
-          onChangeText={e => setEmail(e)}
-          keyboardType="email-address"
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="password"
-          value={password}
-          onChangeText={e => setPassword(e)}
-          secureTextEntry={true}
-        />
-        <Text
-          style={{
-            fontSize: 15,
-            color: 'pink',
-            marginTop: 3,
-            textAlign: 'right',
-          }}>
-          Forgot Password?
-        </Text>
-        <TouchableOpacity
-          style={{
-            borderRadius: 10,
-            // marginHorizontal: 10,
-            backgroundColor: 'pink',
-            paddingVertical: 10,
-            marginTop: 30,
-            marginBottom: 10,
-          }}
-          onPress={handleVerifyLogin}>
-          <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>
+          <WhiteSpace size="lg" />
+
+          <Button type="warning" onPress={handleVerifyLogin}>
             Sign In
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('signUp', {type: 'myInfo', id: '아이디'})
-          }
-          style={{
-            borderRadius: 10,
-            // marginHorizontal: 10,
-            backgroundColor: 'red',
-            paddingVertical: 10,
-          }}>
-          <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>
-            Sign Up
-          </Text>
-        </TouchableOpacity>
+          </Button>
+
+          <WhiteSpace size="xl" />
+
+          <Flex justify="around">
+            <Text
+              onPress={() =>
+                navigation.navigate('signUp', {type: 'myInfo', id: '아이디'})
+              }
+              style={{
+                fontSize: 15,
+                color: 'pink',
+                textAlign: 'right',
+              }}>
+              Create Account
+            </Text>
+            <Text
+              style={{
+                fontSize: 15,
+                color: 'pink',
+                textAlign: 'right',
+              }}>
+              Forgot Password?
+            </Text>
+          </Flex>
+        </WingBlank>
       </View>
 
       {/* {loading && (
@@ -131,8 +135,6 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   header: {
     marginTop: 70,
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 500,
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 50,
   },
   input: {
     height: 45,
@@ -157,20 +159,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
-  },
-  cupomArea: {
-    backgroundColor: '#444',
-    borderRadius: 5,
-    padding: 30,
-  },
-  cupomTitle: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  cupomCode: {
-    textAlign: 'center',
-    fontSize: 40,
   },
   loadingArea: {
     flex: 1,

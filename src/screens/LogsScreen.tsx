@@ -1,7 +1,40 @@
 import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
+import Title from '../components/Title';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {WhiteSpace} from '@ant-design/react-native';
+import {useFocusEffect} from '@react-navigation/native';
 
 const LogsScreen = () => {
+  const dummy = React.useState([
+    {
+      id: 1,
+      msg: "아이가 '달러의 가치와 경제'를 들었습니다.",
+      type: 'system',
+      created_at: '2023.05.23 05:43',
+      isChecked: false,
+    },
+    {
+      id: 2,
+      msg: '아이의 약먹기 일정이 곧 실행됩니다.',
+      type: 'schedule',
+      created_at: '2023.05.23 08.56',
+      isChecked: false,
+    },
+  ]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        console.log(
+          'LogsScreen의 useFocusEffect : isChecked를 true로 바꿔주는 작업',
+        );
+        console.log(
+          'LogsScreen의 useFocusEffect : 100개 넘으면 그만큼 삭제하기',
+        );
+      };
+    }, []),
+  );
   return (
     <SafeAreaView
       style={{
@@ -10,85 +43,18 @@ const LogsScreen = () => {
         paddingHorizontal: 10,
         backgroundColor: 'white',
       }}>
-      <View
-        style={{
-          flex: 0.1,
-          paddingTop: 12,
-          paddingHorizontal: 10,
-          backgroundColor: '#8B00FF',
-          borderRadius: 10,
-          alignItems: 'center',
-        }}>
-        <Text style={{fontSize: 17, color: 'white'}}>
-          김다운님이 딸기을(를) 사용했습니다.
-        </Text>
-        <View style={{flexDirection: 'row', paddingTop: 10}}>
-          <Text style={{color: 'white', paddingRight: 20, fontWeight: 'bold'}}>
-            12:00 - 12:20
-          </Text>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>2023.05.23</Text>
-        </View>
-      </View>
-      <View style={{paddingVertical: 8}}></View>
-      <View
-        style={{
-          flex: 0.1,
-          paddingTop: 12,
-          paddingHorizontal: 10,
-          backgroundColor: '#8B00FF',
-          borderRadius: 10,
-          alignItems: 'center',
-        }}>
-        <Text style={{fontSize: 17, color: 'white'}}>
-          김다운님이 딸기을(를) 사용했습니다.
-        </Text>
-        <View style={{flexDirection: 'row', paddingTop: 10}}>
-          <Text style={{color: 'white', paddingRight: 20, fontWeight: 'bold'}}>
-            13:00 - 13:20
-          </Text>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>2023.05.23</Text>
-        </View>
-      </View>
-      <View style={{paddingVertical: 8}}></View>
-      <View
-        style={{
-          flex: 0.1,
-          paddingTop: 12,
-          paddingHorizontal: 10,
-          backgroundColor: '#8B00FF',
-          borderRadius: 10,
-          alignItems: 'center',
-        }}>
-        <Text style={{fontSize: 17, color: 'white'}}>
-          김다운님이 딸기을(를) 사용했습니다.
-        </Text>
-        <View style={{flexDirection: 'row', paddingTop: 10}}>
-          <Text style={{color: 'white', paddingRight: 20, fontWeight: 'bold'}}>
-            14:00 - 14:20
-          </Text>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>2023.05.23</Text>
-        </View>
-      </View>
-      <View style={{paddingVertical: 8}}></View>
-      <View
-        style={{
-          flex: 0.1,
-          paddingTop: 12,
-          paddingHorizontal: 10,
-          backgroundColor: '#8B00FF',
-          borderRadius: 10,
-          alignItems: 'center',
-        }}>
-        <Text style={{fontSize: 17, color: 'white'}}>
-          김다운님이 딸기을(를) 사용했습니다.
-        </Text>
-        <View style={{flexDirection: 'row', paddingTop: 10}}>
-          <Text style={{color: 'white', paddingRight: 20, fontWeight: 'bold'}}>
-            15:00 - 15:20
-          </Text>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>2023.05.23</Text>
-        </View>
-      </View>
+      <Title title="Logs"></Title>
+      {/* <Text style={{textAlign: 'right', marginHorizontal: 20}}>
+          <Icon name="delete-sweep" size={30} color="#100" />
+        </Text> */}
+
+      {dummy.map((v, i) => {
+        return (
+          <View>
+            <Text>안녕</Text>
+          </View>
+        );
+      })}
     </SafeAreaView>
   );
 };
