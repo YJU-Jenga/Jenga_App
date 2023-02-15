@@ -1,8 +1,18 @@
 import {StyleSheet, View, Text, Pressable, FlatList, Image} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import React, {useCallback} from 'react';
 
-const RecordScreen = () => {
+const RecordScreen = ({navigation}) => {
+  useFocusEffect(
+    useCallback(() => {
+      // Do something when the screen is focused
+      const parent = navigation.getParent();
+      parent.setOptions({
+        tabBarVisible: true,
+        tabBarStyle: {display: 'flex'},
+      });
+    }, [navigation]),
+  );
   return (
     <View
       style={{

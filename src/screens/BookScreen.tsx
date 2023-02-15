@@ -2,6 +2,8 @@ import React from 'react';
 import {View, SafeAreaView, Text, Image} from 'react-native';
 import Title from '../components/Title';
 
+import {useAppSelector, useAppDispatch} from '../../hooks';
+import {selectName, getUserInfo} from './../utils/redux/userSlice';
 interface books {
   id: number;
   title: string;
@@ -10,6 +12,10 @@ interface books {
 }
 
 const BookScreen = () => {
+  //const count = useAppSelector(selectName);
+  const dispatch = useAppDispatch();
+
+  dispatch(getUserInfo('aedin'));
   const data: Array<books> = [
     {
       id: 1,

@@ -1,7 +1,14 @@
-import React from 'react';
+import {
+  Flex,
+  InputItem,
+  WhiteSpace,
+  WingBlank,
+  Button,
+} from '@ant-design/react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, {useCallback} from 'react';
 import {
   SafeAreaView,
-  Button,
   Text,
   TextInput,
   View,
@@ -10,85 +17,140 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import {TouchableHighlight} from 'react-native-gesture-handler';
+import {useFocusEffect} from '@react-navigation/native';
+
+interface signUp {
+  id: string;
+  name: string;
+  phone: string;
+  password: string;
+  confirmPassword: string;
+}
 
 const SignUpScreen = ({route, navigation}) => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
 
-  const [status, setStatus] = React.useState('');
-  const [showCupom, setShowCupom] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [signUpInfo, setSignUpInfo] = React.useState<signUp>({
+    id: '',
+    name: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-  const handleVerifyLogin = async () => {
-    setStatus('');
-    setShowCupom(false);
-    setLoading(true);
-
-    if (email.trim() !== '' && password.trim() !== '') {
-      const req = await fetch('https://api.b7web.com.br/loginsimples/', {
-        /// estou enviando para ver se consigo logar;
-        method: 'POST',
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+  useFocusEffect(
+    useCallback(() => {
+      // Do something when the screen is focused
+      const parent = navigation.getParent();
+      parent.setOptions({
+        tabBarVisible: false,
       });
-      const json = await req.json();
-
-      if (json.status === 'ok') {
-        setStatus('로그인 성공');
-        setShowCupom(true);
-      } else {
-        setStatus('로그인 실패');
-        Alert.alert(`다시 입력하세요`);
+      if (parent) {
+        parent.setOptions({
+          tabBarStyle: {display: 'none'},
+        });
       }
-      setLoading(false);
-    }
+
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+        if (parent) {
+          parent.setOptions({
+            tabBarVisible: true,
+          });
+        }
+      };
+    }, [navigation]),
+  );
+
+  const handleVerifySignUp = async () => {
+    // if (email.trim() !== '' && password.trim() !== '') {
+    //   const req = await fetch('https://api.b7web.com.br/loginsimples/', {
+    //     /// estou enviando para ver se consigo logar;
+    //     method: 'POST',
+    //     body: JSON.stringify({
+    //       email: email,
+    //       password: password,
+    //     }),
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
+    //   const json = await req.json();
+    //   if (json.status === 'ok') {
+    //   } else {
+    //   }
+    // }
   };
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>Create account</Text>
+      {/* <View
+      style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
+      <View>
+        <Text style={styles.header}>회원가입</Text>
+        <WingBlank size="lg">
+          <Flex direction="column">
+            <InputItem
+              //clear
+              value={signUpInfo.id}
+              onChange={e => setSignUpInfo({...signUpInfo, id: e})}
+              placeholder="Id">
+              <Icon name="delete-sweep" size={30} color="#aaa" />
+            </InputItem>
+            <InputItem
+              //clear
+              value={signUpInfo.name}
+              onChange={e => setSignUpInfo({...signUpInfo, name: e})}
+              placeholder="Name">
+              <Icon name="delete-sweep" size={30} color="#aaa" />
+            </InputItem>
+            <InputItem
+              //clear
+              type="phone"
+              value={signUpInfo.phone}
+              onChange={e => setSignUpInfo({...signUpInfo, phone: e})}
+              placeholder="Phone Number">
+              <Icon name="delete-sweep" size={30} color="#aaa" />
+            </InputItem>
+            <WhiteSpace size="xs" />
+            <InputItem
+              //clear
+              type="password"
+              value={signUpInfo.password}
+              onChange={e => setSignUpInfo({...signUpInfo, password: e})}
+              placeholder="Password">
+              <Icon name="delete-sweep" size={30} color="#aaa" />
+            </InputItem>
 
-      <View style={{marginHorizontal: 20, marginTop: 40}}>
-        <TextInput
-          style={styles.input}
-          placeholder="id"
-          value={email}
-          onChangeText={e => setEmail(e)}
-          keyboardType="email-address"
-        />
+            <InputItem
+              type="password"
+              //clear
+              value={signUpInfo.confirmPassword}
+              onChange={e => setSignUpInfo({...signUpInfo, confirmPassword: e})}
+              placeholder="Confirm Password">
+              <Icon name="delete-sweep" size={30} color="#aaa" />
+            </InputItem>
+          </Flex>
 
-        <TextInput
-          style={styles.input}
-          placeholder="password"
-          value={password}
-          onChangeText={e => setPassword(e)}
-          secureTextEntry={true}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="confirm password"
-          value={confirmPassword}
-          onChangeText={e => setConfirmPassword(e)}
-          secureTextEntry={true}
-        />
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Record', {id: '아이디'})}
-          style={{
-            borderRadius: 10,
-            // marginHorizontal: 10,
-            backgroundColor: 'red',
-            paddingVertical: 10,
-          }}>
-          <Text style={{textAlign: 'center', color: '#fff', fontSize: 18}}>
-            Sign Up
+          <WhiteSpace size="lg" />
+
+          <Button type="warning" onPress={handleVerifySignUp}>
+            확인
+          </Button>
+
+          <WhiteSpace size="xl" />
+          <Text
+            onPress={() =>
+              navigation.navigate('login', {type: 'myInfo', id: '아이디'})
+            }
+            style={{
+              fontSize: 15,
+              color: 'gray',
+              textAlign: 'center',
+            }}>
+            Already a user?
           </Text>
-        </TouchableOpacity>
+        </WingBlank>
       </View>
     </SafeAreaView>
   );
@@ -107,48 +169,9 @@ const styles = StyleSheet.create({
     marginTop: 70,
     color: '#111',
     fontSize: 32,
-    fontWeight: 500,
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 30,
-  },
-  input: {
-    height: 45,
-    fontSize: 18,
-    color: '#444',
-    backgroundColor: '#eee',
-    borderRadius: 5,
-    //marginHorizontal: 40,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-  status: {
-    margin: 50,
-    color: '#fff',
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  cupomArea: {
-    backgroundColor: '#444',
-    borderRadius: 5,
-    padding: 30,
-  },
-  cupomTitle: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  cupomCode: {
-    textAlign: 'center',
-    fontSize: 40,
-  },
-  loadingArea: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    color: '#fff',
-    fontSize: 18,
   },
 });
 

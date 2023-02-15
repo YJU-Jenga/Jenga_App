@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -15,14 +15,51 @@ import {
   InputItem,
   Button,
 } from '@ant-design/react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const getValueFunction = () => {
+  // Function to get the value from AsyncStorage
+  AsyncStorage.getItem('login').then(
+    value =>
+      // AsyncStorage returns a promise
+      // Adding a callback to get the value
+      console.log(value),
+    // Setting the value in Text
+  );
+};
 
 const LoginScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const [status, setStatus] = React.useState('');
-  const [showCupom, setShowCupom] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
+  const [userData, setUserData] = React.useState({});
+
+  useFocusEffect(
+    useCallback(() => {
+      // Do something when the screen is focused
+      const parent = navigation.getParent();
+      parent.setOptions({
+        tabBarVisible: false,
+      });
+
+      if (parent) {
+        parent.setOptions({
+          tabBarStyle: {display: 'none'},
+        });
+      }
+
+      userDataStorage.get(userData).then(setUserData).catch(console.error);
+
+      return () => {
+        if (parent) {
+          parent.setOptions({
+            tabBarVisible: true,
+          });
+        }
+      };
+    }, [navigation]),
+  );
 
   const handleVerifyLogin = async () => {
     setStatus('');
@@ -45,12 +82,13 @@ const LoginScreen = ({route, navigation}) => {
 
       if (json.status === 'ok') {
         setStatus('로그인 성공');
-        console.log('로그인 성공');
         setShowCupom(true);
       } else {
         setStatus('로그인 실패');
         console.log('로그인 실패');
-        Alert.alert(`다시 입력하세요`);
+        // 백엔드로부터..,
+        Alert.alert('경고', `아이디/비밀번호를 다시 확인해주세요`);
+        navigation.navigate('record');
       }
       setLoading(false);
     }
@@ -140,7 +178,7 @@ const styles = StyleSheet.create({
     marginTop: 70,
     color: '#111',
     fontSize: 32,
-    fontWeight: 500,
+    fontWeight: '500',
     textAlign: 'center',
     marginBottom: 50,
   },

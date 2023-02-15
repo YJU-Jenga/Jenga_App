@@ -2,11 +2,19 @@ import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import Title from '../components/Title';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {WhiteSpace} from '@ant-design/react-native';
+import {WhiteSpace, WingBlank} from '@ant-design/react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
+interface logType {
+  id: number;
+  msg: string;
+  type: string;
+  created_at: string;
+  isChecked: boolean;
+}
+
 const LogsScreen = () => {
-  const dummy = React.useState([
+  const dummy: Array<logType> = [
     {
       id: 1,
       msg: "아이가 '달러의 가치와 경제'를 들었습니다.",
@@ -21,7 +29,15 @@ const LogsScreen = () => {
       created_at: '2023.05.23 08.56',
       isChecked: false,
     },
-  ]);
+    ,
+    {
+      id: 3,
+      msg: '아이의 약먹기 일정이 곧 실행됩니다.',
+      type: 'schedule',
+      created_at: '2023.05.23 08.56',
+      isChecked: false,
+    },
+  ];
 
   useFocusEffect(
     React.useCallback(() => {
@@ -37,6 +53,7 @@ const LogsScreen = () => {
   );
   return (
     <SafeAreaView
+      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         flex: 1,
         paddingTop: 12,
@@ -48,11 +65,13 @@ const LogsScreen = () => {
           <Icon name="delete-sweep" size={30} color="#100" />
         </Text> */}
 
-      {dummy.map((v, i) => {
+      {dummy.map((el, i) => {
         return (
-          <View>
-            <Text>안녕</Text>
-          </View>
+          <WingBlank size="lg">
+            <View key={el?.id}>
+              <Text>{el?.msg}</Text>
+            </View>
+          </WingBlank>
         );
       })}
     </SafeAreaView>
