@@ -3,16 +3,16 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import React, {useCallback} from 'react';
 
 const RecordScreen = ({navigation}) => {
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      const parent = navigation.getParent();
-      parent.setOptions({
-        tabBarVisible: true,
-        tabBarStyle: {display: 'flex'},
-      });
-    }, [navigation]),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // Do something when the screen is focused
+  //     const parent = navigation.getParent();
+  //     parent.setOptions({
+  //       tabBarVisible: true,
+  //       tabBarStyle: {display: 'flex'},
+  //     });
+  //   }, [navigation]),
+  // );
   return (
     <View
       style={{

@@ -20,7 +20,7 @@ import {
 import {useFocusEffect} from '@react-navigation/native';
 
 interface signUp {
-  id: string;
+  email: string;
   name: string;
   phone: string;
   password: string;
@@ -31,37 +31,12 @@ const SignUpScreen = ({route, navigation}) => {
   const [confirmPassword, setConfirmPassword] = React.useState('');
 
   const [signUpInfo, setSignUpInfo] = React.useState<signUp>({
-    id: '',
+    email: '',
     name: '',
     phone: '',
     password: '',
     confirmPassword: '',
   });
-
-  useFocusEffect(
-    useCallback(() => {
-      // Do something when the screen is focused
-      const parent = navigation.getParent();
-      parent.setOptions({
-        tabBarVisible: false,
-      });
-      if (parent) {
-        parent.setOptions({
-          tabBarStyle: {display: 'none'},
-        });
-      }
-
-      return () => {
-        // Do something when the screen is unfocused
-        // Useful for cleanup functions
-        if (parent) {
-          parent.setOptions({
-            tabBarVisible: true,
-          });
-        }
-      };
-    }, [navigation]),
-  );
 
   const handleVerifySignUp = async () => {
     // if (email.trim() !== '' && password.trim() !== '') {

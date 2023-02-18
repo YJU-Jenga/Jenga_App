@@ -14,8 +14,6 @@ interface books {
 const BookScreen = () => {
   //const count = useAppSelector(selectName);
   const dispatch = useAppDispatch();
-
-  dispatch(getUserInfo('aedin'));
   const data: Array<books> = [
     {
       id: 1,
