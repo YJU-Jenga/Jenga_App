@@ -1,9 +1,11 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createSlice, current, PayloadAction} from '@reduxjs/toolkit';
 import type {RootState} from '../../../store';
 import axios from 'axios';
+import produce from 'immer';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const SERVER_URL = 'http://127.0.0.1:5001';
 // Define a type for the slice state
 interface UserState {
   email: string;
@@ -12,16 +14,18 @@ interface UserState {
   imgURL: string;
   isLogged: boolean;
   password: string;
+  msg: string;
 }
 
 // Define the initial state using that type
 const initialState: UserState = {
   email: '',
   password: '',
-  name: 'Aedin',
+  name: '',
   imgURL: '',
   token: '',
   isLogged: false,
+  msg: '',
 };
 
 export const userSlice = createSlice({
@@ -41,26 +45,38 @@ export const userSlice = createSlice({
     //   state.value += action.payload;
     // },
     loginAccount(state, action) {
-      state.isLogged = true;
       state.email = action.payload.email;
       state.password = action.payload.password;
-
-      state.token = '내가 만든 쿠키';
       let data = {email: state.email, password: state.password};
 
-      axios
-        .post('/login', data)
-        .then(res => console.log('토큰내놔~~~~~~~~~'))
-        .catch(err => console.log('로그인 실패~~~'));
+      // 👇 얘는 되는데
+      const failMsg = 'FAILED_LOGIN';
+      state.msg = failMsg;
 
-      AsyncStorage.setItem('token', state.token);
+      axios
+        .post(`${SERVER_URL}/auth/local/signin`, data)
+        .then(res => {
+          // res.data.access_token); //refresh_token
+
+          if (res.data.access_token) {
+            AsyncStorage.setItem('token', res.data.access_token);
+            // 👇 얘는 안댐
+            const failMsg = 'FAILED_LOGIN';
+            state.msg = failMsg;
+            // state.isLogged = true;
+            // return produce(state, draft => {
+            //   draft.msg = action.payload.msg;
+            // });
+          }
+        })
+        .catch(err => console.error(err));
     },
     logoutAccount(state) {
       state.isLogged = false;
       state.email = null;
       state.name = null;
     },
-    registerAccount(state) {},
+    registerAccount(state, action) {},
   },
 });
 
@@ -70,5 +86,6 @@ export const {loginAccount, logoutAccount} = userSlice.actions;
 // useS
 export const selectEmail = (state: RootState) => state.user.email;
 export const selectToken = (state: RootState) => state.user.token;
+export const selectMsg = (state: RootState) => state.user.msg;
 
 export default userSlice.reducer;

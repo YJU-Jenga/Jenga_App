@@ -23,58 +23,64 @@ import {
   loginAccount,
   selectEmail,
   selectToken,
+  selectMsg,
 } from './../utils/redux/userSlice';
-
-const getValueFunction = () => {
-  // Function to get the value from AsyncStorage
-  AsyncStorage.getItem('login').then(
-    value =>
-      // AsyncStorage returns a promise
-      // Adding a callback to get the value
-      console.log(value),
-    // Setting the value in Text
-  );
-};
+import {validateEmail, removeWhitespace} from '../utils/regex';
 
 const LoginScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  const _email = useSelector(selectEmail);
-  const _token = useSelector(selectToken);
+  //오류메시지 상태저장
+  const [nameMessage, setNameMessage] = React.useState<string>('');
+  const [emailMessage, setEmailMessage] = React.useState<string>('');
+  const [passwordMessage, setPasswordMessage] = React.useState<string>('');
+
+  // 유효성 검사
+  const [isName, setIsName] = React.useState<boolean>(false);
+  const [isEmail, setIsEmail] = React.useState<boolean>(false);
+  const [isPassword, setIsPassword] = React.useState<boolean>(false);
+
+  const _msg = useSelector(selectMsg);
   const dispatch = useDispatch();
 
-  React.useEffect(() => {
-    console.log('LoginScreen 49: 여기서 토큰을 저장합니다. ', _token);
-  }, [_token]);
+  // 이메일
+  const onChangeEmail = useCallback((e: string) => {
+    const emailRegex =
+      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+    // const emailCurrent = e;
+    setEmail(e);
+
+    if (!emailRegex.test(e)) {
+      setEmailMessage('이메일 형식이 틀렸어요');
+      setIsEmail(false);
+    } else {
+      setEmailMessage('올바른 이메일 형식이에요');
+      setIsEmail(true);
+    }
+  }, []);
+
+  // 비밀번호
+  const onChangePassword = useCallback((e: string) => {
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+    // const passwordCurrent = e;
+    setPassword(e);
+
+    if (!passwordRegex.test(e)) {
+      setPasswordMessage(
+        '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
+      );
+      setIsPassword(false);
+    } else {
+      setPasswordMessage('안전한 비밀번호에요');
+      setIsPassword(true);
+    }
+  }, []);
 
   const handleVerifyLogin = async () => {
     if (email.trim() !== '' && password.trim() !== '') {
-      // const req = await fetch('https://api.b7web.com.br/loginsimples/', {
-      //   /// estou enviando para ver se consigo logar;
-      //   method: 'POST',
-      //   body: JSON.stringify({
-      //     email: email,
-      //     password: password,
-      //   }),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
-      // const json = await req.json();
-      // if (json.status === 'ok') {
-      //   setStatus('로그인 성공');
-      //   setShowCupom(true);
-      // } else {
-      //   setStatus('로그인 실패');
-      //   console.log('로그인 실패');
-      //   // 백엔드로부터..,
-      //   Alert.alert('경고', `아이디/비밀번호를 다시 확인해주세요`);
-      //   navigation.navigate('record');
-      // }
-      // setLoading(false);
-
       setLoading(true);
       const res = dispatch(loginAccount({email, password}));
       console.log(res);
@@ -98,21 +104,32 @@ const LoginScreen = ({route, navigation}) => {
             <InputItem
               clear
               value={email}
-              onChange={e => setEmail(e)}
+              onChange={e => onChangeEmail(e)}
               placeholder="Email"
             />
+            {email.length > 0 && (
+              <Text className={`message ${isEmail ? 'success' : 'error'}`}>
+                {emailMessage}
+              </Text>
+            )}
             <InputItem
               type="password"
               clear
               value={password}
-              onChangeText={e => setPassword(e)}
+              onChangeText={e => onChangePassword(e)}
               placeholder="Password"
             />
+            <Text className={`message ${isPassword ? 'success' : 'error'}`}>
+              {passwordMessage}
+            </Text>
           </Flex>
 
           <WhiteSpace size="lg" />
 
-          <Button type="warning" onPress={handleVerifyLogin}>
+          <Button
+            type="warning"
+            disabled={!(isEmail && isPassword)}
+            onPress={handleVerifyLogin}>
             Sign In
           </Button>
 

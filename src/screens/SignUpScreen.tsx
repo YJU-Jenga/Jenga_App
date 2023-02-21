@@ -67,9 +67,9 @@ const SignUpScreen = ({route, navigation}) => {
           <Flex direction="column">
             <InputItem
               //clear
-              value={signUpInfo.id}
-              onChange={e => setSignUpInfo({...signUpInfo, id: e})}
-              placeholder="Id">
+              value={signUpInfo.email}
+              onChange={e => setSignUpInfo({...signUpInfo, email: e})}
+              placeholder="Email">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
             <InputItem

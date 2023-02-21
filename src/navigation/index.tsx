@@ -169,9 +169,9 @@ export const Example = () => {
 
   React.useEffect(() => {
     try {
-      console.log(
-        'index 172 : 여기서 if문 처리해서,, 로그인 되어있는지 안 되어 있는지 파악하고 네비게이션 넘겨줘야짛ㅎㅎ',
-      );
+      // console.log(
+      //   'index 172 : 여기서 if문 처리해서,, 로그인 되어있는지 안 되어 있는지 파악하고 네비게이션 넘겨줘야짛ㅎㅎ',
+      // );
 
       AsyncStorage.getItem('token').then(
         value =>
@@ -186,7 +186,7 @@ export const Example = () => {
     }
   }, [_token]);
 
-  return <>{!isSignIn ? <LoginNavigator /> : <AppNavigator />}</>;
+  return <>{isSignIn ? <LoginNavigator /> : <AppNavigator />}</>;
 };
 
 const RootNavigator = () => {
