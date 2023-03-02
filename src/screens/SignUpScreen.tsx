@@ -10,7 +10,7 @@ import React, {useCallback} from 'react';
 import {SafeAreaView, Text, View, StyleSheet} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
-import {registerAccount} from '../utils/redux/userSlice';
+import {registerAccount} from '../utils/redux/authSlice';
 
 interface signUp {
   email: string;
@@ -116,7 +116,7 @@ const SignUpScreen = ({route, navigation}) => {
   const onChangePassword = useCallback(
     (e: string) => {
       const passwordRegex =
-        /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
       const password = e;
       setSignUpInfo({...signUpInfo, password});

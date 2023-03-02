@@ -3,7 +3,7 @@ import {View, SafeAreaView, Text, Image} from 'react-native';
 import Title from '../components/Title';
 
 import {useAppSelector, useAppDispatch} from '../../hooks';
-import {selectName, getUserInfo} from './../utils/redux/userSlice';
+import {selectName, getUserInfo} from '../utils/redux/authSlice';
 interface books {
   id: number;
   title: string;

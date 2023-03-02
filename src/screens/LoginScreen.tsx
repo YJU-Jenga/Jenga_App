@@ -17,7 +17,7 @@ import {
 } from '@ant-design/react-native';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginAccount, selectMsg} from './../utils/redux/userSlice';
+import {loginAccount, selectMsg} from '../utils/redux/authSlice';
 import {validateEmail, removeWhitespace} from '../utils/regex';
 
 const LoginScreen = ({route, navigation}) => {
@@ -40,7 +40,7 @@ const LoginScreen = ({route, navigation}) => {
 
   React.useEffect(() => {
     console.log('겨ㄹ과는 :', _msg);
-    if (_msg === 'FAILED LOGIN') {
+    if (_msg === 'FAILED_LOGIN') {
     }
   }, [_msg]);
 
@@ -63,7 +63,7 @@ const LoginScreen = ({route, navigation}) => {
   // 비밀번호
   const onChangePassword = useCallback((e: string) => {
     const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
     // const passwordCurrent = e;
     setPassword(e);
 

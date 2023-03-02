@@ -9,7 +9,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getUserInfo} from '../utils/redux/userSlice';
+import {getUserInfo, selectMsg} from '../utils/redux/authSlice';
 
 // Screens
 import LoginScreen from '../screens/LoginScreen';
@@ -24,36 +24,11 @@ import InfoScreen from '../screens/InfoScreen';
 import {BottomTabNavigatorParamList} from '../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {selectToken} from '../utils/redux/userSlice';
+import {selectToken} from '../utils/redux/authSlice';
 import {useSelector} from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
-
-const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem('token');
-    console.log(token);
-    if (token !== null) {
-      return token;
-    } else {
-      return false;
-    }
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-const checkToken = async () => {
-  const ch = await getToken();
-  //console.log(ch);
-  if (ch) {
-    return true;
-  } else {
-    //console.log(ch);
-    return false;
-  }
-};
 
 // const MainNavigator = ({route}) => {
 //   // Alert.alert(ref.current?.getCurrentRoute());
@@ -160,12 +135,12 @@ export const AppNavigator = () => {
   );
 };
 
-export const Example = () => {
+export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState(false);
-  const _token = useSelector(selectToken);
-  React.useEffect(() => {
-    checkToken().then(val => setIsSignIn(val));
-  }, []);
+  const _msg = useSelector(selectMsg);
+  // React.useEffect(() => {
+  //   checkToken().then(val => setIsSignIn(val));
+  // }, []);
 
   React.useEffect(() => {
     try {
@@ -180,7 +155,7 @@ export const Example = () => {
     } catch {
       console.log('힝구~~~');
     }
-  }, [_token]);
+  }, [_msg]);
 
   return <>{!isSignIn ? <LoginNavigator /> : <AppNavigator />}</>;
 };
