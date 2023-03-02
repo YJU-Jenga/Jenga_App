@@ -8,18 +8,38 @@ import RootNavigator, {
 import {store} from './store';
 import {Provider} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 const getToken = async () => {
   try {
-    const token = await AsyncStorage.getItem('token');
-    console.log(token);
-    if (token !== null) {
-      return token;
+    //AsyncStorage.clear();
+
+    const token = await AsyncStorage.getItem('refresh-token');
+
+    if (token) {
+      const refreshToken = axios
+        .post(
+          `http://127.0.0.1:5001/auth/refresh`,
+          {},
+          {
+            headers: {
+              authorization: 'Bearer ' + token,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(res => {
+          AsyncStorage.setItem('access-token', res.data.access_token);
+          // console.log(JSON.stringify(jwt_decode(token)));
+          return token;
+        })
+        .catch(err => console.error(err));
     } else {
       return false;
     }
   } catch (e) {
     console.error(e);
+    AsyncStorage.clear();
   }
 };
 

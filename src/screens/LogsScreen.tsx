@@ -1,8 +1,8 @@
 import React from 'react';
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView} from 'react-native';
 import Title from '../components/Title';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {WhiteSpace, WingBlank} from '@ant-design/react-native';
+import {WhiteSpace, WingBlank, Card} from '@ant-design/react-native';
 import {useFocusEffect} from '@react-navigation/native';
 
 interface logType {
@@ -64,16 +64,31 @@ const LogsScreen = () => {
       {/* <Text style={{textAlign: 'right', marginHorizontal: 20}}>
           <Icon name="delete-sweep" size={30} color="#100" />
         </Text> */}
-
-      {dummy.map((el, i) => {
-        return (
-          <WingBlank size="lg">
-            <View key={el?.id}>
-              <Text>{el?.msg}</Text>
-            </View>
-          </WingBlank>
-        );
-      })}
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
+        {dummy.map((el, i) => {
+          return (
+            <WingBlank key={i} size="lg">
+              <Card style={{marginBottom: 5}}>
+                <Card.Header
+                  title="알림"
+                  thumbStyle={{width: 30, height: 30}}
+                  //thumb="https://gw.alipayobjects.com/zos/rmsportal/MRhHctKOineMbKAZslML.jpg"
+                  extra="this is extra"
+                />
+                <Card.Body>
+                  <View style={{height: 42}}>
+                    <Text style={{marginLeft: 16}}>{el?.msg}</Text>
+                  </View>
+                </Card.Body>
+                <Card.Footer extra={el?.created_at} />
+              </Card>
+            </WingBlank>
+          );
+        })}
+      </ScrollView>
     </SafeAreaView>
   );
 };

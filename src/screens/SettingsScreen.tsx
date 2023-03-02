@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   StyleSheet,
+  ScrollView,
   View,
   Text,
   Image,
@@ -9,144 +10,41 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Title from '../components/Title';
-
+import {List, WingBlank} from '@ant-design/react-native';
+const Item = List.Item;
+const Brief = Item.Brief;
 function SettingsScreen({navigation}) {
+  const [activeSections, setActiveSections] = React.useState([2, 0]);
+  const onChange = () => {
+    setActiveSections(activeSections);
+  };
+
   return (
-    <SafeAreaView style={{flex: 1, paddingTop: 12, paddingHorizontal: 10}}>
-      <Title title="Setting"></Title>
-      <Text
-        style={{
-          color: '#939393',
-          fontSize: 20,
-          paddingHorizontal: 12,
-          paddingVertical: 10,
-        }}>
-        나
-      </Text>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('info', {type: 'myInfo', id: '아이디'})
-        }
-        activeOpacity={0.8}
-        style={{flexDirection: 'row', padding: 10}}>
-        <Image
-          source={require('../assets/image/user.png')}
-          style={{width: 60, height: 60, borderRadius: 10}}
-        />
-        <Text
-          style={{
-            fontWeight: 'bold',
-            fontSize: 30,
-            paddingHorizontal: 12,
-            paddingVertical: 12,
-          }}>
-          김다운
-        </Text>
-        {/* <TouchableOpacity
-            onPress={() => navigation.navigate('info', {id: '아이디'})}
-            style={{
-              paddingVertical: 5,
-              paddingHorizontal: 10,
-            }}>
-            <Text>딸기</Text>
-          </TouchableOpacity> */}
-      </TouchableOpacity>
-      <View
-        style={{
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: '#ccc',
-        }}
-      />
-      <View>
-        <Text
-          style={{
-            color: '#939393',
-            fontSize: 20,
-            paddingHorizontal: 12,
-            paddingVertical: 10,
-          }}>
-          인형
-        </Text>
-        <View style={{flexDirection: 'row', padding: 10}}>
-          <Image
-            source={require('../assets/image/doll.png')}
-            style={{width: 60, height: 60, borderRadius: 10}}
-          />
-          <Text
-            style={{
-              fontWeight: 'bold',
-              fontSize: 30,
-              paddingHorizontal: 12,
-              paddingVertical: 12,
-            }}>
-            딸기
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: '#ccc',
-        }}
-      />
-      <View>
-        <Text style={{fontSize: 20, paddingHorizontal: 12, paddingTop: 12}}>
-          알림
-        </Text>
-        <Text
-          style={{
-            color: '#939393',
-            fontSize: 18,
-            paddingHorizontal: 12,
-            paddingBottom: 12,
-            paddingTop: 3,
-          }}>
-          알림을 허용합니다
-        </Text>
-      </View>
-      <View
-        style={{
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: '#ccc',
-        }}
-      />
-      <View>
-        <Text style={{fontSize: 20, paddingHorizontal: 12, paddingTop: 12}}>
-          언어
-        </Text>
-        <Text
-          style={{
-            color: '#939393',
-            fontSize: 18,
-            paddingHorizontal: 12,
-            paddingBottom: 12,
-            paddingTop: 3,
-          }}>
-          언어를 설정하세요
-        </Text>
-      </View>
-      <View
-        style={{
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: '#ccc',
-        }}
-      />
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={{
-            width: 280,
-            height: 70,
-            backgroundColor: '#fe5746',
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 60,
-          }}>
-          <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 23}}>
-            쇼핑하러가기
-          </Text>
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        paddingVertical: 40,
+        backgroundColor: 'white',
+        paddingHorizontal: 20,
+      }}>
+      <Title title="Settings"></Title>
+      <List renderHeader={'Me'}>
+        <Item
+          thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
+          arrow="horizontal">
+          thumb
+        </Item>
+      </List>
+      <List renderHeader={'Doll'}>
+        <Item
+          thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
+          arrow="horizontal">
+          thumb
+        </Item>
+      </List>
+      <List renderHeader={'Setting'}>
+        <Item>재녹음</Item>
+      </List>
     </SafeAreaView>
   );
 }

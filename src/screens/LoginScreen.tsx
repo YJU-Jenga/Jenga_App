@@ -15,16 +15,9 @@ import {
   InputItem,
   Button,
 } from '@ant-design/react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  loginAccount,
-  selectEmail,
-  selectToken,
-  selectMsg,
-} from './../utils/redux/userSlice';
+import {loginAccount, selectMsg} from './../utils/redux/userSlice';
 import {validateEmail, removeWhitespace} from '../utils/regex';
 
 const LoginScreen = ({route, navigation}) => {
@@ -44,6 +37,12 @@ const LoginScreen = ({route, navigation}) => {
 
   const _msg = useSelector(selectMsg);
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    console.log('겨ㄹ과는 :', _msg);
+    if (_msg === 'FAILED LOGIN') {
+    }
+  }, [_msg]);
 
   // 이메일
   const onChangeEmail = useCallback((e: string) => {
@@ -82,15 +81,7 @@ const LoginScreen = ({route, navigation}) => {
   const handleVerifyLogin = async () => {
     if (email.trim() !== '' && password.trim() !== '') {
       setLoading(true);
-      const res = dispatch(loginAccount({email, password}));
-      console.log(res);
-      // Alert.alert(
-      //   `id:
-      //   ${res.payload.email},
-      //   \npassword:
-      //   ${res.payload.password},
-      //   `,
-      // );
+      dispatch(loginAccount({email, password}));
     }
   };
   return (
