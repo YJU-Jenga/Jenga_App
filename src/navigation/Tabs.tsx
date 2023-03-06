@@ -5,7 +5,7 @@ import {BottomTabNavigatorParamList} from '../types';
 import HomeStackNavigator from './HomeStack';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import BookScreen from '../screens/BookScreen';
+import ListenScreen from '../screens/ListenScreen';
 import MusicScreen from '../screens/MusicScreen';
 import RecordScreen from '../screens/RecordScreen';
 import LogsScreen from '../screens/LogsScreen';
@@ -16,7 +16,7 @@ const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 const BottomTabs = () => {
   return (
     <Tab.Navigator>
-      <Tab.Screen name="책과음악" component={BookScreen} />
+      <Tab.Screen name="책과음악" component={ListenScreen} />
       {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
       <Tab.Screen name="스케쥴" component={ScheduleScreen} />
       <Tab.Screen

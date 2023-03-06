@@ -9,8 +9,7 @@ import {store} from './store';
 import {Provider} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
-import {selectMsg} from './src/utils/redux/authSlice';
+
 const getToken = async () => {
   try {
     //AsyncStorage.clear();
@@ -31,7 +30,7 @@ const getToken = async () => {
         )
         .then(res => {
           AsyncStorage.setItem('access-token', res.data.access_token);
-          console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
+          // console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
           return token;
         })
         .catch(err => console.error(err));
@@ -60,20 +59,16 @@ const checkToken = async () => {
 // let isSignIn: boolean = checkToken().then(val => (isSignIn = val));
 // console.log('결과', isSignIn);
 export default function App() {
-  const [isSignIn, setIsSignIn] = React.useState(false);
+  //AsyncStorage.clear();
+  // const [isSignIn, setIsSignIn] = React.useState(false);
 
-  React.useEffect(() => {
-    let test = checkToken().then(val => setIsSignIn(val));
-  }, []);
-
-  React.useEffect(() => {
-    console.log('안녕', isSignIn);
-  }, [isSignIn]);
+  // React.useEffect(() => {
+  //   let test = checkToken().then(val => setIsSignIn(val));
+  // }, []);
 
   return (
     <Provider store={store}>
-      <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>
-      {/* <MainNavigator /> */}
+      <MainNavigator />
     </Provider>
   );
 }

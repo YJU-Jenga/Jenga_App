@@ -5,77 +5,113 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
+  Button,
 } from 'react-native';
-import {Agenda} from 'react-native-calendars';
-import {Card} from 'react-native-paper';
+import {
+  Provider,
+  Modal,
+  Card,
+  Toast,
+  Flex,
+  WhiteSpace,
+  WingBlank,
+  DatePickerView,
+  List,
+  Switch,
+  SwipeAction,
+} from '@ant-design/react-native';
 import React from 'react';
 import Title from '../components/Title';
+import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 
-interface itemsArray {
-  [index: string]: {day: string; height: number; name: string};
-}
-
-const timeToString = (time: string | number | Date) => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
-
-const HomeScreen = () => {
-  const date = new Date();
-  console.log(date);
-  const [items, setItems] = React.useState<itemsArray>({});
-
-  const loadItems = (day: {timestamp: number}) => {
-    setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = timeToString(time);
-
-        if (!items[strTime]) {
-          items[strTime] = [];
-
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(10, Math.floor(Math.random() * 150)),
-              day: strTime,
-            });
-          }
-        }
-      }
-      const newItems: {[index: string]: object} = {};
-      Object.keys(items).forEach(key => {
-        newItems[key] = items[key];
-      });
-      setItems(newItems);
-    }, 1000);
-  };
-
-  const renderItem = (item: {name: string}) => {
-    return (
-      <TouchableOpacity style={styles.item}>
-        <View>
-          <Text>{item.name}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
+const ScheduleScreen = () => {
+  const [visibleModal, setVisibleModal] = React.useState(false);
+  const [value12hours, setValue12hours] = React.useState(new Date());
   return (
-    <SafeAreaView style={styles.container}>
-      <Title title="Schedule"></Title>
-      <Agenda
-        items={items}
-        loadItemsForMonth={loadItems}
-        selected={'2023-02-07'}
-        //refreshControl={null}
-        showClosingKnob={false}
-        refreshing={false}
-        renderItem={renderItem}
-        theme={{backgroundColor: 'white', calendarBackground: 'white'}}
-      />
-      <StatusBar />
-    </SafeAreaView>
+    <Provider locale={enUS}>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          paddingTop: 12,
+          paddingHorizontal: 10,
+          backgroundColor: 'white',
+        }}>
+        <Title title="Alarm"></Title>
+
+        <WingBlank>
+          <List renderHeader="List">
+            <SwipeAction
+              right={[
+                {
+                  text: 'X',
+                  onPress: () => console.log('delete'),
+                  backgroundColor: 'red',
+                  color: 'white',
+                },
+              ]}>
+              <List.Item
+                onPress={() => setVisibleModal(true)}
+                extra={<Switch />}>
+                12시 30분
+                <WhiteSpace></WhiteSpace>
+                <Text>"안녕 종율아"</Text>
+              </List.Item>
+            </SwipeAction>
+            <List.Item onPress={() => setVisibleModal(true)} extra={<Switch />}>
+              12시 30분
+              <WhiteSpace></WhiteSpace>
+              <Text>"안녕 종율아"</Text>
+            </List.Item>
+            <List.Item onPress={() => setVisibleModal(true)} extra={<Switch />}>
+              12시 30분
+              <WhiteSpace></WhiteSpace>
+              <Text>"안녕 종율아"</Text>
+            </List.Item>
+          </List>
+        </WingBlank>
+
+        <Modal
+          transparent={false}
+          visible={visibleModal}
+          animationType="slide-up"
+          onClose={() => setVisibleModal(false)}>
+          <SafeAreaView
+            style={{
+              height: '100%',
+              display: 'flex',
+            }}>
+            <WhiteSpace size="lg" />
+            <Text style={{fontSize: 24, textAlign: 'center'}}>예약 편집</Text>
+            {/* <Button
+                type="primary"
+                onPress={() => Toast.info('Hello Toast in Modal now works')}>
+                Hello Toast in Modal now works
+              </Button> */}
+            <WingBlank size="lg">
+              <DatePickerView
+                mode="time"
+                value={value12hours}
+                onChange={v => setValue12hours(v)}
+                use12Hours
+              />
+
+              <List>
+                <List.Item arrow="horizontal">반복</List.Item>
+                <List.Item arrow="horizontal">액션</List.Item>
+                <List.Item>명령어</List.Item>
+              </List>
+              <WhiteSpace size="xl" />
+              <Button
+                title="DELETE"
+                color="red"
+                onPress={() => setVisibleModal(false)}></Button>
+
+              <WhiteSpace></WhiteSpace>
+            </WingBlank>
+          </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </Provider>
   );
 };
 const styles = StyleSheet.create({
@@ -94,4 +130,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ScheduleScreen;

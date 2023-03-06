@@ -4,13 +4,18 @@ import {
   WhiteSpace,
   WingBlank,
   Button,
+  Toast,
 } from '@ant-design/react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import React, {useCallback} from 'react';
-import {SafeAreaView, Text, View, StyleSheet} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {SafeAreaView, Text, View, StyleSheet, Alert} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
-import {registerAccount} from '../utils/redux/authSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  initErrorMessage,
+  registerAccount,
+  selectErrorMsg,
+} from '../utils/redux/authSlice';
 
 interface signUp {
   email: string;
@@ -36,6 +41,7 @@ const SignUpScreen = ({route, navigation}) => {
   const [passwordMessage, setPasswordMessage] = React.useState<string>('');
   const [confirmPasswordMessage, setConfirmPasswordMessage] =
     React.useState<string>('');
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   // 유효성 검사
   const [isName, setIsName] = React.useState<boolean>(false);
@@ -46,6 +52,13 @@ const SignUpScreen = ({route, navigation}) => {
     React.useState<boolean>(false);
 
   const dispatch = useDispatch();
+  const _errorMessage = useSelector(selectErrorMsg);
+
+  const failToast = () => {
+    Toast.fail({
+      content: _errorMessage,
+    });
+  };
 
   React.useEffect(() => {
     if (signUpInfo.password === signUpInfo.confirmPassword) {
@@ -54,8 +67,6 @@ const SignUpScreen = ({route, navigation}) => {
     } else {
       setConfirmPasswordMessage('비밀번호가 틀려요. 다시 확인해주세요 ㅜ ㅜ');
       setIsConfirmPassword(false);
-      console.log('위', signUpInfo.password);
-      console.log('아래', signUpInfo.confirmPassword);
     }
   }, [signUpInfo.confirmPassword, signUpInfo.password]);
 
@@ -84,10 +95,10 @@ const SignUpScreen = ({route, navigation}) => {
       const name = e;
       setSignUpInfo({...signUpInfo, name});
       if (e.length < 2 || e.length > 5) {
-        setNameMessage('2글자 이상 5글자 미만으로 입력해주세요.');
+        setNameMessage('2글자 이상 5글자 미만');
         setIsName(false);
       } else {
-        setNameMessage('올바른 이름 형식입니다 :)');
+        setNameMessage('');
         setIsName(true);
       }
     },
@@ -102,11 +113,11 @@ const SignUpScreen = ({route, navigation}) => {
       setSignUpInfo({...signUpInfo, phone});
 
       if (!phoneRegex.test(e)) {
-        setPhoneMessage('이메일 형식이 틀렸어요');
+        setPhoneMessage('휴대폰 번호 (010xxxxxxxx)');
         setIsPhone(false);
         console.log(phone.length);
       } else {
-        setPhoneMessage('올바른 이메일 형식이에요');
+        setPhoneMessage('');
         setIsPhone(true);
       }
     },
@@ -122,12 +133,10 @@ const SignUpScreen = ({route, navigation}) => {
       setSignUpInfo({...signUpInfo, password});
 
       if (!passwordRegex.test(e)) {
-        setPasswordMessage(
-          '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
-        );
+        setPasswordMessage('숫자+영문자+대문자+특수문자 조합으로 8자리 이상');
         setIsPassword(false);
       } else {
-        setPasswordMessage('안전한 비밀번호에요');
+        setPasswordMessage('');
         setIsPassword(true);
       }
     },
@@ -142,15 +151,31 @@ const SignUpScreen = ({route, navigation}) => {
     [signUpInfo],
   );
 
-  const handleVerifySignUp = async () => {
+  const handleVerifySignUp = () => {
     dispatch(registerAccount(signUpInfo));
   };
+
+  useEffect(() => {}, []);
+
+  React.useEffect(() => {
+    setErrorMessage(_errorMessage);
+    dispatch(initErrorMessage());
+  }, [_errorMessage]);
+
+  useEffect(() => {
+    if (errorMessage !== '') {
+      Alert.alert(errorMessage);
+      setErrorMessage('');
+    }
+  }, [errorMessage]);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* <View
       style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
       <View>
         <Text style={styles.header}>회원가입</Text>
+        <WhiteSpace size="xl" />
         <WingBlank size="lg">
           <Flex direction="column">
             <InputItem
@@ -160,6 +185,7 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Email">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
+            {isEmail ? <Text></Text> : <Text>{emailMessage}</Text>}
             <InputItem
               //clear
               value={signUpInfo.name}
@@ -167,6 +193,7 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Name">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
+            {isName ? <Text></Text> : <Text>{nameMessage}</Text>}
             <InputItem
               clear
               type="phone"
@@ -175,6 +202,7 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Phone Number">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
+            {isPhone ? <Text></Text> : <Text>{phoneMessage}</Text>}
             <WhiteSpace size="xs" />
             <InputItem
               clear
@@ -184,6 +212,7 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Password">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
+            {isPassword ? <Text></Text> : <Text>{passwordMessage}</Text>}
 
             <InputItem
               type="password"

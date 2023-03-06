@@ -14,10 +14,16 @@ import {
   Flex,
   InputItem,
   Button,
+  Toast,
 } from '@ant-design/react-native';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
-import {loginAccount, selectMsg} from '../utils/redux/authSlice';
+import {
+  initErrorMessage,
+  loginAccount,
+  selectErrorMsg,
+  selectMsg,
+} from '../utils/redux/authSlice';
 import {validateEmail, removeWhitespace} from '../utils/regex';
 
 const LoginScreen = ({route, navigation}) => {
@@ -29,6 +35,7 @@ const LoginScreen = ({route, navigation}) => {
   const [nameMessage, setNameMessage] = React.useState<string>('');
   const [emailMessage, setEmailMessage] = React.useState<string>('');
   const [passwordMessage, setPasswordMessage] = React.useState<string>('');
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   // 유효성 검사
   const [isName, setIsName] = React.useState<boolean>(false);
@@ -36,13 +43,22 @@ const LoginScreen = ({route, navigation}) => {
   const [isPassword, setIsPassword] = React.useState<boolean>(false);
 
   const _msg = useSelector(selectMsg);
+  const _errorMessage = useSelector(selectErrorMsg);
   const dispatch = useDispatch();
+  React.useEffect(() => {}, []);
+  React.useEffect(() => {
+    setErrorMessage(_errorMessage);
+    dispatch(initErrorMessage());
+  }, [_errorMessage]);
 
   React.useEffect(() => {
-    console.log('겨ㄹ과는 :', _msg);
-    if (_msg === 'FAILED_LOGIN') {
+    if (errorMessage !== '') {
+      Alert.alert(errorMessage);
+      setErrorMessage('');
     }
-  }, [_msg]);
+  }, [errorMessage]);
+
+  // React.useEffect(() => {}, [errorMessage]);
 
   // 이메일
   const onChangeEmail = useCallback((e: string) => {
@@ -98,11 +114,6 @@ const LoginScreen = ({route, navigation}) => {
               onChange={e => onChangeEmail(e)}
               placeholder="Email"
             />
-            {email.length > 0 && (
-              <Text className={`message ${isEmail ? 'success' : 'error'}`}>
-                {emailMessage}
-              </Text>
-            )}
             <InputItem
               type="password"
               clear
@@ -110,9 +121,6 @@ const LoginScreen = ({route, navigation}) => {
               onChangeText={e => onChangePassword(e)}
               placeholder="Password"
             />
-            <Text className={`message ${isPassword ? 'success' : 'error'}`}>
-              {passwordMessage}
-            </Text>
           </Flex>
 
           <WhiteSpace size="lg" />

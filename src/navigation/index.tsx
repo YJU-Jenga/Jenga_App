@@ -9,13 +9,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {getUserInfo, selectMsg} from '../utils/redux/authSlice';
+import {useDispatch} from 'react-redux';
 
 // Screens
 import LoginScreen from '../screens/LoginScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
-import BookScreen from '../screens/BookScreen';
+import ListenScreen from '../screens/ListenScreen';
 import RecordScreen from '../screens/RecordScreen';
 import LogsScreen from '../screens/LogsScreen';
 import SignUpScreen from '../screens/SignUpScreen';
@@ -24,34 +24,13 @@ import InfoScreen from '../screens/InfoScreen';
 import {BottomTabNavigatorParamList} from '../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {selectToken} from '../utils/redux/authSlice';
+import {refreshToken, selectMsg, selectToken} from '../utils/redux/authSlice';
 import {useSelector} from 'react-redux';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
-
-// const MainNavigator = ({route}) => {
-//   // Alert.alert(ref.current?.getCurrentRoute());
-//   return (
-//     <Stack.Navigator initialRouteName={'record'}>
-//       <Stack.Screen
-//         name="record"
-//         options={{headerShown: false}}
-//         component={RecordScreen}
-//       />
-//       <Stack.Screen
-//         name="login"
-//         options={{headerShown: false}}
-//         component={LoginScreen}
-//       />
-//       <Stack.Screen
-//         name="signUp"
-//         options={{headerShown: false}}
-//         component={SignUpScreen}
-//       />
-//     </Stack.Navigator>
-//   );
-// };
 
 const SettingsNavigator = () => {
   return (
@@ -104,7 +83,7 @@ export const AppNavigator = () => {
         })}>
         <Tab.Screen
           name="책과음악"
-          component={BookScreen}
+          component={ListenScreen}
           options={{headerShown: false}}
         />
         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
@@ -135,12 +114,72 @@ export const AppNavigator = () => {
   );
 };
 
+const getToken = async () => {
+  const dispatch = useDispatch();
+  try {
+    //AsyncStorage.clear();
+
+    const token = await AsyncStorage.getItem('refresh-token');
+
+    if (token) {
+      // dispatch(refreshToken(token));
+      // return true;
+      const refreshToken = axios
+        .post(
+          `http://127.0.0.1:5001/auth/refresh`,
+          {},
+          {
+            headers: {
+              authorization: 'Bearer ' + token,
+            },
+            withCredentials: true,
+          },
+        )
+        .then(res => {
+          AsyncStorage.setItem('access-token', res.data.access_token);
+          console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
+          return token;
+        })
+        .catch(err => console.error(err));
+    } else {
+      return false;
+    }
+  } catch (e) {
+    console.error(e);
+    AsyncStorage.clear();
+  }
+};
+
+const checkToken = async () => {
+  const ch = await getToken();
+  //console.log(ch);
+  if (ch) {
+    return true;
+  } else {
+    //console.log(ch);
+    return false;
+  }
+};
+
 export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState(false);
+  const [token, setToken] = React.useState();
+
   const _msg = useSelector(selectMsg);
-  // React.useEffect(() => {
-  //   checkToken().then(val => setIsSignIn(val));
-  // }, []);
+
+  React.useEffect(() => {
+    // checkToken().then(val => setIsSignIn(val));
+    if (_msg === 'SUCCESS_REGISTER' || _msg === 'SUCCESS_LOGIN') {
+      console.log(_msg);
+      setIsSignIn(true);
+    } else if (
+      _msg === 'FAILED_REGISTER' ||
+      _msg === 'FAILED_REGISTER' ||
+      _msg === 'SUCCESS_LOGOUT'
+    ) {
+      setIsSignIn(false);
+    }
+  }, [_msg]);
 
   React.useEffect(() => {
     try {
@@ -148,78 +187,26 @@ export const MainNavigator = () => {
         value =>
           // AsyncStorage returns a promise
           // Adding a callback to get the value
-          console.log('로그인 쿠키 구하기', value),
+          setToken(value),
         // Setting the value in Text
       );
-      setIsSignIn(true);
+      if (token) {
+        setIsSignIn(true);
+      } else {
+        setIsSignIn(false);
+      }
     } catch {
-      console.log('힝구~~~');
+      setIsSignIn(false);
     }
-  }, [_msg]);
+  }, []);
 
-  return <>{!isSignIn ? <LoginNavigator /> : <AppNavigator />}</>;
+  React.useEffect(() => {
+    if (token) {
+      setIsSignIn(true);
+    } else {
+      setIsSignIn(false);
+    }
+  }, [token]);
+
+  return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
 };
-
-// const RootNavigator = () => {
-//   const dispatch = useAppDispatch();
-//   const ui = dispatch(getUserInfo('din'));
-
-//   console.log(useAppSelector(getUserInfo));
-
-//   return (
-//     <NavigationContainer>
-//       <Tab.Navigator
-//         initialRouteName="녹음"
-//         screenOptions={({route}) => ({
-//           tabBarActiveTintColor: 'red',
-//           tabBarInactiveTintColor: 'black',
-//           // eslint-disable-next-line react/no-unstable-nested-components
-//           tabBarIcon: ({focused, color, size}) => {
-//             // let iconName;
-//             // if (route.name === '메인') {
-//             //   iconName = focused ? 'beer' : 'beer-outline';
-//             // } else if (route.name === '통계') {
-//             //   iconName = focused ? 'podium' : 'podium-outline';
-//             // } else if (route.name === '설정') {
-//             //   iconName = focused ? 'settings' : 'settings-outline';
-//             // }
-
-//             return <Icon name="delete-sweep" size={25} color="#aaa" />;
-//           },
-//         })}>
-//         <Tab.Screen
-//           name="책과음악"
-//           component={BookScreen}
-//           options={{headerShown: false}}
-//         />
-//         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
-//         <Tab.Screen
-//           name="스케쥴"
-//           component={ScheduleScreen}
-//           options={{headerShown: false}}
-//         />
-//         <Tab.Screen
-//           name="녹음"
-//           component={MainNavigator}
-//           options={({route}) => ({
-//             headerShown: false,
-
-//             // tabBarStyle: {display: 'none'},
-//           })}
-//         />
-//         <Tab.Screen
-//           name="활동"
-//           component={LogsScreen}
-//           options={{headerShown: false}}
-//         />
-//         <Tab.Screen
-//           name="설정"
-//           component={SettingsNavigator}
-//           options={{headerShown: false}}
-//         />
-//       </Tab.Navigator>
-//     </NavigationContainer>
-//   );
-// };
-
-// export default RootNavigator;

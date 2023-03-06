@@ -11,12 +11,20 @@ import {
 } from 'react-native';
 import Title from '../components/Title';
 import {List, WingBlank} from '@ant-design/react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {logout} from '../utils/redux/authSlice';
 const Item = List.Item;
 const Brief = Item.Brief;
 function SettingsScreen({navigation}) {
-  const [activeSections, setActiveSections] = React.useState([2, 0]);
+  const dispatch = useDispatch();
   const onChange = () => {
     setActiveSections(activeSections);
+  };
+
+  const Logout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -34,6 +42,7 @@ function SettingsScreen({navigation}) {
           arrow="horizontal">
           thumb
         </Item>
+        <Button title="로그아웃" onPress={Logout}></Button>
       </List>
       <List renderHeader={'Doll'}>
         <Item
