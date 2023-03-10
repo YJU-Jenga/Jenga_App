@@ -17,17 +17,25 @@ import ScheduleScreen from '../screens/ScheduleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
 import RecordScreen from '../screens/RecordScreen';
-import LogsScreen from '../screens/LogsScreen';
+import ShoppingScreen from '../screens/ShoppingScreen';
+import ShoppingDetailScreen from '../screens/ShoppingDetailScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import InfoScreen from '../screens/InfoScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {refreshToken, selectMsg, selectToken} from '../utils/redux/authSlice';
+import {
+  refreshToken,
+  selectAccessToken,
+  selectMsg,
+  selectToken,
+} from '../utils/redux/authSlice';
+import {getUser, selectUserData} from '../utils/redux/userSlice';
 import {useSelector} from 'react-redux';
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
+import {useCookies} from 'react-cookie';
+import jwtDecode from 'jwt-decode';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -44,6 +52,23 @@ const SettingsNavigator = () => {
         name="info"
         options={{headerShown: true, title: ''}}
         component={InfoScreen}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const ShoppingNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="shopping"
+        options={{headerShown: false}}
+        component={ShoppingScreen}
+      />
+      <Stack.Screen
+        name="shoppingDetail"
+        options={{headerShown: true, title: ''}}
+        component={ShoppingDetailScreen}
       />
     </Stack.Navigator>
   );
@@ -100,8 +125,8 @@ export const AppNavigator = () => {
           })}
         />
         <Tab.Screen
-          name="활동"
-          component={LogsScreen}
+          name="쇼핑"
+          component={ShoppingNavigator}
           options={{headerShown: false}}
         />
         <Tab.Screen
@@ -114,99 +139,97 @@ export const AppNavigator = () => {
   );
 };
 
-const getToken = async () => {
-  const dispatch = useDispatch();
-  try {
-    //AsyncStorage.clear();
+// const getToken = async () => {
+//   const dispatch = useDispatch();
+//   try {
+//     //AsyncStorage.clear();
 
-    const token = await AsyncStorage.getItem('refresh-token');
+//     const token = await AsyncStorage.getItem('refresh-token');
 
-    if (token) {
-      // dispatch(refreshToken(token));
-      // return true;
-      const refreshToken = axios
-        .post(
-          `http://127.0.0.1:5001/auth/refresh`,
-          {},
-          {
-            headers: {
-              authorization: 'Bearer ' + token,
-            },
-            withCredentials: true,
-          },
-        )
-        .then(res => {
-          AsyncStorage.setItem('access-token', res.data.access_token);
-          console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
-          return token;
-        })
-        .catch(err => console.error(err));
-    } else {
-      return false;
-    }
-  } catch (e) {
-    console.error(e);
-    AsyncStorage.clear();
-  }
-};
+//     if (token) {
+//       // dispatch(refreshToken(token));
+//       // return true;
+//       const refreshToken = axios
+//         .post(
+//           `http://127.0.0.1:5001/auth/refresh`,
+//           {},
+//           {
+//             headers: {
+//               authorization: 'Bearer ' + token,
+//             },
+//             withCredentials: true,
+//           },
+//         )
+//         .then(res => {
+//           AsyncStorage.setItem('access-token', res.data.access_token);
+//           return token;
+//         })
+//         .catch(err => console.error(err));
+//     } else {
+//       return false;
+//     }
+//   } catch (e) {
+//     console.error(e);
+//     AsyncStorage.clear();
+//   }
+// };
 
-const checkToken = async () => {
-  const ch = await getToken();
-  //console.log(ch);
-  if (ch) {
-    return true;
-  } else {
-    //console.log(ch);
-    return false;
-  }
-};
+// const checkToken = async () => {
+//   const ch = await getToken();
+//   //console.log(ch);
+//   if (ch) {
+//     return true;
+//   } else {
+//     //console.log(ch);
+//     return false;
+//   }
+// };
 
 export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState(false);
   const [token, setToken] = React.useState();
 
   const _msg = useSelector(selectMsg);
+  const _accessToken = useSelector(selectAccessToken);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
-    // checkToken().then(val => setIsSignIn(val));
-    if (_msg === 'SUCCESS_REGISTER' || _msg === 'SUCCESS_LOGIN') {
-      console.log(_msg);
-      setIsSignIn(true);
-    } else if (
-      _msg === 'FAILED_REGISTER' ||
-      _msg === 'FAILED_REGISTER' ||
-      _msg === 'SUCCESS_LOGOUT'
-    ) {
-      setIsSignIn(false);
+    console.log('저애오', _msg);
+    switch (_msg) {
+      case 'SUCCESS_REGISTER':
+        setIsSignIn(true);
+        break;
+      case 'SUCCESS_LOGIN':
+        setIsSignIn(true);
+        break;
+      case 'SUCCESS_REFRESH_TOKEN':
+        setIsSignIn(true);
+        break;
+      case 'FAILED_REGISTER':
+      case 'FAILED_LOGIN':
+        setIsSignIn(false);
+        break;
+      case 'SUCCESS_LOGOUT':
+        setIsSignIn(false);
+        break;
+      case 'FAILED_REFRESH_TOKEN':
+        setIsSignIn(false);
+        break;
     }
   }, [_msg]);
 
   React.useEffect(() => {
-    try {
-      AsyncStorage.getItem('access-token').then(
-        value =>
-          // AsyncStorage returns a promise
-          // Adding a callback to get the value
-          setToken(value),
-        // Setting the value in Text
-      );
+    const funcRefresh = async () => {
+      const token = await AsyncStorage.getItem('refresh-token');
+      const accessToken = await AsyncStorage.getItem('access-token');
       if (token) {
-        setIsSignIn(true);
-      } else {
-        setIsSignIn(false);
+        dispatch(refreshToken());
+        dispatch(getUser(accessToken));
       }
-    } catch {
-      setIsSignIn(false);
-    }
-  }, []);
+    };
 
-  React.useEffect(() => {
-    if (token) {
-      setIsSignIn(true);
-    } else {
-      setIsSignIn(false);
-    }
-  }, [token]);
+    funcRefresh();
+  }, []);
 
   return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
 };

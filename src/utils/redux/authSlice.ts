@@ -1,10 +1,15 @@
+import {Platform} from 'react-native';
 import {createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../../store';
 import axios from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useCookies} from 'react-cookie'; // useCookies import
 
-const SERVER_URL = 'http://127.0.0.1:5001';
+let SERVER_URL = 'http://127.0.0.1:5001';
+if (Platform.OS === 'android') {
+  SERVER_URL = 'http://10.0.2.2:5001';
+}
 
 // Define a type for the slice state
 interface AuthState {
@@ -19,6 +24,8 @@ interface AuthState {
   userData: object;
   error: null;
   errorMessage: string;
+  accessToken: string;
+  refreshToken: string;
 }
 
 // Define the initial state using that type
@@ -34,6 +41,8 @@ const initialState: AuthState = {
   error: null,
   userData: {},
   errorMessage: '',
+  accessToken: '',
+  refreshToken: '',
 };
 
 // 통신 에러 시 보여줄 에러 메세지의 타입
@@ -46,22 +55,19 @@ export const registerAccount = createAsyncThunk<
   object,
   {rejectValue: IError}
 >('auth/register', async (registerInfo, thunkAPI) => {
-  console.log(registerInfo);
   let {name, password, email, phone} = registerInfo;
-  phone = registerInfo.phone.replace(/\s|_/g, '-');
+  phone = await registerInfo.phone.replace(/\s|_/g, '-');
 
   const obj = {email, name, password, phone};
   try {
     const {data} = await axios.post(`${SERVER_URL}/auth/local/signup`, obj, {
       withCredentials: true,
     });
-    console.log(data);
-    AsyncStorage.multiSet([
-      ['access-token', data.access_token],
-      ['refresh-token', data.refresh_token],
-    ]);
+    AsyncStorage.setItem('refresh-token', data.refresh_token);
+    AsyncStorage.setItem('access-token', data.access_token);
     return data;
   } catch (e) {
+    console.error(e);
     // rejectWithValue를 사용하여 에러 핸들링이 가능하다
     return thunkAPI.rejectWithValue({
       errorMessage: e.response.data.message,
@@ -70,11 +76,8 @@ export const registerAccount = createAsyncThunk<
 });
 // 비동기 통신 구현
 export const loginAccount = createAsyncThunk<
-  // 성공 시 리턴 타입
   AuthState[],
-  // input type. ex) LoginScreen.tsx에서 email, password 객체를 넘겨줬기때문에 object
   object,
-  // ThunkApi 정의({dispatch?, state?, extra?, rejectValue?})
   {rejectValue: IError}
 >('auth/login', async (userInfo, thunkAPI) => {
   try {
@@ -83,20 +86,17 @@ export const loginAccount = createAsyncThunk<
       userInfo,
       {
         headers: {
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       },
     );
     console.log(data);
-    AsyncStorage.multiSet([
-      ['access-token', data.access_token],
-      ['refresh-token', data.refresh_token],
-    ]);
-    // if (data.response.data.config) {
-    //   state.failReason = data.response.data.config;
-    // }
+    AsyncStorage.setItem('refresh-token', data.refresh_token);
+    AsyncStorage.setItem('access-token', data.access_token);
     return data;
   } catch (e) {
+    console.error(e);
     return thunkAPI.rejectWithValue({
       errorMessage: e.response.data.message,
     });
@@ -107,22 +107,39 @@ export const refreshToken = createAsyncThunk<
   AuthState[],
   object,
   {rejectValue: IError}
->('auth/refresh', async (refreshToken, thunkAPI) => {
-  console.log(refreshToken);
+>('auth/refresh', async thunkAPI => {
+  const token = await AsyncStorage.getItem('refresh-token');
   try {
-    const {data} = axios.post(
-      `http://127.0.0.1:5001/auth/refresh`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    // const {data} = await axios.post(`${SERVER_URL}/auth/refresh`, {
+    //   headers: {
+    //     authorization: 'Bearer ' + token,
+    //   },
+    //   withCredentials: true,
+    // });
+
+    await fetch(`${SERVER_URL}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: 'Bearer ' + token,
       },
-    );
-    console.log(data);
-    AsyncStorage.setItem('access-token', data.access_token);
-    return data;
-    //console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
+      credentials: 'include',
+    })
+      .then(res => {
+        return res.json();
+        //AsyncStorage.multiRemove(['access-token', 'refresh-token']);
+      })
+      .then(json => {
+        console.log(json);
+        AsyncStorage.setItem('refresh-token', json.refresh_token);
+        AsyncStorage.setItem('access-token', json.access_token);
+      });
+    // console.log(data);
+    // if (data.refresh_token) {
+    //   AsyncStorage.setItem('refresh-token', data.refresh_token);
+    //   AsyncStorage.setItem('access-token', data.access_token);
+    // }
+    //return data;
   } catch (e) {
     // rejectWithValue를 사용하여 에러 핸들링이 가능하다
     console.error(e);
@@ -138,28 +155,13 @@ export const logout = createAsyncThunk<
   {rejectValue: IError}
 >('auth/logout', async thunkAPI => {
   try {
-    await fetch('http://localhost:5001/auth/logout', {
+    await fetch(`${SERVER_URL}/auth/logout`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       credentials: 'include',
     }).then(() => {
       AsyncStorage.multiRemove(['access-token', 'refresh-token']);
     });
-    // axios
-    //   .post(
-    //     `http://127.0.0.1:5001/auth/logout`,
-    //     {},
-    //     {
-    //       withCredentials: true,
-    //     },
-    //   )
-    //   .then(async res => {
-    //     console.log(res);
-    //     // await AsyncStorage.multiRemove(['access-token', 'refresh-token']);
-    //   })
-    //   .catch(err => console.error(err));
-
-    //console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
   } catch (e) {
     // rejectWithValue를 사용하여 에러 핸들링이 가능하다
     console.error(e);
@@ -215,10 +217,10 @@ export const authSlice = createSlice({
         state.loading = false;
         state.msg = 'SUCCESS_REGISTER';
         state.errorMessage = '';
+        state.accessToken = payload?.access_token;
       })
       .addCase(registerAccount.rejected, (state, {payload}) => {
         console.log('레지스터 실패ㅣ ', state);
-        console.log(payload);
         state.errorMessage = payload?.errorMessage;
         state.loading = false;
         state.msg = 'FAILED_REGISTER';
@@ -230,6 +232,8 @@ export const authSlice = createSlice({
       .addCase(refreshToken.fulfilled, (state, {payload}) => {
         state.error = null;
         state.msg = 'SUCCESS_REFRESH_TOKEN';
+        state.accessToken = payload?.access_token;
+        state.refreshToken = payload?.refresh_token;
       })
       .addCase(refreshToken.rejected, (state, {payload}) => {
         state.msg = 'FAILED_REFRESH_TOKEN';
@@ -252,8 +256,9 @@ export const authSlice = createSlice({
 export const {initErrorMessage} = authSlice.actions;
 
 // useS
-export const selectToken = (state: RootState) => state.auth.token;
+export const selectAccessToken = (state: RootState) => state.auth.accessToken;
 export const selectMsg = (state: RootState) => state.auth.msg;
 export const selectErrorMsg = (state: RootState) => state.auth.errorMessage;
+export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
 
 export default authSlice.reducer;

@@ -9,6 +9,7 @@ import {store} from './store';
 import {Provider} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import {CookiesProvider} from 'react-cookie';
 
 const getToken = async () => {
   try {
@@ -68,7 +69,9 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <MainNavigator />
+      <CookiesProvider>
+        <MainNavigator />
+      </CookiesProvider>
     </Provider>
   );
 }

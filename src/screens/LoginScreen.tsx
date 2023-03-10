@@ -18,13 +18,13 @@ import {
 } from '@ant-design/react-native';
 import axios from 'axios';
 import {useDispatch, useSelector} from 'react-redux';
+
 import {
   initErrorMessage,
   loginAccount,
   selectErrorMsg,
   selectMsg,
 } from '../utils/redux/authSlice';
-import {validateEmail, removeWhitespace} from '../utils/regex';
 
 const LoginScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
@@ -45,6 +45,7 @@ const LoginScreen = ({route, navigation}) => {
   const _msg = useSelector(selectMsg);
   const _errorMessage = useSelector(selectErrorMsg);
   const dispatch = useDispatch();
+
   React.useEffect(() => {}, []);
   React.useEffect(() => {
     setErrorMessage(_errorMessage);
@@ -52,6 +53,7 @@ const LoginScreen = ({route, navigation}) => {
   }, [_errorMessage]);
 
   React.useEffect(() => {
+    console.log(_errorMessage.length);
     if (errorMessage !== '') {
       Alert.alert(errorMessage);
       setErrorMessage('');

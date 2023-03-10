@@ -6,10 +6,10 @@ import {
   StatusBar,
   SafeAreaView,
   Button,
+  Modal,
 } from 'react-native';
 import {
   Provider,
-  Modal,
   Card,
   Toast,
   Flex,
@@ -52,36 +52,56 @@ const ScheduleScreen = () => {
               <List.Item
                 onPress={() => setVisibleModal(true)}
                 extra={<Switch />}>
-                12시 30분
-                <WhiteSpace></WhiteSpace>
-                <Text>"안녕 종율아"</Text>
+                <WingBlank>
+                  <Flex>
+                    <Text style={{fontSize: 18, marginEnd: 5}}>오전</Text>
+                    <Text style={{fontSize: 32}}>12:30</Text>
+                  </Flex>
+                  <Text style={{fontSize: 18, color: 'gray'}}>"헬로 민수"</Text>
+                </WingBlank>
               </List.Item>
             </SwipeAction>
             <List.Item onPress={() => setVisibleModal(true)} extra={<Switch />}>
-              12시 30분
-              <WhiteSpace></WhiteSpace>
-              <Text>"안녕 종율아"</Text>
+              <WingBlank>
+                <Flex>
+                  <Text style={{fontSize: 18, marginEnd: 5}}>오전</Text>
+                  <Text style={{fontSize: 32}}>12:30</Text>
+                </Flex>
+                <Text style={{fontSize: 18, color: 'gray'}}>"헬로 지토"</Text>
+              </WingBlank>
             </List.Item>
             <List.Item onPress={() => setVisibleModal(true)} extra={<Switch />}>
-              12시 30분
-              <WhiteSpace></WhiteSpace>
-              <Text>"안녕 종율아"</Text>
+              <WingBlank>
+                <Flex>
+                  <Text style={{fontSize: 18, marginEnd: 5}}>오전</Text>
+                  <Text style={{fontSize: 32}}>12:30</Text>
+                </Flex>
+                <Text style={{fontSize: 18, color: 'gray'}}>"응ㅐ응애"</Text>
+              </WingBlank>
             </List.Item>
           </List>
         </WingBlank>
 
         <Modal
-          transparent={false}
+          presentationStyle="formSheet"
           visible={visibleModal}
-          animationType="slide-up"
-          onClose={() => setVisibleModal(false)}>
+          animationType="slide"
+          onRequestClose={() => setVisibleModal(false)}>
           <SafeAreaView
             style={{
               height: '100%',
               display: 'flex',
             }}>
             <WhiteSpace size="lg" />
-            <Text style={{fontSize: 24, textAlign: 'center'}}>예약 편집</Text>
+            <Flex justify="around">
+              <Button
+                title="Back"
+                onPress={() => setVisibleModal(false)}></Button>
+              <Text style={{fontSize: 24}}>예약 편집</Text>
+              <Button
+                title="Save"
+                onPress={() => setVisibleModal(false)}></Button>
+            </Flex>
             {/* <Button
                 type="primary"
                 onPress={() => Toast.info('Hello Toast in Modal now works')}>

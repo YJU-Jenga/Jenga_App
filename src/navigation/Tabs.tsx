@@ -8,7 +8,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
 import MusicScreen from '../screens/MusicScreen';
 import RecordScreen from '../screens/RecordScreen';
-import LogsScreen from '../screens/LogsScreen';
+import ShoppingScreen from '../screens/ShoppingScreen';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -24,7 +24,7 @@ const BottomTabs = () => {
         component={RecordScreen}
         options={{headerShown: false}}
       />
-      <Tab.Screen name="활동" component={LogsScreen} />
+      <Tab.Screen name="활동" component={ShoppingScreen} />
       <Tab.Screen name="설정" component={SettingsScreen} />
     </Tab.Navigator>
   );
