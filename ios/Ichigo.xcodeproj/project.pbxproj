@@ -14,8 +14,11 @@
 		5851A68D29A87E4D003AF8A1 /* antoutline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5851A68C29A87DC0003AF8A1 /* antoutline.ttf */; };
 		5851A68E29A87E4D003AF8A1 /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5851A68B29A87DAD003AF8A1 /* antfill.ttf */; };
 		58B79EB92992C17F001681EC /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58B79EB82992C17F001681EC /* SplashScreen.storyboard */; };
+		5C911D37FE0D94B42E8B716A /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE19ACE008CDBFBF165C78EE /* ExpoModulesProvider.swift */; };
 		65A727D05A9AE3B15DE02843 /* libPods-Ichigo-IchigoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CCF2ED1ED1944FCE42BCEF /* libPods-Ichigo-IchigoTests.a */; };
+		7433FE0F317124479E634DFC /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D12B177ECFA18D148218BDD /* ExpoModulesProvider.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		84A0F1687AA649CAA3B461B7 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26C88775FA9F4BD3B321394C /* noop-file.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +41,8 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Ichigo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Ichigo/main.m; sourceTree = "<group>"; };
 		1F48519B1EEFD9F7025FCE29 /* Pods-Ichigo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo.debug.xcconfig"; path = "Target Support Files/Pods-Ichigo/Pods-Ichigo.debug.xcconfig"; sourceTree = "<group>"; };
+		26C88775FA9F4BD3B321394C /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Ichigo/noop-file.swift"; sourceTree = "<group>"; };
+		2D12B177ECFA18D148218BDD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ichigo-IchigoTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		5851A67729A87B5C003AF8A1 /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ionicons.ttf; path = ../assets/fonts/Ionicons.ttf; sourceTree = "<group>"; };
 		5851A67829A87B5C003AF8A1 /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = ../assets/fonts/MaterialIcons.ttf; sourceTree = "<group>"; };
 		5851A67929A87B5C003AF8A1 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Solid.ttf; path = ../assets/fonts/FontAwesome5_Solid.ttf; sourceTree = "<group>"; };
@@ -68,8 +73,10 @@
 		8B12D6A2FE7BB63B18520EFA /* Pods-Ichigo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo.release.xcconfig"; path = "Target Support Files/Pods-Ichigo/Pods-Ichigo.release.xcconfig"; sourceTree = "<group>"; };
 		8DA5C3CACA324BE99B44C9B0 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = ../assets/fonts/Fontisto.ttf; sourceTree = "<group>"; };
 		A16E528C446140C2807EF4EF /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = ../assets/fonts/Zocial.ttf; sourceTree = "<group>"; };
+		BE19ACE008CDBFBF165C78EE /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ichigo/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		C2D7AA00B9A5FCE89DB5AB10 /* libPods-Ichigo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ichigo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386999D30218CE567E27F91 /* Pods-Ichigo-IchigoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo-IchigoTests.release.xcconfig"; path = "Target Support Files/Pods-Ichigo-IchigoTests/Pods-Ichigo-IchigoTests.release.xcconfig"; sourceTree = "<group>"; };
+		CE04015DFDF1450D88C95DAC /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = Ichigo/SplashScreen.storyboard; sourceTree = "<group>"; };
 		D3CB6416448F43428F173085 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = ../assets/fonts/MaterialCommunityIcons.ttf; sourceTree = "<group>"; };
 		E5CCF2ED1ED1944FCE42BCEF /* libPods-Ichigo-IchigoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ichigo-IchigoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -124,6 +131,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				26C88775FA9F4BD3B321394C /* noop-file.swift */,
+				CE04015DFDF1450D88C95DAC /* SplashScreen.storyboard */,
 			);
 			name = Ichigo;
 			sourceTree = "<group>";
@@ -163,6 +172,14 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
+		6B7F672A949467B5024548B8 /* Ichigo */ = {
+			isa = PBXGroup;
+			children = (
+				BE19ACE008CDBFBF165C78EE /* ExpoModulesProvider.swift */,
+			);
+			name = Ichigo;
+			sourceTree = "<group>";
+		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
@@ -181,6 +198,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
 				EF8BCE6B7DCD47AAAB07ECD0 /* Resources */,
+				CB03ACF3E377B02680F0EB71 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -196,6 +214,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B8CAABAEA18419913C8162C0 /* IchigoTests */ = {
+			isa = PBXGroup;
+			children = (
+				2D12B177ECFA18D148218BDD /* ExpoModulesProvider.swift */,
+			);
+			name = IchigoTests;
+			sourceTree = "<group>";
+		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +231,15 @@
 				C386999D30218CE567E27F91 /* Pods-Ichigo-IchigoTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		CB03ACF3E377B02680F0EB71 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				6B7F672A949467B5024548B8 /* Ichigo */,
+				B8CAABAEA18419913C8162C0 /* IchigoTests */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		EF8BCE6B7DCD47AAAB07ECD0 /* Resources */ = {
@@ -449,6 +484,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* IchigoTests.m in Sources */,
+				7433FE0F317124479E634DFC /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +494,8 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				5C911D37FE0D94B42E8B716A /* ExpoModulesProvider.swift in Sources */,
+				84A0F1687AA649CAA3B461B7 /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,7 +520,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = IchigoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -493,8 +531,10 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ichigo.app/Ichigo";
 			};
 			name = Debug;
@@ -506,7 +546,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = IchigoTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -517,8 +557,10 @@
 					"-lc++",
 					"$(inherited)",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Ichigo.app/Ichigo";
 			};
 			name = Release;
@@ -529,6 +571,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Ichigo/Ichigo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Ichigo/Info.plist;
@@ -542,10 +585,12 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.ichigo;
 				PRODUCT_NAME = Ichigo;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -556,6 +601,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Ichigo/Ichigo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = Ichigo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -568,9 +614,11 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = com.anonymous.ichigo;
 				PRODUCT_NAME = Ichigo;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -624,7 +672,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
@@ -689,7 +737,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					/usr/lib/swift,
 					"$(inherited)",
