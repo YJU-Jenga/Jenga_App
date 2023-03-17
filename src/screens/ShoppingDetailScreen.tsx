@@ -175,7 +175,7 @@ export default function ShoppingDetailScreen() {
 
   useInterval(
     () => {
-      onSliderValueChange(position);
+      //onSliderValueChange(position);
       sound.getStatusAsync().then(res => {
         setDisplayPosition(res.positionMillis);
 
