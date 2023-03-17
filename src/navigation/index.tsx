@@ -140,18 +140,18 @@ export const AppNavigator = () => {
           options={{headerShown: false}}
         />
 
-        {/* <Tab.Screen
+        <Tab.Screen
           name="녹음"
           component={RecordScreen}
           options={({route}) => ({
             headerShown: false,
           })}
-        /> */}
-        <Tab.Screen
+        />
+        {/* <Tab.Screen
           name="쇼핑"
           component={ShoppingNavigator}
           options={{headerShown: false}}
-        />
+        /> */}
         <Tab.Screen
           name="장바구니"
           component={OrderScreen}

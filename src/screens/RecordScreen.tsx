@@ -7,13 +7,19 @@ import {
   Image,
   Button,
   Linking,
+  Alert,
 } from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import * as FileSystem from 'expo-file-system';
 import React, {useCallback} from 'react';
 import {Audio} from 'expo-av';
+import {selectUserData} from '../utils/redux/userSlice';
+import {useSelector} from 'react-redux';
+import {Toast} from '@ant-design/react-native';
 
 const RecordScreen = ({navigation}) => {
   const [recording, setRecording] = React.useState();
+  const _userData = useSelector(selectUserData);
 
   async function startRecording() {
     try {
@@ -24,29 +30,57 @@ const RecordScreen = ({navigation}) => {
         playsInSilentModeIOS: true,
       });
 
-      const recording = new Audio.Recording();
-
-      await recording.prepareToRecordAsync(
+      const {recording} = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY,
       );
-      await recording.startAsync();
+
+      // await recording.prepareToRecordAsync(
+      //   Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      // );
+
+      //await recording.startAsync();
       setRecording(recording);
       console.log('Recording started');
-    } catch (err) {
+    } catch (e) {
       //Linking.openSettings();
-      console.error('녹음기능이 없어 맥미니에', err);
+      if (e.code === 'E_MISSING_PERMISSION') {
+        console.log(e.code);
+        Alert.alert('권한 허용해라', '마이크 권한 접근', [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: '접근 허용하기',
+            onPress: () => Linking.openSettings(),
+          },
+        ]);
+      } else if (e.code === 'E_AUDIO_RECORDERNOTCREATED') {
+        Alert.alert('에러', '장치를 확인해주세요');
+      } else {
+        console.error(e);
+      }
+      //console.error('에러 해결 안 됨', e.constructor);
       // console.error('Failed to start recording', err);
     }
   }
 
   async function stopRecording() {
-    console.log('Stopping recording..');
+    console.log(recording._uri);
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
     await Audio.setAudioModeAsync({
       allowsRecordingIOS: false,
     });
-    const uri = recording.getURI();
+
+    // {"_canRecord": true, "_cleanupForUnloadedRecorder": [Function anonymous], "_finalDurationMillis": 0, "_isDoneRecording": false, "_onRecordingStatusUpdate": null, "_options": {"android": {"audioEncoder": 3, "bitRate": 128000, "extension": ".m4a", "numberOfChannels": 2, "outputFormat": 2, "sampleRate": 44100}, "ios": {"audioQuality": 127, "bitRate": 128000, "extension": ".m4a", "linearPCMBitDepth": 16, "linearPCMIsBigEndian": false, "linearPCMIsFloat": false, "numberOfChannels": 2, "outputFormat": "aac ", "sampleRate": 44100}, "isMeteringEnabled": true, "keepAudioActiveHint": true, "web": {"bitsPerSecond": 128000, "mimeType": "audio/webm"}}, "_pollingLoop": [Function anonymous], "_progressUpdateIntervalMillis": 500, "_progressUpdateTimeoutVariable": null, "_subscription": null, "_uri": "file:///Users/aedin/Library/Developer/CoreSimulator/Devices/B1ED6C42-7B2E-49CD-A57B-E88CD794E68D/data/Containers/Data/Application/D5A15A74-F871-4016-84E5-B8C41663F6F6/Library/Caches/AV/recording-45D5B202-6BC9-445C-9849-AFBE3F36014A.m4a", "getStatusAsync": [Function anonymous]}
+    const uri = recording._uri;
+    const filename = uri.split('/').pop();
+    const filepath = FileSystem.documentDirectory + filename;
+    await FileSystem.moveAsync({
+      from: uri,
+      to: filepath,
+    });
     console.log('Recording stopped and stored at', uri);
   }
 
@@ -64,7 +98,7 @@ const RecordScreen = ({navigation}) => {
           🍓
         </Text>
         <Text style={{fontSize: 50, fontWeight: 'bold', textAlign: 'center'}}>
-          안녕 예진!
+          안녕 {_userData.name}!
         </Text>
       </View>
       <View style={{alignItems: 'center'}}>

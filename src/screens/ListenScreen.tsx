@@ -204,6 +204,98 @@ const ListenScreen = () => {
   }
   //state to manage whether track player is initialized or not
 
+  const FFF = () => {
+    return (
+      <View>
+        {search ? (
+          <FlatList
+            contentContainerStyle={{paddingBottom: '40%'}}
+            data={searchList}
+            renderItem={({item, index}) => (
+              <List.Item
+                style={{}}
+                onPress={() => {
+                  setVisibleModal(true);
+                  setSoundInfo(item);
+                  setCurrIdx(index);
+                  //loadSound();
+                }}
+                thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
+                extra={
+                  <View
+                    style={{
+                      borderRadius: 30,
+                      backgroundColor: 'gray',
+                      width: 10,
+                      height: 10,
+                    }}></View>
+                }>
+                {item.name}
+              </List.Item>
+            )}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            removeClippedSubviews={true}
+            onEndReached={() => {
+              if (page <= totalPage) {
+                setPage(page + 1);
+                setListPerPage(
+                  listPerPage.concat(
+                    searchList.slice(10 * page, 10 * (page + 1)),
+                  ),
+                );
+              }
+            }}></FlatList>
+        ) : (
+          <View style={{height: '100%'}}>
+            <Button title="+" onPress={pickDocument} />
+            <FlatList
+              contentContainerStyle={{paddingBottom: '40%'}}
+              // style={{minHeight: '70%'}}
+              data={soundList}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              removeClippedSubviews={true}
+              onEndReached={() => {
+                if (page <= totalPage) {
+                  setPage(page + 1);
+                  setListPerPage(
+                    listPerPage.concat(
+                      searchList.slice(10 * page, 10 * (page + 1)),
+                    ),
+                  );
+                }
+              }}
+              renderItem={({item, index}) => {
+                return (
+                  <List.Item
+                    onPress={() => {
+                      setVisibleModal(true);
+                      setSoundInfo(item);
+                      setCurrIdx(index);
+
+                      //loadSound();
+                    }}
+                    thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
+                    extra={
+                      <View
+                        style={{
+                          borderRadius: 30,
+                          backgroundColor: 'lightpink',
+                          width: 10,
+                          height: 10,
+                        }}></View>
+                    }>
+                    {item.name}
+                  </List.Item>
+                );
+              }}></FlatList>
+          </View>
+        )}
+      </View>
+    );
+  };
+
   return (
     <Provider locale={enUS}>
       <SafeAreaView
@@ -225,73 +317,8 @@ const ListenScreen = () => {
         />
 
         <WingBlank>
-          <Button title="+" onPress={pickDocument} />
           {soundList ? (
-            <List>
-              <FlatList
-                data={searchList}
-                renderItem={({item, index}) => (
-                  <List.Item
-                    onPress={() => {
-                      setVisibleModal(true);
-                      setSoundInfo(item);
-                      setCurrIdx(index);
-
-                      //loadSound();
-                    }}
-                    thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
-                    extra={
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          backgroundColor: 'gray',
-                          width: 10,
-                          height: 10,
-                        }}></View>
-                    }>
-                    {item.name}
-                  </List.Item>
-                )}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                removeClippedSubviews={true}
-                onEndReached={() => {
-                  if (page <= totalPage) {
-                    setPage(page + 1);
-                    setListPerPage(
-                      listPerPage.concat(
-                        searchList.slice(10 * page, 10 * (page + 1)),
-                      ),
-                    );
-                  }
-                }}></FlatList>
-              <FlatList
-                data={soundList}
-                renderItem={({item, index}) => {
-                  return (
-                    <List.Item
-                      onPress={() => {
-                        setVisibleModal(true);
-                        setSoundInfo(item);
-                        setCurrIdx(index);
-
-                        //loadSound();
-                      }}
-                      thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
-                      extra={
-                        <View
-                          style={{
-                            borderRadius: 30,
-                            backgroundColor: 'lightpink',
-                            width: 10,
-                            height: 10,
-                          }}></View>
-                      }>
-                      {item.name}
-                    </List.Item>
-                  );
-                }}></FlatList>
-            </List>
+            <FFF></FFF>
           ) : (
             <Text
               style={{
