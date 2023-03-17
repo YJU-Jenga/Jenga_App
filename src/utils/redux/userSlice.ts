@@ -46,8 +46,6 @@ export const getUser = createAsyncThunk<
     //console.log(accessToken);
     const refreshToken = await AsyncStorage.getItem('refresh-token');
     const user = JSON.parse(JSON.stringify(jwtDecode(refreshToken)));
-    console.log(user);
-    //const user = JSON.parse(JSON.stringify(jwt_decode(refreshToken)));
     const {data} = await axios.get(`${SERVER_URL}/user/${user.email}`, {
       headers: {
         authorization: 'Bearer ' + accessToken,
@@ -58,7 +56,6 @@ export const getUser = createAsyncThunk<
     return data;
     // setUserName(name);
   } catch (e) {
-    console.error(e.response.data.message);
     return thunkAPI.rejectWithValue({
       errorMessage: e.response.data.message,
     });

@@ -36,6 +36,9 @@ import {useSelector} from 'react-redux';
 import axios from 'axios';
 import {useCookies} from 'react-cookie';
 import jwtDecode from 'jwt-decode';
+import {unwrapResult} from '@reduxjs/toolkit';
+import OrderScreen from '../screens/OrderScreen';
+import {SafeAreaView, Text} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -94,14 +97,33 @@ export const LoginNavigator = () => {
 };
 
 export const AppNavigator = () => {
+  // 인형 등록했으면 쇼핑, 등록하지 않았으면 스케쥴..?
+  const _userData = useSelector(selectUserData);
+  const [mode, setMode] = React.useState('USER');
+  React.useEffect(() => {
+    if (_userData?.permission === true) {
+      setMode('ADMIN');
+    } else {
+      setMode('USER');
+      // 인형 세팅 X이라면.. INITIAL 모드로!!
+    }
+  }, [_userData]);
+
+  const AdminMode = () => {
+    return (
+      <SafeAreaView>
+        <Text>저는 관리자입니다</Text>
+      </SafeAreaView>
+    );
+  };
+
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="녹음"
+        initialRouteName="쇼핑"
         screenOptions={({route}) => ({
           tabBarActiveTintColor: 'red',
           tabBarInactiveTintColor: 'black',
-          // eslint-disable-next-line react/no-unstable-nested-components
           tabBarIcon: ({focused, color, size}) => {
             return <Icon name="delete-sweep" size={25} color="#aaa" />;
           },
@@ -117,18 +139,23 @@ export const AppNavigator = () => {
           component={ScheduleScreen}
           options={{headerShown: false}}
         />
-        <Tab.Screen
+
+        {/* <Tab.Screen
           name="녹음"
           component={RecordScreen}
           options={({route}) => ({
             headerShown: false,
           })}
-        />
+        /> */}
         <Tab.Screen
           name="쇼핑"
           component={ShoppingNavigator}
           options={{headerShown: false}}
         />
+        <Tab.Screen
+          name="장바구니"
+          component={OrderScreen}
+          options={{headerShown: false}}></Tab.Screen>
         <Tab.Screen
           name="설정"
           component={SettingsNavigator}
@@ -191,27 +218,19 @@ export const MainNavigator = () => {
 
   const _msg = useSelector(selectMsg);
   const _accessToken = useSelector(selectAccessToken);
+
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    console.log('저애오', _msg);
     switch (_msg) {
       case 'SUCCESS_REGISTER':
-        setIsSignIn(true);
-        break;
       case 'SUCCESS_LOGIN':
-        setIsSignIn(true);
-        break;
       case 'SUCCESS_REFRESH_TOKEN':
         setIsSignIn(true);
         break;
       case 'FAILED_REGISTER':
       case 'FAILED_LOGIN':
-        setIsSignIn(false);
-        break;
       case 'SUCCESS_LOGOUT':
-        setIsSignIn(false);
-        break;
       case 'FAILED_REFRESH_TOKEN':
         setIsSignIn(false);
         break;
@@ -222,12 +241,20 @@ export const MainNavigator = () => {
     const funcRefresh = async () => {
       const token = await AsyncStorage.getItem('refresh-token');
       const accessToken = await AsyncStorage.getItem('access-token');
+
       if (token) {
-        dispatch(refreshToken());
-        dispatch(getUser(accessToken));
+        dispatch(refreshToken())
+          .unwrap()
+          .then((unwrapResult: any) => {
+            dispatch(getUser(accessToken));
+          })
+          .catch((rejectedValueOrSerializedError: any) => {
+            // handle error here
+            console.log(rejectedValueOrSerializedError);
+          });
+        // dispatch(getUser(accessToken));
       }
     };
-
     funcRefresh();
   }, []);
 

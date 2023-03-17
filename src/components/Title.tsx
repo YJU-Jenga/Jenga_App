@@ -11,7 +11,6 @@ interface Props {
 
 const Title: React.FC<Props> = ({title}) => {
   const _userData = useSelector(selectUserData);
-  console.log(_userData);
   return (
     <SafeAreaView>
       <Flex
@@ -20,17 +19,17 @@ const Title: React.FC<Props> = ({title}) => {
         <Text
           style={{
             fontSize: 36,
-            fontWeight: 600,
+            fontWeight: '600',
           }}>
           {title}
         </Text>
         <Icon name="delete-sweep" size={25} color="#aaa" />
-        <Image
+        {/* <Image
           source={require('./../scpark.jpeg')}
-          style={{width: 30, height: 30, borderRadius: 40}}></Image>
+          style={{width: 30, height: 30, borderRadius: 40}}></Image> */}
       </Flex>
-      <Text>프사 누르면 {_userData['name']}이랑..</Text>
-      <Text>장바구니 탭도 넣을 거임</Text>
+      {/* <Text>프사 누르면 {_userData['name']}이랑..</Text>
+      <Text>장바구니 탭도 넣을 거임</Text> */}
     </SafeAreaView>
   );
 };

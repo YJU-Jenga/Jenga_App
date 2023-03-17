@@ -20,6 +20,7 @@ const LogsScreen = ({route, navigation}) => {
         setProductList(res.data);
       });
   }, []);
+
   return (
     <SafeAreaView
       // eslint-disable-next-line react-native/no-inline-styles
@@ -38,11 +39,15 @@ const LogsScreen = ({route, navigation}) => {
         renderItem={({item, i}) => (
           <WingBlank key={i} size="lg">
             <TouchableOpacity
-              style={{backgroundColor: '#ddd', marginBottom: 10}}
+              style={{
+                backgroundColor: '#eee',
+                marginVertical: 5,
+                paddingVertical: 10,
+              }}
               onPress={() => navigation.navigate('shoppingDetail', item)}>
               <Card.Content>
                 <Card.Cover source={{uri: item.image}}></Card.Cover>
-                <View>
+                <View style={{paddingTop: 10}}>
                   <Text style={{fontSize: 18}}>{item.name}</Text>
                   <Text style={{fontSize: 18, fontWeight: '600', color: 'red'}}>
                     {item.price}
@@ -51,13 +56,7 @@ const LogsScreen = ({route, navigation}) => {
               </Card.Content>
             </TouchableOpacity>
           </WingBlank>
-        )}>
-        {/* {dummy.map((el, i) => {
-          return (
-            
-          );
-        })} */}
-      </FlatList>
+        )}></FlatList>
     </SafeAreaView>
   );
 };

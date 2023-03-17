@@ -36,7 +36,7 @@ const ScheduleScreen = () => {
           paddingHorizontal: 10,
           backgroundColor: 'white',
         }}>
-        <Title title="Alarm"></Title>
+        <Title title="Schedule"></Title>
 
         <WingBlank>
           <List renderHeader="List">

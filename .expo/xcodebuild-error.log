@@ -1,0 +1,6 @@
+** BUILD FAILED **
+
+
+The following build commands failed:
+	CompileC /Users/aedin/Library/Developer/Xcode/DerivedData/Ichigo-gmplkripvpafclgfvvedhefxivcb/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/RNReanimated.build/Objects-normal/arm64/NativeProxy.o /Users/aedin/Documents/Janga_App/node_modules/react-native-reanimated/ios/native/NativeProxy.mm normal arm64 objective-c++ com.apple.compilers.llvm.clang.1_0.compiler (in target 'RNReanimated' from project 'Pods')
+(1 failure)

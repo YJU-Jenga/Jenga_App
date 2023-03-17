@@ -22,25 +22,18 @@ import {getUser, selectMsg, selectUserData} from '../utils/redux/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import axios from 'axios';
 import SelectStock from '../components/SelectStock';
+import WebView from 'react-native-webview';
 
-const OrderScreen = ({route, navigation}) => {
-  const [product, setProduct] = React.useState();
-  const [stockList, setStockList] = React.useState();
-  const [currStock, setCurrStock] = React.useState();
-  const [visibleModal, setVisibleModal] = React.useState(false);
-  let list: any = [];
-  const setValue = (props: number) => {
-    for (let i = 1; i <= props; i++) {
-      list.push({label: i, value: i});
-    }
-    let wrapper = [list];
-    return wrapper;
-  };
-
-  React.useEffect(() => {
-    // setProduct(route.params);
-    setStockList(setValue(route.params.stock));
-  }, []);
+const OrderScreen = () => {
+  /** webview 로딩 완료시 */
+  // const handleEndLoading = e => {
+  //   /** rn에서 웹뷰로 정보를 보내는 메소드 */
+  //   webviewRef.postMessage('로딩 완료시 webview로 정보를 보내는 곳');
+  // };
+  // React.useEffect(() => {
+  //   // setProduct(route.params);
+  //   setStockList(setValue(route.params.stock));
+  // }, []);
 
   return (
     <SafeAreaView
@@ -50,11 +43,11 @@ const OrderScreen = ({route, navigation}) => {
         paddingHorizontal: 10,
         backgroundColor: 'white',
       }}>
-      <WingBlank size="lg">
-        <Flex direction="column">
-          <Title title="Order"></Title>
-        </Flex>
-      </WingBlank>
+      <WebView
+        // onLoadEnd={handleEndLoading}
+        // onMessage={handleOnMessage}
+        // ref={handleSetRef}
+        source={{uri: 'http://127.0.0.1:3000'}}></WebView>
     </SafeAreaView>
   );
 };
