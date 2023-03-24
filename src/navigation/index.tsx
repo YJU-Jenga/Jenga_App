@@ -21,6 +21,8 @@ import ShoppingScreen from '../screens/ShoppingScreen';
 import ShoppingDetailScreen from '../screens/ShoppingDetailScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import InfoScreen from '../screens/InfoScreen';
+import ScheduleDetailScreen from '../screens/ScheduleDetailScreen';
+import ScheduleModalScreen from '../screens/ScheduleModalScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -73,6 +75,27 @@ const ShoppingNavigator = () => {
         options={{headerShown: true, title: ''}}
         component={ShoppingDetailScreen}
       />
+    </Stack.Navigator>
+  );
+};
+
+const ScheduleNavigator = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="schedule"
+        options={{headerShown: false}}
+        component={ScheduleScreen}
+      />
+      <Stack.Screen
+        name="scheduleModal"
+        options={{headerShown: false, presentation: 'modal'}}
+        component={ScheduleModalScreen}></Stack.Screen>
+      {/* <Stack.Screen
+        name="scheduleDetail"
+        options={{headerShown: false, presentation: 'formSheet'}}
+        component={ScheduleDetailScreen}
+      /> */}
     </Stack.Navigator>
   );
 };
@@ -136,7 +159,7 @@ export const AppNavigator = () => {
         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
         <Tab.Screen
           name="스케쥴"
-          component={ScheduleScreen}
+          component={ScheduleNavigator}
           options={{headerShown: false}}
         />
 
@@ -165,52 +188,6 @@ export const AppNavigator = () => {
     </NavigationContainer>
   );
 };
-
-// const getToken = async () => {
-//   const dispatch = useDispatch();
-//   try {
-//     //AsyncStorage.clear();
-
-//     const token = await AsyncStorage.getItem('refresh-token');
-
-//     if (token) {
-//       // dispatch(refreshToken(token));
-//       // return true;
-//       const refreshToken = axios
-//         .post(
-//           `http://127.0.0.1:5001/auth/refresh`,
-//           {},
-//           {
-//             headers: {
-//               authorization: 'Bearer ' + token,
-//             },
-//             withCredentials: true,
-//           },
-//         )
-//         .then(res => {
-//           AsyncStorage.setItem('access-token', res.data.access_token);
-//           return token;
-//         })
-//         .catch(err => console.error(err));
-//     } else {
-//       return false;
-//     }
-//   } catch (e) {
-//     console.error(e);
-//     AsyncStorage.clear();
-//   }
-// };
-
-// const checkToken = async () => {
-//   const ch = await getToken();
-//   //console.log(ch);
-//   if (ch) {
-//     return true;
-//   } else {
-//     //console.log(ch);
-//     return false;
-//   }
-// };
 
 export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState(false);

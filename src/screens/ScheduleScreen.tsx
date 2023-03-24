@@ -19,14 +19,21 @@ import {
   List,
   Switch,
   SwipeAction,
+  InputItem,
 } from '@ant-design/react-native';
 import React from 'react';
 import Title from '../components/Title';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ScheduleScreen = () => {
+const ScheduleScreen = ({route, navigation}) => {
   const [visibleModal, setVisibleModal] = React.useState(false);
   const [value12hours, setValue12hours] = React.useState(new Date());
+  const [visibleRepeatModal, setVisibleRepeatModal] = React.useState(false);
+  const [visibleSoundsModal, setVisibleSoundsModal] = React.useState(false);
+  React.useEffect(() => {
+    console.log(visibleRepeatModal);
+  }, [visibleRepeatModal]);
   return (
     <Provider locale={enUS}>
       <SafeAreaView
@@ -50,7 +57,11 @@ const ScheduleScreen = () => {
                 },
               ]}>
               <List.Item
-                onPress={() => setVisibleModal(true)}
+                onPress={() => {
+                  navigation.navigate('scheduleModal');
+                  //setVisibleModal(true);
+                  setValue12hours(new Date());
+                }}
                 extra={<Switch />}>
                 <WingBlank>
                   <Flex>
@@ -82,7 +93,7 @@ const ScheduleScreen = () => {
           </List>
         </WingBlank>
 
-        <Modal
+        {/* <Modal
           presentationStyle="formSheet"
           visible={visibleModal}
           animationType="slide"
@@ -102,11 +113,11 @@ const ScheduleScreen = () => {
                 title="Save"
                 onPress={() => setVisibleModal(false)}></Button>
             </Flex>
-            {/* <Button
+            <Button
                 type="primary"
                 onPress={() => Toast.info('Hello Toast in Modal now works')}>
                 Hello Toast in Modal now works
-              </Button> */}
+              </Button>
             <WingBlank size="lg">
               <DatePickerView
                 mode="time"
@@ -116,9 +127,25 @@ const ScheduleScreen = () => {
               />
 
               <List>
-                <List.Item arrow="horizontal">반복</List.Item>
-                <List.Item arrow="horizontal">액션</List.Item>
-                <List.Item>명령어</List.Item>
+                <List.Item
+                  onPress={() => {
+                    setVisibleModal(false);
+                    navigation.navigate('scheduleDetail');
+                  }}
+                  arrow="horizontal">
+                  반복
+                </List.Item>
+                <List.Item
+                  onPress={() => {
+                    setVisibleModal(false);
+                    navigation.navigate('scheduleDetail');
+                  }}
+                  arrow="horizontal">
+                  액션
+                </List.Item>
+                <InputItem placeholder="아이에게 할 말을 입력하세요">
+                  명령어
+                </InputItem>
               </List>
               <WhiteSpace size="xl" />
               <Button
@@ -129,7 +156,7 @@ const ScheduleScreen = () => {
               <WhiteSpace></WhiteSpace>
             </WingBlank>
           </SafeAreaView>
-        </Modal>
+        </Modal> */}
       </SafeAreaView>
     </Provider>
   );

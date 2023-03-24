@@ -35,9 +35,10 @@ interface ISound {
   mimeType: string;
   name: string;
   uri: string;
+  isRecording?: boolean;
 }
 
-const ListenScreen = () => {
+const ListenScreen = ({navigation}) => {
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
   const [soundInfo, setSoundInfo] = React.useState<ISound>();
   const [soundList, setSoundList] = React.useState([]);
@@ -85,13 +86,13 @@ const ListenScreen = () => {
   useEffect(() => {
     if (soundInfo?.uri) {
       console.log('로딩');
-      loadSound();
+      loadSound(soundInfo?.uri);
     }
   }, [soundInfo]);
 
-  async function loadSound() {
-    console.log('Loading Sound');
-    const {sound} = await Audio.Sound.createAsync({uri: soundInfo.uri});
+  async function loadSound(soundPath: string) {
+    console.log('Loading Sound : ', soundPath);
+    const {sound} = await Audio.Sound.createAsync({uri: soundPath});
     setSound(sound);
     sound.getStatusAsync().then(res => {
       setDuration(Math.floor(res.durationMillis));
@@ -141,6 +142,7 @@ const ListenScreen = () => {
               mimeType: result.mimeType,
               name: result.name,
               uri: result.uri,
+              isRecording: false,
             },
             ...soundList,
           ]),
@@ -153,11 +155,12 @@ const ListenScreen = () => {
               mimeType: result.mimeType,
               name: result.name,
               uri: result.uri,
+              isRecording: false,
             },
           ]),
         );
       }
-      getSounds();
+      getSoundList();
     }
   };
 
@@ -170,15 +173,19 @@ const ListenScreen = () => {
     sound.pauseAsync();
   };
 
-  const getSounds = async () => {
+  const getSoundList = async () => {
     //AsyncStorage.removeItem('sounds');
     const d = await AsyncStorage.getItem('sounds');
     setSoundList(JSON.parse(d));
     //console.log('getSOUND : ', d);
   };
 
+  const fetchGetSoundList = navigation.addListener('focus', () => {
+    getSoundList();
+  });
+
   React.useEffect(() => {
-    getSounds();
+    return () => fetchGetSoundList();
   }, []);
 
   const deleteSound = index => {
@@ -191,7 +198,7 @@ const ListenScreen = () => {
           newSoundList.splice(index, 1);
           setSoundList(newSoundList);
           await AsyncStorage.setItem('sounds', JSON.stringify(newSoundList));
-          getSounds();
+          getSoundList();
         },
       },
     ]);
@@ -218,7 +225,6 @@ const ListenScreen = () => {
                   setVisibleModal(true);
                   setSoundInfo(item);
                   setCurrIdx(index);
-                  //loadSound();
                 }}
                 thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
                 extra={
@@ -400,8 +406,6 @@ const ListenScreen = () => {
                   </View>
                   <Text>{formatTime(Math.floor(duration / 1000))}</Text>
                 </Flex>
-
-                {/* <Button title="Play Sound" /> */}
 
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />

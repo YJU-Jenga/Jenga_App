@@ -139,7 +139,7 @@ export const refreshToken = createAsyncThunk<
     //   AsyncStorage.setItem('refresh-token', data.refresh_token);
     //   AsyncStorage.setItem('access-token', data.access_token);
     // }
-    //return data;
+    return {refresh: 'refresh'};
   } catch (e) {
     // rejectWithValue를 사용하여 에러 핸들링이 가능하다
     console.error(e);
