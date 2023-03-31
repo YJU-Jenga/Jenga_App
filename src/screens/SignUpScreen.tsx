@@ -16,6 +16,7 @@ import {
   registerAccount,
   selectErrorMsg,
 } from '../utils/redux/authSlice';
+import {HelperText, Snackbar} from 'react-native-paper';
 
 interface signUp {
   email: string;
@@ -80,10 +81,10 @@ const SignUpScreen = ({route, navigation}) => {
       setSignUpInfo({...signUpInfo, email});
 
       if (!emailRegex.test(e)) {
-        setEmailMessage('이메일 형식이 틀렸어요');
+        setEmailMessage('이메일을 입력하세요');
         setIsEmail(false);
       } else {
-        setEmailMessage('올바른 이메일 형식이에요');
+        setEmailMessage('');
         setIsEmail(true);
       }
     },
@@ -95,7 +96,7 @@ const SignUpScreen = ({route, navigation}) => {
       const name = e;
       setSignUpInfo({...signUpInfo, name});
       if (e.length < 2 || e.length > 5) {
-        setNameMessage('2글자 이상 5글자 미만');
+        setNameMessage('2글자 이상 5글자 미만으로 입력하세요');
         setIsName(false);
       } else {
         setNameMessage('');
@@ -133,7 +134,7 @@ const SignUpScreen = ({route, navigation}) => {
       setSignUpInfo({...signUpInfo, password});
 
       if (!passwordRegex.test(e)) {
-        setPasswordMessage('숫자+영문자+대문자+특수문자 조합으로 8자리 이상');
+        setPasswordMessage('숫자, 대문자, 특수문자를 포함하세요');
         setIsPassword(false);
       } else {
         setPasswordMessage('');
@@ -155,8 +156,6 @@ const SignUpScreen = ({route, navigation}) => {
     dispatch(registerAccount(signUpInfo));
   };
 
-  useEffect(() => {}, []);
-
   React.useEffect(() => {
     setErrorMessage(_errorMessage);
     dispatch(initErrorMessage());
@@ -174,6 +173,15 @@ const SignUpScreen = ({route, navigation}) => {
       {/* <View
       style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
       <View>
+        {/* <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => {
+          setSnackbarVisible(false);
+          setSnackbarContent('');
+        }}
+        duration={2500}>
+        {snackbarContent}
+      </Snackbar> */}
         <Text style={styles.header}>회원가입</Text>
         <WhiteSpace size="xl" />
         <WingBlank size="lg">
@@ -185,7 +193,9 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Email">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
-            {isEmail ? <Text></Text> : <Text>{emailMessage}</Text>}
+            <HelperText type="error" visible={!isEmail}>
+              {emailMessage}
+            </HelperText>
             <InputItem
               //clear
               value={signUpInfo.name}
@@ -193,7 +203,9 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Name">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
-            {isName ? <Text></Text> : <Text>{nameMessage}</Text>}
+            <HelperText type="error" visible={!isName}>
+              {nameMessage}
+            </HelperText>
             <InputItem
               clear
               type="phone"
@@ -202,7 +214,9 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Phone Number">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
-            {isPhone ? <Text></Text> : <Text>{phoneMessage}</Text>}
+            <HelperText type="error" visible={!isPhone}>
+              {phoneMessage}
+            </HelperText>
             <WhiteSpace size="xs" />
             <InputItem
               clear
@@ -212,7 +226,9 @@ const SignUpScreen = ({route, navigation}) => {
               placeholder="Password">
               <Icon name="delete-sweep" size={30} color="#aaa" />
             </InputItem>
-            {isPassword ? <Text></Text> : <Text>{passwordMessage}</Text>}
+            <HelperText type="error" visible={!isPassword}>
+              {passwordMessage}
+            </HelperText>
 
             <InputItem
               type="password"

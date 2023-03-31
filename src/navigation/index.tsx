@@ -17,12 +17,10 @@ import ScheduleScreen from '../screens/ScheduleScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
 import RecordScreen from '../screens/RecordScreen';
-import ShoppingScreen from '../screens/ShoppingScreen';
-import ShoppingDetailScreen from '../screens/ShoppingDetailScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import InfoScreen from '../screens/InfoScreen';
-import ScheduleDetailScreen from '../screens/ScheduleDetailScreen';
 import ScheduleModalScreen from '../screens/ScheduleModalScreen';
+import ShoppingScreen from '../screens/ShoppingScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -39,8 +37,14 @@ import axios from 'axios';
 import {useCookies} from 'react-cookie';
 import jwtDecode from 'jwt-decode';
 import {unwrapResult} from '@reduxjs/toolkit';
-import OrderScreen from '../screens/OrderScreen';
-import {SafeAreaView, Text} from 'react-native';
+
+import {
+  Alert,
+  BackHandler,
+  SafeAreaView,
+  Text,
+  ToastAndroid,
+} from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -57,23 +61,6 @@ const SettingsNavigator = () => {
         name="info"
         options={{headerShown: true, title: ''}}
         component={InfoScreen}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const ShoppingNavigator = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="shopping"
-        options={{headerShown: false}}
-        component={ShoppingScreen}
-      />
-      <Stack.Screen
-        name="shoppingDetail"
-        options={{headerShown: true, title: ''}}
-        component={ShoppingDetailScreen}
       />
     </Stack.Navigator>
   );
@@ -123,32 +110,17 @@ export const AppNavigator = () => {
   // 인형 등록했으면 쇼핑, 등록하지 않았으면 스케쥴..?
   const _userData = useSelector(selectUserData);
   const [mode, setMode] = React.useState('USER');
-  React.useEffect(() => {
-    if (_userData?.permission === true) {
-      setMode('ADMIN');
-    } else {
-      setMode('USER');
-      // 인형 세팅 X이라면.. INITIAL 모드로!!
-    }
-  }, [_userData]);
-
-  const AdminMode = () => {
-    return (
-      <SafeAreaView>
-        <Text>저는 관리자입니다</Text>
-      </SafeAreaView>
-    );
-  };
 
   return (
     <NavigationContainer>
       <Tab.Navigator
-        initialRouteName="쇼핑"
+        // initialRouteName="책과음악"
         screenOptions={({route}) => ({
+          tabBarHideOnKeyboard: true,
           tabBarActiveTintColor: 'red',
           tabBarInactiveTintColor: 'black',
           tabBarIcon: ({focused, color, size}) => {
-            return <Icon name="delete-sweep" size={25} color="#aaa" />;
+            return <Icon name="delete-sweep" size={25} color="#111" />;
           },
         })}>
         <Tab.Screen
@@ -176,8 +148,8 @@ export const AppNavigator = () => {
           options={{headerShown: false}}
         /> */}
         <Tab.Screen
-          name="장바구니"
-          component={OrderScreen}
+          name="쇼핑"
+          component={ShoppingScreen}
           options={{headerShown: false}}></Tab.Screen>
         <Tab.Screen
           name="설정"
@@ -220,19 +192,55 @@ export const MainNavigator = () => {
       const accessToken = await AsyncStorage.getItem('access-token');
 
       if (token) {
-        dispatch(refreshToken())
-          .unwrap()
-          .then((unwrapResult: any) => {
-            dispatch(getUser(accessToken));
-          })
-          .catch((rejectedValueOrSerializedError: any) => {
-            // handle error here
-            console.log(rejectedValueOrSerializedError);
-          });
+        dispatch(refreshToken());
+        // .unwrap()
+        // .then((unwrapResult: any) => {
+        //   dispatch(getUser(accessToken));
+        // })
+        // .catch((rejectedValueOrSerializedError: any) => {
+        //   // handle error here
+        //   console.log(rejectedValueOrSerializedError);
+        // });
         // dispatch(getUser(accessToken));
       }
     };
     funcRefresh();
+  }, []);
+
+  // React.useEffect(() => {
+  //   const backAction = () => {
+  //     Alert.alert('Hold on!', '앱을 종료하시겠습니까?', [
+  //       {
+  //         text: '취소',
+  //         onPress: () => null,
+  //       },
+  //       {text: '확인', onPress: () => BackHandler.exitApp()},
+  //     ]);
+  //     return true;
+  //   };
+
+  //   const backHandler = BackHandler.addEventListener(
+  //     'hardwareBackPress',
+  //     backAction,
+  //   );
+
+  //   return () => backHandler.remove();
+  // }, []);
+
+  React.useEffect(() => {
+    const backAction = () => {
+      ToastAndroid.show(
+        '뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.',
+        ToastAndroid.SHORT,
+      );
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
 
   return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;

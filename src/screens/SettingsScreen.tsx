@@ -31,9 +31,8 @@ function SettingsScreen({navigation}) {
     <SafeAreaView
       style={{
         flex: 1,
-        paddingVertical: 40,
+        paddingTop: 12,
         backgroundColor: 'white',
-        paddingHorizontal: 20,
       }}>
       <Title title="Settings"></Title>
       <List renderHeader={'Me'}>

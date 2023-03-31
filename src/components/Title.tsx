@@ -15,15 +15,21 @@ const Title: React.FC<Props> = ({title}) => {
     <SafeAreaView>
       <Flex
         justify="between"
-        style={{marginHorizontal: 25, marginTop: 20, marginBottom: 20}}>
+        style={{
+          marginHorizontal: 25,
+          marginTop: 0,
+          marginBottom: 20,
+          backgroundColor: 'white',
+        }}>
         <Text
           style={{
+            color: 'black',
             fontSize: 36,
             fontWeight: '600',
           }}>
           {title}
         </Text>
-        <Icon name="delete-sweep" size={25} color="#aaa" />
+
         {/* <Image
           source={require('./../scpark.jpeg')}
           style={{width: 30, height: 30, borderRadius: 40}}></Image> */}

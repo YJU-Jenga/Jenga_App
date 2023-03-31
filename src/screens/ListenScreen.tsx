@@ -9,6 +9,11 @@ import {
   FlatList,
   Alert,
   StyleSheet,
+  Pressable,
+  TouchableOpacity,
+  PermissionsAndroid,
+  BackHandler,
+  ToastAndroid,
 } from 'react-native';
 import Title from '../components/Title';
 import {
@@ -30,6 +35,8 @@ import {Ionicons} from '@expo/vector-icons';
 import {useAppSelector, useAppDispatch} from '../../hooks';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useInterval} from '../utils/useInterval';
+import FloatingButton from '../components/FloatingButton';
+import DeleteButton from '../components/DeleteButton';
 
 interface ISound {
   mimeType: string;
@@ -37,6 +44,30 @@ interface ISound {
   uri: string;
   isRecording?: boolean;
 }
+
+const requestDocumentPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      {
+        title: 'Cool Photo App Camera Permission',
+        message:
+          'Cool Photo App needs access to your camera ' +
+          'so you can take awesome pictures.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the camera');
+    } else {
+      console.log('Camera permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
 
 const ListenScreen = ({navigation}) => {
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
@@ -55,14 +86,18 @@ const ListenScreen = ({navigation}) => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState();
 
+  const [selectedDocument, setSelectedDocument] = useState(null);
+
   const updateSearch = search => {
     setSearch(search);
-    const filtered = soundList.filter(itemList => {
-      return itemList.name.toUpperCase().includes(search.toUpperCase());
-    });
-    setSearchList(filtered);
-    setTotalPage(Math.ceil(filtered.length / 10));
-    setListPerPage(filtered.slice(0, 10));
+    if (soundList) {
+      const filtered = soundList?.filter(itemList => {
+        return itemList.name.toUpperCase().includes(search.toUpperCase());
+      });
+      setSearchList(filtered);
+      setTotalPage(Math.ceil(filtered.length / 10));
+      setListPerPage(filtered.slice(0, 10));
+    }
   };
 
   useInterval(
@@ -125,42 +160,71 @@ const ListenScreen = ({navigation}) => {
       : undefined;
   }, [sound]);
 
-  const pickDocument = async () => {
-    let result = await DocumentPicker.getDocumentAsync({type: 'audio/*'});
+  const goBack = () => {
+    if (visibleModal) {
+      setVisibleModal(false);
+      return true;
+    } else {
+      console.log('응애ㅠ');
+      return false;
+    }
+  };
 
-    if (result.type !== 'cancel') {
-      // const data = ;
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', goBack);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', goBack);
+    };
+  }, [visibleModal, goBack]);
 
-      console.log(result);
+  const handleOpenDocumentPicker = async () => {
+    try {
+      if (Platform.OS === 'android') await requestDocumentPermission();
+      console.log('죽어라 안드로이드');
 
-      if (soundList) {
-        console.log(soundList);
-        await AsyncStorage.setItem(
-          'sounds',
-          JSON.stringify([
-            {
-              mimeType: result.mimeType,
-              name: result.name,
-              uri: result.uri,
-              isRecording: false,
-            },
-            ...soundList,
-          ]),
-        );
-      } else {
-        await AsyncStorage.setItem(
-          'sounds',
-          JSON.stringify([
-            {
-              mimeType: result.mimeType,
-              name: result.name,
-              uri: result.uri,
-              isRecording: false,
-            },
-          ]),
-        );
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'audio/*',
+      });
+
+      console.log('ㅏ아아아아ㅏㅇ');
+      if (result.type !== 'cancel') {
+        // const data = ;
+
+        console.log(result);
+
+        if (soundList) {
+          console.log(soundList);
+          await AsyncStorage.setItem(
+            'sounds',
+            JSON.stringify([
+              {
+                mimeType: result.mimeType,
+                name: result.name,
+                uri: result.uri,
+                isRecording: false,
+              },
+              ...soundList,
+            ]),
+          );
+        } else {
+          await AsyncStorage.setItem(
+            'sounds',
+            JSON.stringify([
+              {
+                mimeType: result.mimeType,
+                name: result.name,
+                uri: result.uri,
+                isRecording: false,
+              },
+            ]),
+          );
+        }
+        getSoundList();
+      } else if (result?.type === 'cancel') {
+        return;
       }
-      getSoundList();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -169,14 +233,16 @@ const ListenScreen = ({navigation}) => {
     setIsPlaying(false);
     console.log('object');
     setPosition(0);
-    sound.setPositionAsync(0);
-    sound.pauseAsync();
+    sound?.setPositionAsync(0);
+    sound?.pauseAsync();
   };
 
   const getSoundList = async () => {
     //AsyncStorage.removeItem('sounds');
     const d = await AsyncStorage.getItem('sounds');
-    setSoundList(JSON.parse(d));
+    if (d) {
+      setSoundList(JSON.parse(d));
+    }
     //console.log('getSOUND : ', d);
   };
 
@@ -190,15 +256,16 @@ const ListenScreen = ({navigation}) => {
 
   const deleteSound = index => {
     Alert.alert('삭제', '파일을 삭제하시겠습니까?', [
-      {text: 'Cancel'},
+      {text: '취소'},
       {
-        text: "I'm Sure",
+        text: '확인',
         onPress: async () => {
           const newSoundList = [...soundList];
           newSoundList.splice(index, 1);
           setSoundList(newSoundList);
           await AsyncStorage.setItem('sounds', JSON.stringify(newSoundList));
           getSoundList();
+          setVisibleModal(false);
         },
       },
     ]);
@@ -211,7 +278,7 @@ const ListenScreen = ({navigation}) => {
   }
   //state to manage whether track player is initialized or not
 
-  const FFF = () => {
+  const SearchComponent = () => {
     return (
       <View>
         {search ? (
@@ -254,7 +321,6 @@ const ListenScreen = ({navigation}) => {
             }}></FlatList>
         ) : (
           <View style={{height: '100%'}}>
-            <Button title="+" onPress={pickDocument} />
             <FlatList
               contentContainerStyle={{paddingBottom: '40%'}}
               // style={{minHeight: '70%'}}
@@ -308,7 +374,6 @@ const ListenScreen = ({navigation}) => {
         style={{
           flex: 1,
           paddingTop: 12,
-          paddingHorizontal: 10,
           backgroundColor: 'white',
         }}>
         <Title title="Sounds"></Title>
@@ -324,25 +389,41 @@ const ListenScreen = ({navigation}) => {
 
         <WingBlank>
           {soundList ? (
-            <FFF></FFF>
+            <SearchComponent></SearchComponent>
           ) : (
-            <Text
-              style={{
-                textAlign: 'center',
-                marginTop: 50,
-                fontSize: 21,
-                color: '#999',
-              }}>
-              음악, 동화를 업로드해주세요
-            </Text>
+            <View>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 50,
+                  fontSize: 21,
+                  color: '#999',
+                }}>
+                음악, 동화를 업로드해주세요
+              </Text>
+            </View>
           )}
         </WingBlank>
-
+        <FloatingButton onPress={handleOpenDocumentPicker}></FloatingButton>
+        {/* <TouchableOpacity
+          activeOpacity={0.5}
+          // onPress={this.SampleFunction}
+          style={styles.TouchableOpacityStyle}>
+          <Image
+            source={{
+              uri: 'https://reactnativecode.com/wp-content/uploads/2017/11/Floating_Button.png',
+            }}
+            style={styles.FloatingButtonStyle}
+          />
+        </TouchableOpacity> */}
         <Modal
           transparent={false}
           visible={visibleModal}
           animationType="slide-up"
-          onClose={onCloseModal}>
+          onClose={() => {
+            onCloseModal();
+            setSelectedDocument(true);
+          }}>
           <SafeAreaView
             style={{
               height: '100%',
@@ -409,13 +490,17 @@ const ListenScreen = ({navigation}) => {
 
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
-                <Button
+                {/* <Button
                   title="DELETE"
                   color="red"
                   onPress={() => {
                     setVisibleModal(false);
                     deleteSound(currIdx);
-                  }}></Button>
+                  }}></Button> */}
+                <DeleteButton
+                  onPress={() => {
+                    deleteSound(currIdx);
+                  }}></DeleteButton>
               </View>
               {/* <WhiteSpace></WhiteSpace> */}
             </WingBlank>
@@ -446,5 +531,20 @@ const styles = StyleSheet.create({
   slider: {
     width: '100%',
     height: 40,
+  },
+  TouchableOpacityStyle: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+  },
+
+  FloatingButtonStyle: {
+    resizeMode: 'contain',
+    width: 50,
+    height: 50,
   },
 });

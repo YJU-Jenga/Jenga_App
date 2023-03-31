@@ -1,64 +1,60 @@
 import React from 'react';
-import {View, Text, SafeAreaView, FlatList, Image} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  FlatList,
+  Image,
+  Button,
+  Modal,
+  Platform,
+} from 'react-native';
 import Title from '../components/Title';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {WhiteSpace, WingBlank, Flex} from '@ant-design/react-native';
+import {
+  WhiteSpace,
+  WingBlank,
+  Card,
+  Flex,
+  PickerView,
+} from '@ant-design/react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {getUser, selectMsg, selectUserData} from '../utils/redux/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import {Card, Title as CardTitle} from 'react-native-paper';
 import axios from 'axios';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import WebView from 'react-native-webview';
 
-const LogsScreen = ({route, navigation}) => {
-  const [productList, setProductList] = React.useState();
+let SERVER_URL = 'http://127.0.0.1:3000';
+if (Platform.OS === 'android') {
+  SERVER_URL = 'http://10.0.2.2:3000';
+}
 
-  React.useEffect(() => {
-    const productList = axios
-      .get('http://127.0.0.1:5001/product/getAll')
-      .then(res => {
-        setProductList(res.data);
-      });
-  }, []);
+const ShoppingScreen = () => {
+  /** webview 로딩 완료시 */
+  // const handleEndLoading = e => {
+  //   /** rn에서 웹뷰로 정보를 보내는 메소드 */
+  //   webviewRef.postMessage('로딩 완료시 webview로 정보를 보내는 곳');
+  // };
+  // React.useEffect(() => {
+  //   // setProduct(route.params);
+  //   setStockList(setValue(route.params.stock));
+  // }, []);
 
   return (
     <SafeAreaView
-      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         flex: 1,
         paddingTop: 12,
         paddingHorizontal: 10,
         backgroundColor: 'white',
       }}>
-      <Title title="Shopping"></Title>
-      {/* <Text style={{textAlign: 'right', marginHorizontal: 20}}>
-          <Icon name="delete-sweep" size={30} color="#100" />
-        </Text> */}
-      <FlatList
-        data={productList}
-        renderItem={({item, i}) => (
-          <WingBlank key={i} size="lg">
-            <TouchableOpacity
-              style={{
-                backgroundColor: '#eee',
-                marginVertical: 5,
-                paddingVertical: 10,
-              }}
-              onPress={() => navigation.navigate('shoppingDetail', item)}>
-              <Card.Content>
-                <Card.Cover source={{uri: item.image}}></Card.Cover>
-                <View style={{paddingTop: 10}}>
-                  <Text style={{fontSize: 18}}>{item.name}</Text>
-                  <Text style={{fontSize: 18, fontWeight: '600', color: 'red'}}>
-                    {item.price}
-                  </Text>
-                </View>
-              </Card.Content>
-            </TouchableOpacity>
-          </WingBlank>
-        )}></FlatList>
+      <WebView
+        // onLoadEnd={handleEndLoading}
+        // onMessage={handleOnMessage}
+        // ref={handleSetRef}
+        source={{uri: SERVER_URL}}></WebView>
     </SafeAreaView>
   );
 };
 
-export default LogsScreen;
+export default ShoppingScreen;

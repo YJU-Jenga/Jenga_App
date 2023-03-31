@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   StatusBar,
   SafeAreaView,
-  Button,
   Modal,
   BackHandler,
+  Pressable,
 } from 'react-native';
 import {
   Provider,
@@ -21,26 +21,146 @@ import {
   Switch,
   SwipeAction,
   InputItem,
+  Button,
 } from '@ant-design/react-native';
 import React, {useEffect, useState} from 'react';
 import Title from '../components/Title';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import {ActionComponent, RepeatComponent} from './ScheduleDetailScreen';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  initEditScheduleState,
+  initScheduleState,
+  selectRepeatInfo,
+  selectSoundInfo,
+} from '../utils/redux/scheduleSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {height} from '../config/globalStyles';
+import DeleteButton from '../components/DeleteButton';
+import {Snackbar} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const ScheduleModalScreen = ({route, navigation}) => {
-  const [value12hours, setValue12hours] = React.useState(new Date());
+  const [valuehours, setValuehours] = React.useState(new Date());
   const [visibleRepeatModal, setVisibleRepeatModal] = React.useState(false);
   const [visibleSoundsModal, setVisibleSoundsModal] = React.useState(false);
+  //const [repeatInformation, setRepeatInformation] = React.useState();
+  const [repeatInfo, setRepeatInfo] = React.useState([]);
+  const [sentence, setSentence] = React.useState('');
 
-  const day: string[] = [
-    '일요일',
-    '월요일',
-    '화요일',
-    '수요일',
-    '목요일',
-    '금요일',
-    '토요일',
-  ];
+  const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
+  const [snackbarContent, setSnackbarContent] = useState<string>('');
+
+  const mode = route.params?.type === 'EDIT' ? '예약 편집' : '예약 생성';
+
+  const dispatch = useDispatch();
+  const _currSound = useSelector(selectSoundInfo);
+  const _currRepeat = useSelector(selectRepeatInfo);
+
+  useEffect(() => {
+    if (route.params?.type === 'CREATE') {
+      dispatch(initScheduleState());
+    } else if (route.params?.type === 'EDIT') {
+      dispatch(initEditScheduleState(route.params.data));
+      setSentence(route.params.data.sentence);
+      setValuehours(new Date(route.params.data.time));
+    }
+  }, []);
+
+  useEffect(() => {
+    let str = '';
+    setRepeatInfo('없음');
+    const data = _currRepeat
+      .filter(el1 => el1.isChecked)
+      .map(el2 => {
+        str = str.concat(el2.day.slice(0, 1) + ' ');
+        setRepeatInfo(str);
+      });
+  }, [visibleRepeatModal]);
+
+  const onSave = async () => {
+    const data = await AsyncStorage.getItem('schedules');
+    let loadedSchedules = await JSON.parse(data);
+    const isDuplicated = checkDuplicationSchedule(loadedSchedules);
+    if (isDuplicated) {
+      setSnackbarVisible(true);
+      setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
+      return;
+    }
+    if (route.params.type === 'CREATE') {
+      if (loadedSchedules) {
+        console.log(loadedSchedules);
+        await AsyncStorage.setItem(
+          'schedules',
+          JSON.stringify([
+            {
+              id: generateId(),
+              repeat: _currRepeat,
+              sentence: sentence,
+              soundFile: _currSound,
+              time: valuehours,
+              isScheduleOn: true,
+            },
+            ...loadedSchedules,
+          ]),
+        );
+      } else {
+        await AsyncStorage.setItem(
+          'schedules',
+          JSON.stringify([
+            {
+              id: generateId(),
+              repeat: _currRepeat,
+              sentence,
+              soundFile: _currSound,
+              time: valuehours,
+              isScheduleOn: true,
+            },
+          ]),
+        );
+      }
+    } else if (route.params.type === 'EDIT') {
+      const index = loadedSchedules.findIndex(
+        item => item.id === route.params.data.id,
+      );
+
+      loadedSchedules[index].repeat = _currRepeat;
+      loadedSchedules[index].sentence = sentence;
+      loadedSchedules[index].soundFile = _currSound;
+      loadedSchedules[index].time = valuehours;
+
+      await AsyncStorage.setItem('schedules', JSON.stringify(loadedSchedules));
+    }
+
+    navigation.navigate('schedule');
+  };
+
+  const onDelete = async () => {
+    const data = await AsyncStorage.getItem('schedules');
+    let loadedSchedules = JSON.parse(data);
+    const filteredSchedules = loadedSchedules.filter(
+      item => item.id !== route.params.data.id,
+    );
+    await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
+
+    navigation.navigate('schedule');
+  };
+
+  const generateId = () => {
+    const hour = valuehours.getHours().toString();
+    const min = valuehours.getMinutes().toString();
+    const res = Number(hour + min);
+    return res;
+  };
+
+  const checkDuplicationSchedule = scheduleList => {
+    const id = generateId();
+    if (Array.isArray(scheduleList) && scheduleList.length === 0) {
+      return false;
+    } else {
+      return scheduleList.some(el => el.id === id);
+    }
+  };
 
   return (
     <Provider locale={enUS}>
@@ -57,46 +177,54 @@ const ScheduleModalScreen = ({route, navigation}) => {
             display: 'flex',
           }}>
           <WhiteSpace size="lg" />
-          <Flex justify="around">
-            <Button
-              title="Back"
-              onPress={() => navigation.navigate('schedule')}></Button>
-            <Text style={{fontSize: 24}}>예약 편집</Text>
-            <Button
-              title="Save"
-              onPress={() => navigation.navigate('schedule')}></Button>
+          <Flex justify="around" style={{marginBottom: height * 20}}>
+            <Icon
+              name="md-caret-back-outline"
+              size={30}
+              color={'#ff6e6e'}
+              onPress={() => navigation.navigate('schedule')}></Icon>
+            <Text style={{fontSize: 24, color: 'black'}}>{mode}</Text>
+            <Text
+              style={{color: '#ff6e6e', fontSize: 18, fontWeight: '600'}}
+              onPress={onSave}>
+              저장
+            </Text>
           </Flex>
           <WingBlank size="lg">
             <DatePickerView
               mode="time"
-              value={value12hours}
-              onChange={v => setValue12hours(v)}
-              use12Hours
+              value={valuehours}
+              onChange={v => setValuehours(v)}
             />
 
             <List>
               <List.Item
+                extra={<Text>{repeatInfo}</Text>}
                 onPress={() => {
                   setVisibleRepeatModal(true);
-                  //navigation.navigate('scheduleDetail', {type: 'repeat'});
                 }}
                 arrow="horizontal">
                 반복
               </List.Item>
               <List.Item
+                extra={<Text>{_currSound?.name}</Text>}
                 onPress={() => {
                   setVisibleSoundsModal(true);
-                  //navigation.navigate('scheduleDetail', {type: 'action'});
                 }}
                 arrow="horizontal">
                 액션
               </List.Item>
-              <InputItem placeholder="아이에게 할 말을 입력하세요">
+              <InputItem
+                value={sentence}
+                onChange={v => setSentence(v)}
+                placeholder="아이에게 할 말을 입력하세요">
                 명령어
               </InputItem>
             </List>
             <WhiteSpace size="xl" />
-            <Button title="DELETE" color="red"></Button>
+            {route.params?.type === 'EDIT' && (
+              <DeleteButton onPress={onDelete}></DeleteButton>
+            )}
 
             <WhiteSpace></WhiteSpace>
           </WingBlank>
@@ -106,7 +234,10 @@ const ScheduleModalScreen = ({route, navigation}) => {
           presentationStyle="pageSheet"
           visible={visibleRepeatModal}
           animationType="slide"
-          onRequestClose={() => setVisibleRepeatModal(false)}>
+          onRequestClose={() => {
+            setVisibleRepeatModal(false);
+            // setRepeatInformation(_currRepeat);
+          }}>
           <SafeAreaView
             style={{
               height: '100%',
@@ -124,8 +255,8 @@ const ScheduleModalScreen = ({route, navigation}) => {
               </Text>
             </Flex>
             <WhiteSpace size="lg" />
-            {day.map((v, i) => {
-              return <RepeatComponent data={v}></RepeatComponent>;
+            {_currRepeat.map((v, i) => {
+              return <RepeatComponent key={i} index={i}></RepeatComponent>;
             })}
           </SafeAreaView>
         </Modal>
@@ -152,10 +283,20 @@ const ScheduleModalScreen = ({route, navigation}) => {
                   액션
                 </Text>
               </Flex>
-              <ActionComponent></ActionComponent>
             </WingBlank>
+            <ActionComponent></ActionComponent>
           </SafeAreaView>
         </Modal>
+
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => {
+            setSnackbarVisible(false);
+            setSnackbarContent('');
+          }}
+          duration={2500}>
+          {snackbarContent}
+        </Snackbar>
       </SafeAreaView>
     </Provider>
   );

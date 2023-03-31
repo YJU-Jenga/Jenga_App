@@ -1,33 +1,47 @@
 import {
+  Animated,
   StyleSheet,
   View,
   Text,
   Pressable,
   FlatList,
   Image,
-  Button,
   Linking,
   Alert,
+  Dimensions,
   SafeAreaView,
+  Modal,
 } from 'react-native';
+import {MotiView} from 'moti';
 import {Ionicons} from '@expo/vector-icons';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import * as FileSystem from 'expo-file-system';
 import React, {useCallback, useState, useEffect} from 'react';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {Snackbar} from 'react-native-paper';
 
 import {Audio} from 'expo-av';
 import {selectUserData} from '../utils/redux/userSlice';
 import {useSelector} from 'react-redux';
-import {Flex, Toast, WingBlank} from '@ant-design/react-native';
+import {
+  Button,
+  Flex,
+  Toast,
+  WingBlank,
+  Popover,
+  PermissionsAndroid,
+} from '@ant-design/react-native';
 import Title from '../components/Title';
 import Slider from '@react-native-community/slider';
 import {useInterval} from '../utils/useInterval';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Easing} from 'react-native-reanimated';
+import {height, width} from '../config/globalStyles';
+import PopupMessage from '../components/PopupMessage';
 
 const RecordScreen = ({navigation}) => {
   const [recording, setRecording] = React.useState();
   const [recordingInfo, setRecordingInfo] = React.useState();
-  const _userData = useSelector(selectUserData);
   const [sound, setSound] = useState(null);
   const [soundPath, setSoundPath] = useState<string>('');
   const [soundList, setSoundList] = useState<string>('');
@@ -36,10 +50,14 @@ const RecordScreen = ({navigation}) => {
   const [position, setPosition] = useState(0);
   const [displayPosition, setDisplayPosition] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
+  const [snackbarContent, setSnackbarContent] = useState<string>('');
 
   useInterval(
     () => {
       //onSliderValueChange(position);
+      console.log('가자');
       sound.getStatusAsync().then(res => {
         setDisplayPosition(res.positionMillis);
 
@@ -63,7 +81,7 @@ const RecordScreen = ({navigation}) => {
       });
 
       const {recording} = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+        Audio.RecordingOptionsPresets.LOW_QUALITY,
       );
 
       // await recording.prepareToRecordAsync(
@@ -129,15 +147,19 @@ const RecordScreen = ({navigation}) => {
     console.log('Recording stopped and stored at', filepath);
     loadSound(filepath);
     getSounds();
+    setModalVisible(true);
   }
 
   async function deleteRecord() {
+    setSnackbarContent('녹음이 삭제되었습니다');
+    setModalVisible(false);
+    setSnackbarVisible(true);
+    setIsPlaying(false);
     await FileSystem.deleteAsync(soundPath);
     setRecordingInfo(null);
     setRecordingUri(null);
     setSound(null);
     setSoundPath(null);
-    Alert.alert('삭제됐습니다');
   }
 
   async function saveRecord(e) {
@@ -173,6 +195,13 @@ const RecordScreen = ({navigation}) => {
         ]),
       );
     }
+    setRecordingInfo(null);
+    setRecordingUri(null);
+    setSound(null);
+    setSoundPath(null);
+    setSnackbarContent('녹음을 저장했습니다');
+    setModalVisible(false);
+    setSnackbarVisible(true);
   }
 
   async function loadSound(soundPath: string) {
@@ -181,14 +210,21 @@ const RecordScreen = ({navigation}) => {
     setSound(sound);
     sound.getStatusAsync().then(res => {
       setDuration(Math.floor(res.durationMillis));
+      sound.setPositionAsync(0);
     });
+    setIsPlaying(true);
+    await playSound(sound);
   }
 
-  async function playSound() {
-    await sound.setPositionAsync(position);
-    await sound.playAsync();
-    setIsPlaying(true);
-  }
+  const playSound = React.useCallback(
+    async sound => {
+      await sound.setPositionAsync(position);
+      setDisplayPosition(position);
+      await sound.playAsync();
+      setIsPlaying(true);
+    },
+    [sound],
+  );
 
   async function pauseSound() {
     sound.getStatusAsync().then(res => {
@@ -215,91 +251,187 @@ const RecordScreen = ({navigation}) => {
       : undefined;
   }, [sound]);
 
+  React.useEffect(
+    () =>
+      navigation.addListener('blur', async () => {
+        setIsPlaying(false);
+        if (soundPath) await FileSystem.deleteAsync(soundPath);
+        setRecordingInfo(null);
+        setRecordingUri(null);
+        setSound(null);
+        setSoundPath(null);
+        setRecording(null);
+      }),
+    [],
+  );
+
+  // useFocusEffect(() => {
+  //   React.useCallback(() => {
+  //     return async () => {
+  //       setIsPlaying(false);
+  //       if (soundPath) await FileSystem.deleteAsync(soundPath);
+  //       setRecordingInfo(null);
+  //       setRecordingUri(null);
+  //       setSound(null);
+  //       setSoundPath(null);
+  //     };
+  //   }, []);
+  // });
   return (
     <SafeAreaView
       style={{
         flex: 1,
         paddingTop: 12,
-        paddingHorizontal: 10,
         backgroundColor: 'white',
       }}>
       <Title title="Record"></Title>
-      <WingBlank size="lg">
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => {
+          setSnackbarVisible(false);
+          setSnackbarContent('');
+        }}
+        duration={2500}>
+        {snackbarContent}
+      </Snackbar>
+
+      <WingBlank style={{}} size="lg">
         <View
           style={{
-            alignItems: 'center',
+            width: '100%',
             height: '100%',
-            backgroundColor: 'pink',
+            paddingTop: '30%',
+            alignItems: 'center',
           }}>
-          <Pressable
-            style={{
-              backgroundColor: 'black',
-              justifyContent: 'center',
-              flex: 2.5,
-            }}
-            //</View>onPress={recording ? stopRecording : startRecording}
-          >
-            <Image
-              alt="마이크"
-              source={require('../assets/image/mic2.png')}
-              style={{width: 100, height: 100, borderRadius: 60, padding: 40}}
-            />
-            <Button
-              title={recording ? '녹음 종료' : '녹음 시작'}
-              onPress={recording ? stopRecording : startRecording}
-            />
-          </Pressable>
-          <View style={{flex: 1, backgroundColor: '#ddd', padding: '5%'}}>
-            <View style={styles.sliderContainer}>
-              {!isPlaying ? (
-                <Ionicons
-                  name="ios-play-circle"
-                  size={48}
-                  color="#444"
-                  onPress={playSound}
-                />
-              ) : (
-                <Ionicons
-                  name="ios-pause"
-                  size={48}
-                  color="#444"
-                  onPress={pauseSound}
-                />
-              )}
-              <Slider
-                style={styles.slider}
-                minimumValue={0}
-                maximumValue={duration}
-                value={displayPosition}
-                onSlidingComplete={async value =>
-                  await sound.getStatusAsync().then(res => {
-                    console.log(value);
-                    setPosition(value);
-                    setDisplayPosition(value);
-                    sound.setPositionAsync(value);
-                  })
-                }
-                onValueChange={value => setDisplayPosition(value)}
-                minimumTrackTintColor="#000"
-                maximumTrackTintColor="#ccc"
-                thumbTintColor="#000"
-              />
+          <View style={[styles.dot, styles.center, {}]}>
+            <View
+              style={[
+                styles.dot,
+                styles.center,
+                {
+                  zIndex: 1,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: '#F9C8C8',
+                },
+              ]}>
+              <Pressable
+                style={{
+                  justifyContent: 'center',
+                  width: '100%',
+                  height: '100%',
+                  //flex: 1,
+                }}
+                onPress={recording ? stopRecording : startRecording}>
+                <Text style={{textAlign: 'center', zIndex: 1}}>
+                  <Icon name="microphone" size={80} color="#fff" />
+                </Text>
+              </Pressable>
             </View>
-            <Flex justify="end">
-              <Button
-                title="저장"
-                onPress={() =>
-                  Alert.prompt(
-                    '녹음 제목을 입력하세요',
-                    '리스닝 파일에 저장됩니다.',
-                    e => saveRecord(e),
-                  )
-                }></Button>
-              <Button color="red" title="삭제" onPress={deleteRecord}></Button>
-            </Flex>
+
+            {recording &&
+              [...Array(2).keys()].map(i => {
+                return (
+                  <MotiView
+                    from={{opacity: 1, scale: 1}}
+                    animate={{opacity: 0, scale: 3.5}}
+                    key={i}
+                    transition={{
+                      type: 'timing',
+                      duration: 1500,
+                      easing: Easing.out(Easing.ease),
+                      delay: i * 400,
+
+                      repeatReverse: false,
+                      loop: true,
+                    }}
+                    style={[
+                      StyleSheet.absoluteFillObject,
+                      styles.dot,
+                      {width: '100%', height: '100%'},
+                    ]}></MotiView>
+                );
+              })}
           </View>
+          {!recording && (
+            <PopupMessage
+              onPress={() => {}}
+              msg={'마이크를 터치해서 녹음을 시작하세요'}></PopupMessage>
+          )}
         </View>
+
+        {/* {isCompletedRecord && (
+            
+          )} */}
       </WingBlank>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}>
+        <SafeAreaView
+          style={{position: 'relative', width: '100%', height: '100%'}}>
+          <View style={[styles.modalView]}>
+            <View style={styles.sliderContainer}>
+              <Flex>
+                {!isPlaying ? (
+                  <Ionicons
+                    name="ios-play-circle"
+                    size={48}
+                    color="#444"
+                    onPress={() => playSound(sound)}
+                  />
+                ) : (
+                  <Ionicons
+                    name="ios-pause"
+                    size={48}
+                    color="#444"
+                    onPress={pauseSound}
+                  />
+                )}
+
+                <Slider
+                  style={styles.slider}
+                  minimumValue={0}
+                  maximumValue={duration}
+                  value={displayPosition}
+                  onSlidingComplete={async value =>
+                    await sound.getStatusAsync().then(res => {
+                      console.log(value);
+                      setPosition(value);
+                      setDisplayPosition(value);
+                      sound.setPositionAsync(value);
+                    })
+                  }
+                  onValueChange={value => setDisplayPosition(value)}
+                  minimumTrackTintColor="#000"
+                  maximumTrackTintColor="#ccc"
+                  thumbTintColor="#000"
+                />
+              </Flex>
+              <Flex style={{width: '100%', gap: 10}} direction="row">
+                <Button
+                  style={{flex: 1}}
+                  size="large"
+                  onPress={() =>
+                    Alert.prompt(
+                      '녹음 제목을 입력하세요',
+                      '리스닝 파일에 저장됩니다.',
+                      e => saveRecord(e),
+                    )
+                  }>
+                  저장
+                </Button>
+                <Button style={{flex: 1}} type="warning" onPress={deleteRecord}>
+                  삭제
+                </Button>
+              </Flex>
+            </View>
+          </View>
+        </SafeAreaView>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -322,20 +454,63 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sliderContainer: {
-    backgroundColor: '#eee',
+    backgroundColor: '#fff',
     width: '100%',
-    marginBottom: 24,
-    display: 'flex',
-    flexDirection: 'row',
+    height: '100%',
+    flexDirection: 'column',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 2,
-    borderRadius: 30,
+    borderRadius: 20,
+    padding: '10%',
+    display: 'flex',
+    justifyContent: 'space-around',
   },
   slider: {
     width: '100%',
     height: 40,
     flex: 1,
+  },
+  dot: {
+    width: width * 150,
+    height: width * 150,
+    borderRadius: 200,
+    backgroundColor: '#ff6e6e',
+  },
+  center: {alignItems: 'center', justifyContent: 'center'},
+  modalView: {
+    // margin: 20,
+    width: '100%',
+    borderRadius: 20,
+    height: '40%',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    position: 'absolute',
+    bottom: 0,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 
