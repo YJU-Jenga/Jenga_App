@@ -16,7 +16,7 @@ const PopupMessage = ({onPress, msg}) => {
       Animated.loop(
         Animated.spring(startValue, {
           toValue: 1.1,
-          speed: 6,
+          speed: 3,
           useNativeDriver: true,
           bounciness: 10,
         }),
@@ -50,18 +50,42 @@ const PopupMessage = ({onPress, msg}) => {
 };
 
 const styles = StyleSheet.create({
+  // container: {
+  //   paddingVertical: height * 15,
+  //   paddingHorizontal: width * 20,
+  //   backgroundColor: '#fff',
+  //   marginTop: height * 60,
+  //   borderRadius: 30,
+  //   shadowColor: '#ff9e9b',
+  //   shadowOpacity: 0.3,
+  //   shadowRadius: 4,
+  //   shadowOffset: {
+  //     height: 5,
+  //     width: 0,
+  //   },
+  //   elevation: 10,
+  // },
   container: {
-    paddingVertical: height * 30,
+    paddingVertical: height * 15,
     paddingHorizontal: width * 20,
-    backgroundColor: '#ff9e9b',
+    backgroundColor: '#ffe7e6',
     marginTop: height * 60,
     borderRadius: 30,
+    shadowColor: '#ffe7e6',
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    shadowOffset: {
+      height: 5,
+      width: 0,
+    },
+    elevation: 10,
   },
   content: {
     textAlign: 'center',
-    color: 'white',
-    fontSize: 19,
-    fontWeight: '500',
+    //color: '#df9f9f',
+    color: '#ed8f8c',
+    fontSize: 15,
+    fontFamily: 'TheJamsilOTF_Regular',
   },
 });
 export default PopupMessage;

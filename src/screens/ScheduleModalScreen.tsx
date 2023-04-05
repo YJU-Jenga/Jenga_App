@@ -81,13 +81,15 @@ const ScheduleModalScreen = ({route, navigation}) => {
   const onSave = async () => {
     const data = await AsyncStorage.getItem('schedules');
     let loadedSchedules = await JSON.parse(data);
+
     const isDuplicated = checkDuplicationSchedule(loadedSchedules);
-    if (isDuplicated) {
-      setSnackbarVisible(true);
-      setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
-      return;
-    }
+    console.log('isDuplicated 결과 : ', isDuplicated);
     if (route.params.type === 'CREATE') {
+      if (isDuplicated) {
+        setSnackbarVisible(true);
+        setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
+        return;
+      }
       if (loadedSchedules) {
         console.log(loadedSchedules);
         await AsyncStorage.setItem(
@@ -120,10 +122,16 @@ const ScheduleModalScreen = ({route, navigation}) => {
         );
       }
     } else if (route.params.type === 'EDIT') {
+      if (isDuplicated) {
+        setSnackbarVisible(true);
+        setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
+        return;
+      }
       const index = loadedSchedules.findIndex(
         item => item.id === route.params.data.id,
       );
 
+      loadedSchedules[index].id = generateId();
       loadedSchedules[index].repeat = _currRepeat;
       loadedSchedules[index].sentence = sentence;
       loadedSchedules[index].soundFile = _currSound;
@@ -147,6 +155,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
   };
 
   const generateId = () => {
+    console.log(valuehours.getHours());
     const hour = valuehours.getHours().toString();
     const min = valuehours.getMinutes().toString();
     const res = Number(hour + min);
@@ -155,6 +164,14 @@ const ScheduleModalScreen = ({route, navigation}) => {
 
   const checkDuplicationSchedule = scheduleList => {
     const id = generateId();
+    if (route.params.type === 'EDIT') {
+      const editId = route.params.data.id;
+      console.log('안녕 : ', id, editId);
+      if (id === editId) {
+        return false;
+      }
+      return scheduleList.some(el => el.id === id);
+    }
     if (Array.isArray(scheduleList) && scheduleList.length === 0) {
       return false;
     } else {
@@ -177,21 +194,34 @@ const ScheduleModalScreen = ({route, navigation}) => {
             display: 'flex',
           }}>
           <WhiteSpace size="lg" />
-          <Flex justify="around" style={{marginBottom: height * 20}}>
+          <Flex justify="around" style={{marginBottom: height * 30}}>
             <Icon
               name="md-caret-back-outline"
               size={30}
               color={'#ff6e6e'}
               onPress={() => navigation.navigate('schedule')}></Icon>
-            <Text style={{fontSize: 24, color: 'black'}}>{mode}</Text>
             <Text
-              style={{color: '#ff6e6e', fontSize: 18, fontWeight: '600'}}
+              style={{
+                fontSize: 24,
+                color: 'black',
+                fontFamily: 'TheJamsilOTF_Regular',
+              }}>
+              {mode}
+            </Text>
+            <Text
+              style={{
+                color: '#ff6e6e',
+                fontSize: 18,
+                fontWeight: '600',
+                fontFamily: 'TheJamsilOTF_Regular',
+              }}
               onPress={onSave}>
               저장
             </Text>
           </Flex>
           <WingBlank size="lg">
             <DatePickerView
+              itemStyle={{fontFamily: 'TheJamsilOTF_Light'}}
               mode="time"
               value={valuehours}
               onChange={v => setValuehours(v)}
@@ -199,26 +229,57 @@ const ScheduleModalScreen = ({route, navigation}) => {
 
             <List>
               <List.Item
-                extra={<Text>{repeatInfo}</Text>}
+                extra={
+                  <Text
+                    style={{fontFamily: 'TheJamsilOTF_Regular', color: 'gray'}}>
+                    {repeatInfo}
+                  </Text>
+                }
                 onPress={() => {
                   setVisibleRepeatModal(true);
                 }}
                 arrow="horizontal">
-                반복
+                <Text
+                  style={{
+                    color: 'black',
+                    fontSize: 17,
+                    fontFamily: 'TheJamsilOTF_Light',
+                  }}>
+                  반복
+                </Text>
               </List.Item>
               <List.Item
-                extra={<Text>{_currSound?.name}</Text>}
+                extra={
+                  <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>
+                    {_currSound?.name}
+                  </Text>
+                }
                 onPress={() => {
                   setVisibleSoundsModal(true);
                 }}
                 arrow="horizontal">
-                액션
+                <Text
+                  style={{
+                    fontFamily: 'TheJamsilOTF_Light',
+                    color: 'black',
+                    fontSize: 17,
+                  }}>
+                  액션
+                </Text>
               </List.Item>
               <InputItem
                 value={sentence}
                 onChange={v => setSentence(v)}
+                style={{fontFamily: 'TheJamsilOTF_Light'}}
                 placeholder="아이에게 할 말을 입력하세요">
-                명령어
+                <Text
+                  style={{
+                    fontFamily: 'TheJamsilOTF_Light',
+                    color: 'black',
+                    fontSize: 17,
+                  }}>
+                  명령어
+                </Text>
               </InputItem>
             </List>
             <WhiteSpace size="xl" />
@@ -250,6 +311,8 @@ const ScheduleModalScreen = ({route, navigation}) => {
                 style={{
                   fontSize: 28,
                   fontWeight: '600',
+                  color: 'black',
+                  fontFamily: 'TheJamsilOTF_Regular',
                 }}>
                 반복
               </Text>
@@ -279,6 +342,8 @@ const ScheduleModalScreen = ({route, navigation}) => {
                   style={{
                     fontSize: 28,
                     fontWeight: '600',
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Regular',
                   }}>
                   액션
                 </Text>

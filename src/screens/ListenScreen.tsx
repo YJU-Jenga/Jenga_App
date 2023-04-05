@@ -25,6 +25,7 @@ import {
   List,
   Flex,
   SearchBar,
+  PickerView,
 } from '@ant-design/react-native';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import Slider from '@react-native-community/slider';
@@ -37,6 +38,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useInterval} from '../utils/useInterval';
 import FloatingButton from '../components/FloatingButton';
 import DeleteButton from '../components/DeleteButton';
+import DefaultButton from '../components/DefaultButton';
+import * as FileSystem from 'expo-file-system';
+
+import {height} from '../config/globalStyles';
 
 interface ISound {
   mimeType: string;
@@ -50,19 +55,17 @@ const requestDocumentPermission = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       {
-        title: 'Cool Photo App Camera Permission',
-        message:
-          'Cool Photo App needs access to your camera ' +
-          'so you can take awesome pictures.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
+        title: '파일 접근 권한',
+        message: '파일 접근 권한을 허가하세요.',
+        buttonNeutral: '나중에',
+        buttonNegative: '취소',
+        buttonPositive: '허가',
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log('You can use the camera');
+      console.log('You can use the READ_EXTERNAL_STORAGE');
     } else {
-      console.log('Camera permission denied');
+      console.log('READ_EXTERNAL_STORAGE permission denied');
     }
   } catch (err) {
     console.warn(err);
@@ -87,6 +90,7 @@ const ListenScreen = ({navigation}) => {
   const [totalPage, setTotalPage] = useState();
 
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [pickerValue, setPickerValue] = useState('1');
 
   const updateSearch = search => {
     setSearch(search);
@@ -121,6 +125,7 @@ const ListenScreen = ({navigation}) => {
   useEffect(() => {
     if (soundInfo?.uri) {
       console.log('로딩');
+      console.log(soundInfo);
       loadSound(soundInfo?.uri);
     }
   }, [soundInfo]);
@@ -202,6 +207,7 @@ const ListenScreen = ({navigation}) => {
                 name: result.name,
                 uri: result.uri,
                 isRecording: false,
+                type: 'uncategorized',
               },
               ...soundList,
             ]),
@@ -215,6 +221,7 @@ const ListenScreen = ({navigation}) => {
                 name: result.name,
                 uri: result.uri,
                 isRecording: false,
+                type: 'uncategorized',
               },
             ]),
           );
@@ -266,6 +273,11 @@ const ListenScreen = ({navigation}) => {
           await AsyncStorage.setItem('sounds', JSON.stringify(newSoundList));
           getSoundList();
           setVisibleModal(false);
+
+          if (soundList[index].type === 'record') {
+            await FileSystem.deleteAsync(soundList[index].uri);
+            console.log(soundList[index]);
+          }
         },
       },
     ]);
@@ -287,13 +299,11 @@ const ListenScreen = ({navigation}) => {
             data={searchList}
             renderItem={({item, index}) => (
               <List.Item
-                style={{}}
                 onPress={() => {
                   setVisibleModal(true);
                   setSoundInfo(item);
                   setCurrIdx(index);
                 }}
-                thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
                 extra={
                   <View
                     style={{
@@ -303,7 +313,9 @@ const ListenScreen = ({navigation}) => {
                       height: 10,
                     }}></View>
                 }>
-                {item.name}
+                <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>
+                  {item.name}
+                </Text>
               </List.Item>
             )}
             initialNumToRender={10}
@@ -339,6 +351,7 @@ const ListenScreen = ({navigation}) => {
                 }
               }}
               renderItem={({item, index}) => {
+                const color = item?.type === 'record' ? 'skyblue' : 'lightpink';
                 return (
                   <List.Item
                     onPress={() => {
@@ -348,17 +361,22 @@ const ListenScreen = ({navigation}) => {
 
                       //loadSound();
                     }}
-                    thumb="https://os.alipayobjects.com/rmsportal/mOoPurdIfmcuqtr.png"
                     extra={
                       <View
                         style={{
                           borderRadius: 30,
-                          backgroundColor: 'lightpink',
+                          backgroundColor: color,
                           width: 10,
                           height: 10,
                         }}></View>
                     }>
-                    {item.name}
+                    <Text
+                      style={{
+                        color: 'black',
+                        fontFamily: 'TheJamsilOTF_Regular',
+                      }}>
+                      {item.name}
+                    </Text>
                   </List.Item>
                 );
               }}></FlatList>
@@ -378,6 +396,7 @@ const ListenScreen = ({navigation}) => {
         }}>
         <Title title="Sounds"></Title>
         <SearchBar
+          style={{fontFamily: 'TheJamsilOTF_Light'}}
           placeholder="오디오의 제목을 입력하세요"
           onChange={updateSearch}
           value={search}
@@ -388,7 +407,7 @@ const ListenScreen = ({navigation}) => {
         />
 
         <WingBlank>
-          {soundList ? (
+          {!(Array.isArray(soundList) && soundList.length === 0) ? (
             <SearchComponent></SearchComponent>
           ) : (
             <View>
@@ -397,7 +416,7 @@ const ListenScreen = ({navigation}) => {
                   textAlign: 'center',
                   marginTop: 50,
                   fontSize: 21,
-                  color: '#999',
+                  color: '#777',
                 }}>
                 음악, 동화를 업로드해주세요
               </Text>
@@ -429,12 +448,28 @@ const ListenScreen = ({navigation}) => {
               height: '100%',
               display: 'flex',
             }}>
-            <WhiteSpace size="lg" />
-            <Flex>
+            {/* <WingBlank size="md"></WingBlank> */}
+            <Flex direction="row">
               <WingBlank size="md"></WingBlank>
-              <Button title="Back" onPress={onCloseModal}></Button>
+              <Ionicons
+                name="md-caret-back-outline"
+                size={30}
+                color={'#ff6e6e'}
+                onPress={onCloseModal}></Ionicons>
+
+              {/* <Button title="Back" onPress={onCloseModal}></Button> */}
+              {/* <DefaultButton
+                onPress={onCloseModal}
+                title="취소"
+                type="default"></DefaultButton> */}
+
               {/* <Text style={{fontSize: 24}}>책</Text> */}
             </Flex>
+            {/* <Picker selectedValue={pickerValue}>
+              <Picker.Item label="라벨" value="1"></Picker.Item>
+              <Picker.Item label="라벨" value="2"></Picker.Item>
+              <Picker.Item label="라벨" value="3"></Picker.Item>
+            </Picker> */}
             <WingBlank size="lg">
               <View
                 style={{
@@ -446,7 +481,13 @@ const ListenScreen = ({navigation}) => {
                   // alignItems: 'center',
                 }}>
                 <Text
-                  style={{textAlign: 'center', fontSize: 32, marginBottom: 32}}>
+                  style={{
+                    textAlign: 'center',
+                    fontSize: 32,
+                    marginBottom: height * 30,
+                    color: '#111',
+                    fontFamily: 'TheJamsilOTF_Light',
+                  }}>
                   {soundInfo?.name}
                 </Text>
                 <Slider
@@ -473,14 +514,14 @@ const ListenScreen = ({navigation}) => {
                       <Ionicons
                         name="ios-play-circle"
                         size={48}
-                        color="#444"
+                        color="#111"
                         onPress={playSound}
                       />
                     ) : (
                       <Ionicons
                         name="ios-pause"
                         size={48}
-                        color="#444"
+                        color="#111"
                         onPress={pauseSound}
                       />
                     )}

@@ -38,6 +38,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Easing} from 'react-native-reanimated';
 import {height, width} from '../config/globalStyles';
 import PopupMessage from '../components/PopupMessage';
+import prompt from 'react-native-prompt-android';
+import Prompt from '../components/Prompt';
 
 const RecordScreen = ({navigation}) => {
   const [recording, setRecording] = React.useState();
@@ -53,6 +55,8 @@ const RecordScreen = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [result, setResult] = useState('');
 
   useInterval(
     () => {
@@ -101,7 +105,7 @@ const RecordScreen = ({navigation}) => {
       if (e.code === 'E_MISSING_PERMISSION') {
         Alert.alert('에러', '마이크 권한 접근을 허용하세요', [
           {
-            text: 'Cancel',
+            text: '확인',
             style: 'cancel',
           },
           {
@@ -179,6 +183,7 @@ const RecordScreen = ({navigation}) => {
             mimeType: recordingInfo.mimeType,
             name: name,
             uri: recordingInfo.uri,
+            type: 'record',
           },
           ...soundList,
         ]),
@@ -191,6 +196,7 @@ const RecordScreen = ({navigation}) => {
             mimeType: recordingInfo.mimeType,
             name: name,
             uri: recordingInfo.uri,
+            type: 'record',
           },
         ]),
       );
@@ -254,6 +260,7 @@ const RecordScreen = ({navigation}) => {
   React.useEffect(
     () =>
       navigation.addListener('blur', async () => {
+        console.log('초기화');
         setIsPlaying(false);
         if (soundPath) await FileSystem.deleteAsync(soundPath);
         setRecordingInfo(null);
@@ -265,18 +272,6 @@ const RecordScreen = ({navigation}) => {
     [],
   );
 
-  // useFocusEffect(() => {
-  //   React.useCallback(() => {
-  //     return async () => {
-  //       setIsPlaying(false);
-  //       if (soundPath) await FileSystem.deleteAsync(soundPath);
-  //       setRecordingInfo(null);
-  //       setRecordingUri(null);
-  //       setSound(null);
-  //       setSoundPath(null);
-  //     };
-  //   }, []);
-  // });
   return (
     <SafeAreaView
       style={{
@@ -296,11 +291,12 @@ const RecordScreen = ({navigation}) => {
       </Snackbar>
 
       <WingBlank style={{}} size="lg">
-        <View
+        <Pressable
+          onPress={recording ? stopRecording : startRecording}
           style={{
             width: '100%',
             height: '100%',
-            paddingTop: '30%',
+            paddingTop: height * 150,
             alignItems: 'center',
           }}>
           <View style={[styles.dot, styles.center, {}]}>
@@ -353,12 +349,12 @@ const RecordScreen = ({navigation}) => {
                 );
               })}
           </View>
-          {!recording && (
+          {/* {!recording && (
             <PopupMessage
-              onPress={() => {}}
-              msg={'마이크를 터치해서 녹음을 시작하세요'}></PopupMessage>
-          )}
-        </View>
+              onPress={recording ? stopRecording : startRecording}
+              msg={'터치해서 녹음을 시작하세요'}></PopupMessage>
+          )} */}
+        </Pressable>
 
         {/* {isCompletedRecord && (
             
@@ -416,12 +412,38 @@ const RecordScreen = ({navigation}) => {
                   style={{flex: 1}}
                   size="large"
                   onPress={() =>
-                    Alert.prompt(
-                      '녹음 제목을 입력하세요',
-                      '리스닝 파일에 저장됩니다.',
-                      e => saveRecord(e),
-                    )
-                  }>
+                    // Alert.prompt(
+                    //   '녹음 제목을 입력하세요',
+                    //   '리스닝 파일에 저장됩니다.',
+                    //   e => saveRecord(e),
+                    // )
+                    setPromptVisible(true)
+                  }
+                  // onPress={() => {
+                  //   prompt(
+                  //     'Enter password',
+                  //     'Enter your password to claim your $1.5B in lottery winnings',
+                  //     [
+                  //       {
+                  //         text: 'Cancel',
+                  //         onPress: () => console.log('Cancel Pressed'),
+                  //         style: 'cancel',
+                  //       },
+                  //       {
+                  //         text: 'OK',
+                  //         onPress: password =>
+                  //           console.log('OK Pressed, password: ' + password),
+                  //       },
+                  //     ],
+                  //     {
+                  //       type: 'secure-text',
+                  //       cancelable: false,
+                  //       defaultValue: 'test',
+                  //       placeholder: 'placeholder',
+                  //     },
+                  //   );
+                  // }}
+                >
                   저장
                 </Button>
                 <Button style={{flex: 1}} type="warning" onPress={deleteRecord}>
@@ -430,6 +452,18 @@ const RecordScreen = ({navigation}) => {
               </Flex>
             </View>
           </View>
+          <Prompt
+            visible={promptVisible}
+            title="제목을 입력해주세요"
+            message="리스닝 파일로 저장됩니다."
+            onCancel={() => {
+              setPromptVisible(false);
+            }}
+            onSubmit={text => {
+              setPromptVisible(false);
+              saveRecord(text);
+            }}
+          />
         </SafeAreaView>
       </Modal>
     </SafeAreaView>

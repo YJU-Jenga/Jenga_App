@@ -11,6 +11,7 @@ interface Props {
 
 const Title: React.FC<Props> = ({title}) => {
   const _userData = useSelector(selectUserData);
+
   return (
     <SafeAreaView>
       <Flex
@@ -23,9 +24,9 @@ const Title: React.FC<Props> = ({title}) => {
         }}>
         <Text
           style={{
-            color: 'black',
+            color: '#111',
             fontSize: 36,
-            fontWeight: '600',
+            fontFamily: 'Cafe24Ohsquare',
           }}>
           {title}
         </Text>

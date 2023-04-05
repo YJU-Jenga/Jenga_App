@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   Modal,
   ScrollView,
-  Switch,
   Image,
 } from 'react-native';
 import {
@@ -17,6 +16,7 @@ import {
   List,
   SwipeAction,
   Button,
+  Switch,
 } from '@ant-design/react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import Title from '../components/Title';
@@ -39,9 +39,11 @@ const ScheduleScreen = ({route, navigation}) => {
     //await AsyncStorage.removeItem('schedules');
     const data = JSON.parse(await AsyncStorage.getItem('schedules'));
     if (data) {
-      setScheduleList(data);
-      let d = data.sort(orderFunction);
-      setDisplayScheduleList(d);
+      let sortedData = data.sort(orderFunction);
+      setScheduleList(sortedData);
+      // setScheduleList(data);
+      // let d = data.sort(orderFunction);
+      // setDisplayScheduleList(d);
     }
     //const orderedScheduleList = JSON.parse(data).sort(orderFunction);
     //setDisplayScheduleList(orderedScheduleList)
@@ -59,31 +61,24 @@ const ScheduleScreen = ({route, navigation}) => {
 
   const onChangeSwitch = React.useCallback(
     async data => {
-      let list = displayScheduleList;
-      const index = displayScheduleList.findIndex(item => item.id === data.id);
+      console.log(data);
+      let list = scheduleList;
+      const index = scheduleList.findIndex(item => item.id === data.id);
 
       data.isScheduleOn = !data.isScheduleOn;
 
       list[index] = data;
       await AsyncStorage.setItem('schedules', JSON.stringify(list));
-      onLoadSchedules('왜이래');
+      await onLoadSchedules('왜이래');
     },
-    [displayScheduleList],
+    [scheduleList],
   );
 
-  const onSwipeDelete = React.useCallback(
-    async data => {
-      const filteredSchedules = displayScheduleList.filter(
-        item => item.id !== data.id,
-      );
-      await AsyncStorage.setItem(
-        'schedules',
-        JSON.stringify(filteredSchedules),
-      );
-      onLoadSchedules('swipe');
-    },
-    [displayScheduleList],
-  );
+  const onSwipeDelete = React.useCallback(async data => {
+    const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
+    await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
+    await onLoadSchedules('swipe');
+  }, []);
 
   // useEffect(() => {
   //   const orderedScheduleList = scheduleList?.sort(orderFunction);
@@ -100,7 +95,10 @@ const ScheduleScreen = ({route, navigation}) => {
   // }, []);
 
   useEffect(() => {
-    navigation.addListener('focus', () => onLoadSchedules('우아앙'));
+    navigation.addListener(
+      'focus',
+      async () => await onLoadSchedules('우아앙'),
+    );
     //onLoadSchedules();
   }, []);
 
@@ -114,22 +112,18 @@ const ScheduleScreen = ({route, navigation}) => {
         }}>
         <Title title="Schedule"></Title>
 
-        <WingBlank>
+        <WingBlank style={{}}>
           <ScrollView
             contentContainerStyle={{paddingBottom: '50%'}}
             style={{minHeight: '100%'}}>
-            {!(
-              Array.isArray(displayScheduleList) &&
-              displayScheduleList.length === 0
-            ) ? (
-              displayScheduleList.map((item, i) => {
-                console.log('진짜 이거 왜이럼 : ', i, item.isScheduleOn);
+            {!(Array.isArray(scheduleList) && scheduleList.length === 0) ? (
+              scheduleList?.map((item, i) => {
+                console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
                 const date = new Date(item.time);
                 const h =
                   10 > date.getHours()
                     ? '0' + date.getHours()
                     : date.getHours();
-                console.log('sdfsdf', h % 12);
                 const m =
                   10 > date.getMinutes()
                     ? '0' + date.getMinutes()
@@ -148,7 +142,6 @@ const ScheduleScreen = ({route, navigation}) => {
                     ]}>
                     <List.Item
                       extra={
-                        // </Button> //   {item.isScheduleOn.toString()} // <Button onPress={e => onChangeSwitch(item)}> // /> //   value={item.isScheduleOn} //   // }} //   //   onChangeSwitch(e, item); //   // onChange={e => { //   }} //     onChangeSwitch(e, item); //   onValueChange={e => { // <Switch
                         <Pressable onPress={e => onChangeSwitch(item)}>
                           {item.isScheduleOn === true ? (
                             <Icon
@@ -172,20 +165,33 @@ const ScheduleScreen = ({route, navigation}) => {
                         }>
                         <WingBlank>
                           <Flex>
-                            <Text style={{fontSize: 32, color: 'black'}}>
+                            <Text
+                              style={{
+                                fontSize: 32,
+                                color: '#444',
+                                fontFamily: 'IMcreSoojinOTF',
+                                paddingTop: height * 20,
+                              }}>
                               {h} {`:`} {m}
                             </Text>
                           </Flex>
-                          {item.sentence.length > 0 && (
-                            <Text style={{fontSize: 18, color: 'gray'}}>
+                          {item.repeat.length > 0 && (
+                            <Text
+                              style={{
+                                fontSize: 12,
+                                color: 'gray',
+                                marginTop: 3,
+                                fontFamily: 'TheJamsilOTF_Light',
+                              }}>
                               {item.sentence}
                             </Text>
                           )}
-                          {item.soundFile.uri && (
-                            <Text style={{fontSize: 18, color: 'gray'}}>
+
+                          {/* {item.soundFile.uri && (
+                            <Text style={{fontSize: 12, color: 'gray'}}>
                               {item.soundFile.name}
                             </Text>
-                          )}
+                          )} */}
                         </WingBlank>
                       </Pressable>
                     </List.Item>
@@ -234,6 +240,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     marginTop: 17,
+    fontFamily: '',
   },
   TouchableOpacityStyle: {
     position: 'absolute',

@@ -23,7 +23,7 @@ import ScheduleModalScreen from '../screens/ScheduleModalScreen';
 import ShoppingScreen from '../screens/ShoppingScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Entypo';
 
 import {
   refreshToken,
@@ -33,10 +33,6 @@ import {
 } from '../utils/redux/authSlice';
 import {getUser, selectUserData} from '../utils/redux/userSlice';
 import {useSelector} from 'react-redux';
-import axios from 'axios';
-import {useCookies} from 'react-cookie';
-import jwtDecode from 'jwt-decode';
-import {unwrapResult} from '@reduxjs/toolkit';
 
 import {
   Alert,
@@ -107,20 +103,36 @@ export const LoginNavigator = () => {
 };
 
 export const AppNavigator = () => {
-  // 인형 등록했으면 쇼핑, 등록하지 않았으면 스케쥴..?
-  const _userData = useSelector(selectUserData);
-  const [mode, setMode] = React.useState('USER');
-
   return (
     <NavigationContainer>
       <Tab.Navigator
         // initialRouteName="책과음악"
         screenOptions={({route}) => ({
           tabBarHideOnKeyboard: true,
-          tabBarActiveTintColor: 'red',
-          tabBarInactiveTintColor: 'black',
+          tabBarActiveTintColor: '#ff6e6e',
+          tabBarInactiveTintColor: '#f5abab',
           tabBarIcon: ({focused, color, size}) => {
-            return <Icon name="delete-sweep" size={25} color="#111" />;
+            let iconName;
+            let iconColor = focused ? '#ff6e6e' : '#f5abab';
+            switch (route.name) {
+              case '책과음악':
+                iconName = 'folder-music';
+                break;
+              case '스케쥴':
+                iconName = 'calendar';
+                break;
+              case '녹음':
+                iconName = 'modern-mic';
+                break;
+              case '쇼핑':
+                iconName = 'shop';
+                break;
+              case '설정':
+                iconName = 'sound-mix';
+                break;
+            }
+
+            return <Icon name={iconName} size={25} color={iconColor} />;
           },
         })}>
         <Tab.Screen
@@ -162,7 +174,7 @@ export const AppNavigator = () => {
 };
 
 export const MainNavigator = () => {
-  const [isSignIn, setIsSignIn] = React.useState(false);
+  const [isSignIn, setIsSignIn] = React.useState<boolean | null>(null);
   const [token, setToken] = React.useState();
 
   const _msg = useSelector(selectMsg);
@@ -170,6 +182,15 @@ export const MainNavigator = () => {
 
   const dispatch = useDispatch();
 
+  const Result = () => {
+    if (isSignIn === true) {
+      return <AppNavigator />;
+    } else if (isSignIn === false) {
+      return <LoginNavigator />;
+    } else {
+      return <SafeAreaView></SafeAreaView>;
+    }
+  };
   React.useEffect(() => {
     switch (_msg) {
       case 'SUCCESS_REGISTER':
@@ -207,26 +228,6 @@ export const MainNavigator = () => {
     funcRefresh();
   }, []);
 
-  // React.useEffect(() => {
-  //   const backAction = () => {
-  //     Alert.alert('Hold on!', '앱을 종료하시겠습니까?', [
-  //       {
-  //         text: '취소',
-  //         onPress: () => null,
-  //       },
-  //       {text: '확인', onPress: () => BackHandler.exitApp()},
-  //     ]);
-  //     return true;
-  //   };
-
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     backAction,
-  //   );
-
-  //   return () => backHandler.remove();
-  // }, []);
-
   React.useEffect(() => {
     const backAction = () => {
       ToastAndroid.show(
@@ -243,5 +244,6 @@ export const MainNavigator = () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
 
-  return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
+  // return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
+  return <Result></Result>;
 };

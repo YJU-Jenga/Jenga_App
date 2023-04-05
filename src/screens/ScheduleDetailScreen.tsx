@@ -53,7 +53,9 @@ export const RepeatComponent = ({index}: {index: any}) => {
                 dispatch(createScheduleRepeatInfo({day, isChecked}));
               }}></Checkbox>
           }>
-          <Text>{day}마다 반복</Text>
+          <Text style={{fontFamily: 'TheJamsilOTF_Light', color: 'black'}}>
+            {day}마다 반복
+          </Text>
         </List.Item>
       )}
     </List>
@@ -102,6 +104,15 @@ export const ActionComponent = () => {
     getSoundList();
   }, []);
 
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
   return (
     <FlatList
       contentContainerStyle={{paddingBottom: '30%'}}
@@ -119,7 +130,11 @@ export const ActionComponent = () => {
           //  console.log('안녕');
           //}}></SoundListItem>
           <List.Item
-            style={{marginStart: 10}}
+            style={{marginStart: 10, width: '100%'}}
+            onPress={() => {
+              loadSound(item?.uri);
+              dispatch(createScheduleActionInfo(item));
+            }}
             // thumb={
             //   <Checkbox
             //     checked={isChecked}
@@ -128,13 +143,7 @@ export const ActionComponent = () => {
             //     }}></Checkbox>
             // }
             key={item?.name}>
-            <Pressable
-              onPress={() => {
-                loadSound(item?.uri);
-                dispatch(createScheduleActionInfo(item));
-              }}>
-              <Text>{item?.name}</Text>
-            </Pressable>
+            <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>{item?.name}</Text>
           </List.Item>
         );
       }}></FlatList>
@@ -153,8 +162,10 @@ const SelectedSoundItem = (): JSX.Element => {
     <View>
       <List renderHeader={'선택된 파일'}>
         <Flex style={{paddingVertical: 15, marginStart: 15}}>
-          <Icon name="delete-sweep" size={25} color="#aaa" />
-          <Text style={{marginStart: 15}}>{_currSound?.name}</Text>
+          <Icon name="playlist-music" size={25} color="#aaa" />
+          <Text style={{marginStart: 15, fontFamily: 'TheJamsilOTF_Light'}}>
+            {_currSound?.name}
+          </Text>
         </Flex>
       </List>
       <List renderHeader={'목록'}></List>

@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: width * 50,
     height: width * 50,
-    backgroundColor: '#ff6e6e',
+    backgroundColor: '#f29999',
     borderRadius: 100,
     display: 'flex',
     flexDirection: 'column',

@@ -78,10 +78,38 @@ export default function App() {
         );
 
         await Font.loadAsync(
-          'antfill',
-          // eslint-disable-next-line
-          require('@ant-design/icons-react-native/fonts/antfill.ttf'),
+          {
+            antfill:
+              // eslint-disable-next-line
+              require('@ant-design/icons-react-native/fonts/antfill.ttf'),
+          },
+          // {Dovemayo_gothic: require('./src/assets/fonts/Dovemayo_gothic.ttf')},
+          // require('./src/assets/fonts/TAEBAEK milkyway.ttf'),
         );
+
+        // await Font.loadAsync({
+        //   Dovemayo_gothic: require('./src/assets/fonts/Dovemayo_gothic.ttf'),
+        // });
+
+        await Font.loadAsync({
+          Cafe24Ohsquare: require('./src/assets/fonts/Cafe24Ohsquare.ttf'),
+        });
+
+        await Font.loadAsync({
+          TAEBAEK_milkyway: require('./src/assets/fonts/TAEBAEK-milkyway.otf'),
+        });
+
+        await Font.loadAsync({
+          IMcreSoojinOTF: require('./src/assets/fonts/ImcreSoojinOTFRegular.otf'),
+        });
+
+        await Font.loadAsync({
+          TheJamsilOTF_Regular: require('./src/assets/fonts/TheJamsilOTF3Regular.otf'),
+        });
+
+        await Font.loadAsync({
+          TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
+        });
         await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
