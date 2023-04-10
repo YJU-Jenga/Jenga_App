@@ -116,9 +116,9 @@ const ScheduleScreen = ({route, navigation}) => {
           <ScrollView
             contentContainerStyle={{paddingBottom: '50%'}}
             style={{minHeight: '100%'}}>
-            {!(Array.isArray(scheduleList) && scheduleList.length === 0) ? (
+            {Array.isArray(scheduleList) && scheduleList.length === 0 ? (
               scheduleList?.map((item, i) => {
-                console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
+                // console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
                 const date = new Date(item.time);
                 const h =
                   10 > date.getHours()

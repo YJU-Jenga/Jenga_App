@@ -11,10 +11,9 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		26869005E6B19AFBFC7D40E8 /* libPods-Ichigo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C2D7AA00B9A5FCE89DB5AB10 /* libPods-Ichigo.a */; };
+		582CF92F29E42CE500964EAC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 582CF92E29E42CE500964EAC /* Images.xcassets */; };
 		5851A68D29A87E4D003AF8A1 /* antoutline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5851A68C29A87DC0003AF8A1 /* antoutline.ttf */; };
 		5851A68E29A87E4D003AF8A1 /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5851A68B29A87DAD003AF8A1 /* antfill.ttf */; };
-		589B8A7329D95C7B002A7816 /* Dovemayo_gothic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589B8A7129D95C4F002A7816 /* Dovemayo_gothic.ttf */; };
-		589B8A7429D95C81002A7816 /* TAEBAEK milkyway.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 589B8A7229D95C4F002A7816 /* TAEBAEK milkyway.ttf */; };
 		58B79EB92992C17F001681EC /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58B79EB82992C17F001681EC /* SplashScreen.storyboard */; };
 		5C911D37FE0D94B42E8B716A /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE19ACE008CDBFBF165C78EE /* ExpoModulesProvider.swift */; };
 		65A727D05A9AE3B15DE02843 /* libPods-Ichigo-IchigoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E5CCF2ED1ED1944FCE42BCEF /* libPods-Ichigo-IchigoTests.a */; };
@@ -45,6 +44,7 @@
 		1F48519B1EEFD9F7025FCE29 /* Pods-Ichigo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo.debug.xcconfig"; path = "Target Support Files/Pods-Ichigo/Pods-Ichigo.debug.xcconfig"; sourceTree = "<group>"; };
 		26C88775FA9F4BD3B321394C /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "Ichigo/noop-file.swift"; sourceTree = "<group>"; };
 		2D12B177ECFA18D148218BDD /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ichigo-IchigoTests/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		582CF92E29E42CE500964EAC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		5851A68B29A87DAD003AF8A1 /* antfill.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = antfill.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antfill.ttf"; sourceTree = "<group>"; };
 		5851A68C29A87DC0003AF8A1 /* antoutline.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
 		589B8A6F29D955A4002A7816 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
@@ -57,7 +57,6 @@
 		BE19ACE008CDBFBF165C78EE /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Ichigo/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		C2D7AA00B9A5FCE89DB5AB10 /* libPods-Ichigo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ichigo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386999D30218CE567E27F91 /* Pods-Ichigo-IchigoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Ichigo-IchigoTests.release.xcconfig"; path = "Target Support Files/Pods-Ichigo-IchigoTests/Pods-Ichigo-IchigoTests.release.xcconfig"; sourceTree = "<group>"; };
-		CE04015DFDF1450D88C95DAC /* SplashScreen.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SplashScreen.storyboard; path = Ichigo/SplashScreen.storyboard; sourceTree = "<group>"; };
 		E5CCF2ED1ED1944FCE42BCEF /* libPods-Ichigo-IchigoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Ichigo-IchigoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -108,7 +107,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				26C88775FA9F4BD3B321394C /* noop-file.swift */,
-				CE04015DFDF1450D88C95DAC /* SplashScreen.storyboard */,
+				582CF92E29E42CE500964EAC /* Images.xcassets */,
 			);
 			name = Ichigo;
 			sourceTree = "<group>";
@@ -297,9 +296,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				589B8A7429D95C81002A7816 /* TAEBAEK milkyway.ttf in Resources */,
-				589B8A7329D95C7B002A7816 /* Dovemayo_gothic.ttf in Resources */,
 				5851A68D29A87E4D003AF8A1 /* antoutline.ttf in Resources */,
+				582CF92F29E42CE500964EAC /* Images.xcassets in Resources */,
 				5851A68E29A87E4D003AF8A1 /* antfill.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				58B79EB92992C17F001681EC /* SplashScreen.storyboard in Resources */,

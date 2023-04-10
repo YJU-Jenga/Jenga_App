@@ -244,6 +244,6 @@ export const MainNavigator = () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
 
-  // return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
-  return <Result></Result>;
+  return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
+  // return <Result></Result>;
 };
