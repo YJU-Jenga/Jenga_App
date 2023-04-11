@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import RootNavigator, {
   AppNavigator,
@@ -110,7 +110,7 @@ export default function App() {
         await Font.loadAsync({
           TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
         });
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // await new Promise(resolve => setTimeout(resolve, 2000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -121,20 +121,6 @@ export default function App() {
 
     prepare();
   }, []);
-
-  const onLayoutRootView = React.useCallback(async () => {
-    if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
-    }
-  }, [appIsReady]);
-
-  // if (!appIsReady) {
-  //   return null;
-  // }
 
   return (
     <Provider store={store}>

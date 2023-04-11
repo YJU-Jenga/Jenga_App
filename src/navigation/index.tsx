@@ -37,10 +37,14 @@ import {useSelector} from 'react-redux';
 import {
   Alert,
   BackHandler,
+  Image,
   SafeAreaView,
   Text,
   ToastAndroid,
+  View,
 } from 'react-native';
+import {height, width} from '../config/globalStyles';
+import SplashScreen from '../screens/SplashScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -176,6 +180,7 @@ export const AppNavigator = () => {
 export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState<boolean | null>(null);
   const [token, setToken] = React.useState();
+  const [isLoading, setIsLoading] = React.useState(true);
 
   const _msg = useSelector(selectMsg);
   const _accessToken = useSelector(selectAccessToken);
@@ -183,12 +188,21 @@ export const MainNavigator = () => {
   const dispatch = useDispatch();
 
   const Result = () => {
-    if (isSignIn === true) {
-      return <AppNavigator />;
-    } else if (isSignIn === false) {
-      return <LoginNavigator />;
+    if (isLoading) {
+      React.useEffect(() => {
+        let timer = setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
+      });
+      return <SplashScreen></SplashScreen>;
     } else {
-      return <SafeAreaView></SafeAreaView>;
+      if (isSignIn === true) {
+        return <AppNavigator />;
+      } else if (isSignIn === false) {
+        return <LoginNavigator />;
+      } else {
+        return <SplashScreen></SplashScreen>;
+      }
     }
   };
   React.useEffect(() => {
@@ -244,6 +258,6 @@ export const MainNavigator = () => {
       BackHandler.removeEventListener('hardwareBackPress', backAction);
   }, []);
 
-  return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
-  // return <Result></Result>;
+  //return <>{isSignIn ? <AppNavigator /> : <LoginNavigator />}</>;
+  return <Result></Result>;
 };

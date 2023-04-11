@@ -101,6 +101,7 @@
 		13B07FAE1A68108700A75B9A /* Ichigo */ = {
 			isa = PBXGroup;
 			children = (
+				58B79EB82992C17F001681EC /* SplashScreen.storyboard */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -141,7 +142,6 @@
 			isa = PBXGroup;
 			children = (
 				589B8A6F29D955A4002A7816 /* Fonts */,
-				58B79EB82992C17F001681EC /* SplashScreen.storyboard */,
 				13B07FAE1A68108700A75B9A /* Ichigo */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* IchigoTests */,

@@ -85,12 +85,8 @@ const RecordScreen = ({navigation}) => {
       });
 
       const {recording} = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.LOW_QUALITY,
+        Audio.RecordingOptionsPresets.HIGHT_QUALITY,
       );
-
-      // await recording.prepareToRecordAsync(
-      //   Audio.RecordingOptionsPresets.HIGH_QUALITY,
-      // );
 
       //await recording.startAsync();
       setRecording(recording);
