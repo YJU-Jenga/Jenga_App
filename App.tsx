@@ -10,8 +10,8 @@ import {Provider} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {CookiesProvider} from 'react-cookie';
-import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
+import {SafeAreaView, Text} from 'react-native';
 
 const getToken = async () => {
   try {
@@ -129,18 +129,17 @@ export default function App() {
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-      await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
+  // if (!appIsReady) {
+  //   return null;
+  // }
 
   return (
     <Provider store={store}>
       <CookiesProvider>
-        <MainNavigator />
+        <MainNavigator></MainNavigator>
       </CookiesProvider>
     </Provider>
   );
