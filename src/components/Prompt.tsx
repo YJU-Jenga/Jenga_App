@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, TextInput, Modal, Button} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Modal,
+  Button,
+  KeyboardAvoidingView,
+  SafeAreaView,
+} from 'react-native';
 import {height} from '../config/globalStyles';
 import DefaultButton from './DefaultButton';
 
@@ -18,25 +26,22 @@ const Prompt = ({visible, title, message, onCancel, onSubmit}) => {
 
   return (
     <Modal transparent={true} visible={visible} animationType="fade">
-      <View
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-        }}>
-        <View
+      <SafeAreaView
+        style={{height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+        <KeyboardAvoidingView
           style={{
             width: '100%',
             borderRadius: 20,
-            height: '40%',
+            height: height * 200,
             shadowColor: '#000',
             shadowOpacity: 0.3,
             shadowRadius: 4,
             elevation: 5,
-            position: 'absolute',
-            bottom: 0,
+            // position: 'absolute',
+            // bottom: 0,
             backgroundColor: '#fff',
             padding: 20,
+            marginTop: height * 200,
           }}>
           <Text
             style={{
@@ -71,8 +76,8 @@ const Prompt = ({visible, title, message, onCancel, onSubmit}) => {
             <DefaultButton onPress={handleCancel} title="취소"></DefaultButton>
             <DefaultButton onPress={handleSubmit} title="저장"></DefaultButton>
           </View>
-        </View>
-      </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </Modal>
   );
 };

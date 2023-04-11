@@ -11,19 +11,9 @@ import {
 } from 'react-native';
 import Title from '../components/Title';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {
-  WhiteSpace,
-  WingBlank,
-  Card,
-  Flex,
-  PickerView,
-} from '@ant-design/react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {getUser, selectMsg, selectUserData} from '../utils/redux/userSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import axios from 'axios';
-import WebView from 'react-native-webview';
 
+import WebView from 'react-native-webview';
+import {web_address} from '../config/address';
 let SERVER_URL = 'http://127.0.0.1:3000';
 if (Platform.OS === 'android') {
   SERVER_URL = 'http://10.0.2.2:3000';
@@ -52,7 +42,7 @@ const ShoppingScreen = () => {
         // onLoadEnd={handleEndLoading}
         // onMessage={handleOnMessage}
         // ref={handleSetRef}
-        source={{uri: SERVER_URL}}></WebView>
+        source={{uri: web_address}}></WebView>
     </SafeAreaView>
   );
 };

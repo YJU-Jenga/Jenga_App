@@ -7,11 +7,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwt_decode from 'jwt-decode';
 import {useCookies} from 'react-cookie';
 import jwtDecode from 'jwt-decode';
+import {back_address} from '../../config/address';
 
-let SERVER_URL = 'http://127.0.0.1:5001';
-if (Platform.OS === 'android') {
-  SERVER_URL = 'http://10.0.2.2:5001';
-}
+// let SERVER_URL = 'http://127.0.0.1:5001';
+// if (Platform.OS === 'android') {
+//   SERVER_URL = 'http://10.0.2.2:5001';
+// }
+
+let SERVER_URL = back_address;
 
 // Define a type for the slice state
 interface UserState {

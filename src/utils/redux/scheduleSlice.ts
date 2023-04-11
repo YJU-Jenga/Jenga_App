@@ -4,11 +4,13 @@ import type {RootState} from '../../../store';
 import axios from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {back_address} from '../../config/address';
 
-let SERVER_URL = 'http://127.0.0.1:5001';
-if (Platform.OS === 'android') {
-  SERVER_URL = 'http://10.0.2.2:5001';
-}
+let SERVER_URL = back_address;
+// let SERVER_URL = 'http://127.0.0.1:5001';
+// if (Platform.OS === 'android') {
+//   SERVER_URL = 'http://10.0.2.2:5001';
+// }
 
 // // Define a type for the slice state
 interface ScheduleState {

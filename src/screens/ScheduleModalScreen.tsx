@@ -172,9 +172,13 @@ const ScheduleModalScreen = ({route, navigation}) => {
       }
       return scheduleList.some(el => el.id === id);
     }
-    if (Array.isArray(scheduleList) && scheduleList.length === 0) {
+    if (
+      (Array.isArray(scheduleList) && scheduleList.length === 0) ||
+      !scheduleList
+    ) {
       return false;
     } else {
+      console.log('서케쥴은 ', scheduleList);
       return scheduleList.some(el => el.id === id);
     }
   };

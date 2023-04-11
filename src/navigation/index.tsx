@@ -188,6 +188,8 @@ export const MainNavigator = () => {
   const dispatch = useDispatch();
 
   const Result = () => {
+    console.log(isLoading);
+    console.log(isSignIn);
     if (isLoading) {
       React.useEffect(() => {
         let timer = setTimeout(() => {
@@ -198,10 +200,8 @@ export const MainNavigator = () => {
     } else {
       if (isSignIn === true) {
         return <AppNavigator />;
-      } else if (isSignIn === false) {
-        return <LoginNavigator />;
       } else {
-        return <SplashScreen></SplashScreen>;
+        return <LoginNavigator />;
       }
     }
   };

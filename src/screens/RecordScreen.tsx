@@ -20,17 +20,10 @@ import React, {useCallback, useState, useEffect} from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Snackbar} from 'react-native-paper';
 
-import {Audio} from 'expo-av';
+import {AVPlaybackStatus, Audio} from 'expo-av';
 import {selectUserData} from '../utils/redux/userSlice';
 import {useSelector} from 'react-redux';
-import {
-  Button,
-  Flex,
-  Toast,
-  WingBlank,
-  Popover,
-  PermissionsAndroid,
-} from '@ant-design/react-native';
+import {Button, Flex, WingBlank} from '@ant-design/react-native';
 import Title from '../components/Title';
 import Slider from '@react-native-community/slider';
 import {useInterval} from '../utils/useInterval';
@@ -38,16 +31,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Easing} from 'react-native-reanimated';
 import {height, width} from '../config/globalStyles';
 import PopupMessage from '../components/PopupMessage';
-import prompt from 'react-native-prompt-android';
 import Prompt from '../components/Prompt';
 
 const RecordScreen = ({navigation}) => {
-  const [recording, setRecording] = React.useState();
+  const [recording, setRecording] = React.useState<Audio.Recording | null>();
   const [recordingInfo, setRecordingInfo] = React.useState();
-  const [sound, setSound] = useState(null);
-  const [soundPath, setSoundPath] = useState<string>('');
-  const [soundList, setSoundList] = useState<string>('');
-  const [recordingUri, setRecordingUri] = useState();
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [soundPath, setSoundPath] = useState<string | null>('');
+  const [soundList, setSoundList] = useState<string | null>('');
+  const [recordingUri, setRecordingUri] = useState<string | null>();
   const [duration, setDuration] = useState(0);
   const [position, setPosition] = useState(0);
   const [displayPosition, setDisplayPosition] = useState(0);
@@ -62,7 +54,7 @@ const RecordScreen = ({navigation}) => {
     () => {
       //onSliderValueChange(position);
       console.log('가자');
-      sound.getStatusAsync().then(res => {
+      sound.getStatusAsync().then((res: AVPlaybackStatus) => {
         setDisplayPosition(res.positionMillis);
 
         if (res.positionMillis == res.durationMillis) {
@@ -84,9 +76,14 @@ const RecordScreen = ({navigation}) => {
         playsInSilentModeIOS: true,
       });
 
-      const {recording} = await Audio.Recording.createAsync(
-        Audio.RecordingOptionsPresets.HIGHT_QUALITY,
-      );
+      const {recording}: Audio.Recording | null =
+        await Audio.Recording.createAsync(
+          Audio.RecordingOptionsPresets.LOW_QUALITY,
+        );
+
+      // await recording.prepareToRecordAsync(
+      //   Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      // );
 
       //await recording.startAsync();
       setRecording(recording);
@@ -112,7 +109,7 @@ const RecordScreen = ({navigation}) => {
       } else if (e.code === 'E_AUDIO_RECORDERNOTCREATED') {
         Alert.alert('에러', '장치를 확인해주세요');
       } else {
-        Alert.alert('알 수 없는 에러', `교수님에게 문의해주세요`);
+        Alert.alert('알 수 없는 에러', `제작자에게 문의해주세요`);
       }
       //console.error('에러 해결 안 됨', e.constructor);
       // console.error('Failed to start recording', err);
@@ -258,7 +255,12 @@ const RecordScreen = ({navigation}) => {
       navigation.addListener('blur', async () => {
         console.log('초기화');
         setIsPlaying(false);
-        if (soundPath) await FileSystem.deleteAsync(soundPath);
+        setSoundPath(null);
+        try {
+          if (soundPath) await FileSystem.deleteAsync(soundPath);
+        } catch {
+          setSoundPath(null);
+        }
         setRecordingInfo(null);
         setRecordingUri(null);
         setSound(null);

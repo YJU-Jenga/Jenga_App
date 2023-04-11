@@ -116,9 +116,12 @@ const ScheduleScreen = ({route, navigation}) => {
           <ScrollView
             contentContainerStyle={{paddingBottom: '50%'}}
             style={{minHeight: '100%'}}>
-            {Array.isArray(scheduleList) && scheduleList.length === 0 ? (
+            {!(
+              (Array.isArray(scheduleList) && scheduleList.length === 0) ||
+              !scheduleList
+            ) ? (
               scheduleList?.map((item, i) => {
-                // console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
+                console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
                 const date = new Date(item.time);
                 const h =
                   10 > date.getHours()
@@ -178,10 +181,11 @@ const ScheduleScreen = ({route, navigation}) => {
                           {item.repeat.length > 0 && (
                             <Text
                               style={{
-                                fontSize: 12,
-                                color: 'gray',
-                                marginTop: 3,
+                                fontSize: 13,
+                                color: 'black',
+                                marginTop: 5,
                                 fontFamily: 'TheJamsilOTF_Light',
+                                marginBottom: 3,
                               }}>
                               {item.sentence}
                             </Text>

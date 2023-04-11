@@ -36,6 +36,7 @@ function SettingsScreen({navigation}) {
   }, []);
 
   React.useEffect(() => {
+    console.log(_userData);
     setUserData(_userData);
   }, [_userData]);
 
@@ -53,7 +54,7 @@ function SettingsScreen({navigation}) {
       <Title title="Settings"></Title>
       <List renderHeader={'내 정보'}>
         <Item arrow="horizontal">
-          {_userData && <Text>{_userData?.name}</Text>}
+          {userData && <Text>{userData?.name}</Text>}
         </Item>
         <DefaultButton title="로그아웃" onPress={Logout}></DefaultButton>
       </List>
