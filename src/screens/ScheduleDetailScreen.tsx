@@ -101,6 +101,8 @@ export const ActionComponent = () => {
   }
 
   useEffect(() => {
+    // setSound(null);
+    // setIsPlaying(false);
     getSoundList();
   }, []);
 

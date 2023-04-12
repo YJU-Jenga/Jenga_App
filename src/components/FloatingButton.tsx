@@ -2,13 +2,13 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Font from 'react-native-vector-icons/AntDesign';
 import {width} from '../config/globalStyles';
-const FloatingButton = ({onPress}) => {
+const FloatingButton = ({onPress, color = '#f29999'}) => {
   return (
     <TouchableOpacity
       activeOpacity={0.5}
       onPress={onPress}
       style={styles.touchableOpacity}>
-      <View style={styles.buttonWrapper}>
+      <View style={[styles.buttonWrapper, {backgroundColor: color}]}>
         <Font
           color={'#fff'}
           size={40}
@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: width * 50,
     height: width * 50,
-    backgroundColor: '#f29999',
     borderRadius: 100,
     display: 'flex',
     flexDirection: 'column',

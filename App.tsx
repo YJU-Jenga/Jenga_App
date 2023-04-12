@@ -125,7 +125,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <CookiesProvider>
-        <MainNavigator></MainNavigator>
+        {appIsReady && <MainNavigator></MainNavigator>}
       </CookiesProvider>
     </Provider>
   );

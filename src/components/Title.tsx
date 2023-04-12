@@ -4,12 +4,13 @@ import {Text, SafeAreaView, Image} from 'react-native';
 import {useSelector} from 'react-redux';
 import {selectUserData} from '../utils/redux/userSlice';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {Pressable} from 'react-native';
 
 interface Props {
   title: string;
 }
 
-const Title: React.FC<Props> = ({title}) => {
+const Title: React.FC<Props> = ({title, onPress}) => {
   const _userData = useSelector(selectUserData);
 
   return (
@@ -30,6 +31,16 @@ const Title: React.FC<Props> = ({title}) => {
           }}>
           {title}
         </Text>
+        {title === 'Schedule' && (
+          <Pressable onPress={onPress}>
+            <Icon color={'#f29999'} size={30} name="calendar-month"></Icon>
+          </Pressable>
+        )}
+        {title === 'Monthly' && (
+          <Pressable onPress={onPress}>
+            <Icon color={'#99ccff'} size={30} name="calendar-week"></Icon>
+          </Pressable>
+        )}
 
         {/* <Image
           source={require('./../scpark.jpeg')}

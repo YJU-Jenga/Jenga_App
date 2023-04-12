@@ -14,12 +14,13 @@ import {useDispatch} from 'react-redux';
 // Screens
 import LoginScreen from '../screens/LoginScreen';
 import ScheduleScreen from '../screens/ScheduleScreen';
+import ScheduleModalScreen from '../screens/ScheduleModalScreen';
+import CalendarScreen from '../screens/CalendarScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
 import RecordScreen from '../screens/RecordScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import InfoScreen from '../screens/InfoScreen';
-import ScheduleModalScreen from '../screens/ScheduleModalScreen';
 import ShoppingScreen from '../screens/ShoppingScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
@@ -78,6 +79,10 @@ const ScheduleNavigator = () => {
         name="scheduleModal"
         options={{headerShown: false, presentation: 'modal'}}
         component={ScheduleModalScreen}></Stack.Screen>
+      <Stack.Screen
+        name="calendar"
+        options={{headerShown: false}}
+        component={CalendarScreen}></Stack.Screen>
       {/* <Stack.Screen
         name="scheduleDetail"
         options={{headerShown: false, presentation: 'formSheet'}}
@@ -200,8 +205,10 @@ export const MainNavigator = () => {
     } else {
       if (isSignIn === true) {
         return <AppNavigator />;
-      } else {
+      } else if (isSignIn === false || !isSignIn) {
         return <LoginNavigator />;
+      } else {
+        return <SplashScreen />;
       }
     }
   };

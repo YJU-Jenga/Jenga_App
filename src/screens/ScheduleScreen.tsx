@@ -102,6 +102,10 @@ const ScheduleScreen = ({route, navigation}) => {
     //onLoadSchedules();
   }, []);
 
+  const NavigateToCalendar = () => {
+    console.log('헤헤');
+  };
+
   return (
     <Provider locale={enUS}>
       <SafeAreaView
@@ -110,7 +114,9 @@ const ScheduleScreen = ({route, navigation}) => {
           paddingTop: 12,
           backgroundColor: 'white',
         }}>
-        <Title title="Schedule"></Title>
+        <Title
+          title="Schedule"
+          onPress={() => navigation.navigate('calendar')}></Title>
 
         <WingBlank style={{}}>
           <ScrollView

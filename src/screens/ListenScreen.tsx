@@ -89,7 +89,6 @@ const ListenScreen = ({navigation}) => {
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState();
 
-  const [selectedDocument, setSelectedDocument] = useState(null);
   const [pickerValue, setPickerValue] = useState('1');
 
   const updateSearch = search => {
@@ -129,6 +128,23 @@ const ListenScreen = ({navigation}) => {
       loadSound(soundInfo?.uri);
     }
   }, [soundInfo]);
+
+  React.useEffect(
+    () =>
+      navigation.addListener('blur', async () => {
+        console.log('초기화');
+        setIsPlaying(false);
+        //setSoundPath(null);
+        // setRecordingInfo(null);
+        // setRecordingUri(null);
+        setPosition(0);
+        setDuration(null);
+        setSound(null);
+        //setSoundPath(null);
+        //setRecording(null);
+      }),
+    [],
+  );
 
   async function loadSound(soundPath: string) {
     console.log('Loading Sound : ', soundPath);
@@ -441,7 +457,6 @@ const ListenScreen = ({navigation}) => {
           animationType="slide-up"
           onClose={() => {
             onCloseModal();
-            setSelectedDocument(true);
           }}>
           <SafeAreaView
             style={{

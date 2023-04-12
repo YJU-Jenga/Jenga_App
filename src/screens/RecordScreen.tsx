@@ -32,6 +32,12 @@ import {Easing} from 'react-native-reanimated';
 import {height, width} from '../config/globalStyles';
 import PopupMessage from '../components/PopupMessage';
 import Prompt from '../components/Prompt';
+import {
+  AndroidAudioEncoder,
+  AndroidOutputFormat,
+  IOSAudioQuality,
+  IOSOutputFormat,
+} from 'expo-av/build/Audio';
 
 const RecordScreen = ({navigation}) => {
   const [recording, setRecording] = React.useState<Audio.Recording | null>();
@@ -54,7 +60,7 @@ const RecordScreen = ({navigation}) => {
     () => {
       //onSliderValueChange(position);
       console.log('가자');
-      sound.getStatusAsync().then((res: AVPlaybackStatus) => {
+      sound?.getStatusAsync().then((res: AVPlaybackStatus) => {
         setDisplayPosition(res.positionMillis);
 
         if (res.positionMillis == res.durationMillis) {
@@ -78,7 +84,33 @@ const RecordScreen = ({navigation}) => {
 
       const {recording}: Audio.Recording | null =
         await Audio.Recording.createAsync(
-          Audio.RecordingOptionsPresets.LOW_QUALITY,
+          {
+            isMeteringEnabled: true,
+            android: {
+              extension: '.m4a',
+              outputFormat: AndroidOutputFormat.MPEG_4,
+              audioEncoder: AndroidAudioEncoder.AAC,
+              sampleRate: 44100,
+              numberOfChannels: 2,
+              bitRate: 128000,
+            },
+            ios: {
+              extension: '.m4a',
+              outputFormat: IOSOutputFormat.MPEG4AAC,
+              audioQuality: IOSAudioQuality.MAX,
+              sampleRate: 44100,
+              numberOfChannels: 2,
+              bitRate: 128000,
+              linearPCMBitDepth: 16,
+              linearPCMIsBigEndian: false,
+              linearPCMIsFloat: false,
+            },
+            web: {
+              mimeType: 'audio/webm',
+              bitsPerSecond: 128000,
+            },
+          },
+          //Audio.RecordingOptionsPresets.LOW_QUALITY,
         );
 
       // await recording.prepareToRecordAsync(

@@ -24,7 +24,6 @@ import {
   Button,
 } from '@ant-design/react-native';
 import React, {useEffect, useState} from 'react';
-import Title from '../components/Title';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import {ActionComponent, RepeatComponent} from './ScheduleDetailScreen';
 import {useDispatch, useSelector} from 'react-redux';
