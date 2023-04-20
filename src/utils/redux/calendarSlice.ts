@@ -13,30 +13,18 @@ let SERVER_URL = back_address;
 // }
 
 // // Define a type for the slice state
-interface ScheduleState {
+interface CalendarState {
   msg: string;
   loading: boolean;
-  musicData: any;
-  repeatData: Array<object>;
-  error: null;
+  calendarData: object;
   errorMessage: string;
 }
 
 // Define the initial state using that type
-const initialState: ScheduleState = {
+const initialState: CalendarState = {
   msg: '',
   loading: false,
-  error: null,
-  musicData: [],
-  repeatData: [
-    {day: '일요일', isChecked: false},
-    {day: '월요일', isChecked: false},
-    {day: '화요일', isChecked: false},
-    {day: '수요일', isChecked: false},
-    {day: '목요일', isChecked: false},
-    {day: '금요일', isChecked: false},
-    {day: '토요일', isChecked: false},
-  ],
+  calendarData: {},
   errorMessage: '',
 };
 
@@ -45,89 +33,317 @@ interface IError {
   errorMessage: string;
 }
 
-export const scheduleSlice = createSlice({
+export const createCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calender/createCalendar', async (calendarData: object, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.post(
+      `${SERVER_URL}/calendar/create`,
+      calendarData,
+      {
+        headers: {
+          authorization: 'Bearer ' + accessToken,
+        },
+        withCredentials: true,
+      },
+    );
+
+    console.log(data);
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const getAllCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/getAllCalendar', async (userId, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.post(`${SERVER_URL}/calendar/all`, userId, {
+      headers: {
+        authorization: 'Bearer ' + accessToken,
+      },
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const getMonthCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/getMonthCalendar', async (info, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.post(`${SERVER_URL}/calendar/month`, info, {
+      headers: {
+        authorization: 'Bearer ' + accessToken,
+      },
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const getWeekCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/getWeekCalendar', async (userId, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.post(`${SERVER_URL}/calendar/week`, userId, {
+      headers: {
+        authorization: 'Bearer ' + accessToken,
+      },
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const getDateCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/getDateCalendar', async (userId, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.post(`${SERVER_URL}/calendar/date`, userId, {
+      headers: {
+        authorization: 'Bearer ' + accessToken,
+      },
+      withCredentials: true,
+    });
+
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const updateCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/updateCalendar', async (info, thunkAPI) => {
+  try {
+    const obj = {
+      title: info.title,
+      start: info.start,
+      end: info.end,
+      location: info.location,
+      description: info.description,
+    };
+    const calendarId = info.id;
+    console.log(info);
+    const accessToken = await AsyncStorage.getItem('access-token');
+
+    const {data} = await axios.patch(
+      `${SERVER_URL}/calendar/update_calendar/${info.id}`,
+      obj,
+      {
+        headers: {
+          authorization: 'Bearer ' + accessToken,
+        },
+        withCredentials: true,
+      },
+    );
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const deleteCalendar = createAsyncThunk<
+  CalendarState[],
+  object,
+  {rejectValue: IError}
+>('calendar/deleteCalendar', async (calendarId, thunkAPI) => {
+  try {
+    const accessToken = await AsyncStorage.getItem('access-token');
+    console.log(calendarId);
+
+    const {data} = await axios.delete(
+      `${SERVER_URL}/calendar/delete_calendar/${calendarId}`,
+      {
+        //data: {id: calendarId},
+        headers: {
+          authorization: 'Bearer ' + accessToken,
+        },
+        withCredentials: true,
+      },
+    );
+    return data;
+  } catch (e) {
+    return thunkAPI.rejectWithValue({
+      errorMessage: e.response.data.message,
+    });
+  }
+});
+
+export const calendarSlice = createSlice({
   // 슬라이스 이름 정의
-  name: 'schedule',
+  name: 'calendar',
   // 초기 값
   initialState,
   reducers: {
-    initScheduleState: state => {
-      state.repeatData = [
-        {day: '일요일', isChecked: false},
-        {day: '월요일', isChecked: false},
-        {day: '화요일', isChecked: false},
-        {day: '수요일', isChecked: false},
-        {day: '목요일', isChecked: false},
-        {day: '금요일', isChecked: false},
-        {day: '토요일', isChecked: false},
-      ];
-      state.musicData = [];
+    initCalendarErrorMessage: state => {
+      state.errorMessage = '';
     },
-    initEditScheduleState: (state, action) => {
-      console.log(action.payload);
-      state.repeatData = action.payload.repeat;
-      state.musicData = action.payload.soundFile;
-    },
-    createScheduleActionInfo: (state, action) => {
-      state.musicData = action.payload;
-    },
-    createScheduleRepeatInfo: (state, action) => {
-      // const day: string = action.payload.day;
-      const check: boolean = action.payload.isChecked;
-      // state.repeatData.map(item =>
-      //   item.day === day ? (item.isChecked = !check) : (item.isChecked = check),
-      // );
-      const findDay = state.repeatData.findIndex(
-        item => item.day === action.payload.day,
-      );
-      console.log(state.repeatData[findDay].day);
-      if (!isNaN(findDay)) {
-        state.repeatData[findDay].isChecked =
-          !state.repeatData[findDay].isChecked;
-      }
-    },
-    // deleteScheduleRepeatInfo: (state, action) {
-
-    // }
   },
 
-  //   extraReducers: builder => {
-  //     builder
-  //       // 통신 중
-  //       .addCase(getUser.pending, state => {
-  //         state.error = null;
-  //         state.loading = true;
-  //         state.errorMessage = '';
-  //       })
-  //       // 통신 성공
-  //       .addCase(getUser.fulfilled, (state, {payload}) => {
-  //         console.log('payload : ', payload);
-  //         state.error = null;
-  //         state.loading = false;
-  //         state.userData = payload;
-  //         state.msg = 'SUCCESS_GET_USER';
-  //         state.errorMessage = '';
-  //       })
-  //       // 통신 에러
-  //       .addCase(getUser.rejected, (state, {payload}) => {
-  //         state.loading = false;
-  //         state.msg = 'FAILED_GET_USER';
-  //         state.errorMessage = payload?.errorMessage;
-  //       });
-  //   },
+  extraReducers: builder => {
+    builder
+      // 통신 중
+      .addCase(createCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(createCalendar.fulfilled, (state, {payload}) => {
+        console.log('통신 성공 : ', payload);
+        state.loading = false;
+        // state.userData = payload;
+        state.msg = 'SUCCESS_CREATE_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(createCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_CREATE_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
+      })
+
+      // UPDATE
+      // 통신 중
+      .addCase(updateCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(updateCalendar.fulfilled, (state, {payload}) => {
+        console.log('통신 성공 : ', payload);
+        state.loading = false;
+        // state.userData = payload;
+        state.msg = 'SUCCESS_UPDATE_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(updateCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_UPDATE_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
+      })
+
+      // DELETE
+      // 통신 중
+      .addCase(deleteCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(deleteCalendar.fulfilled, (state, {payload}) => {
+        console.log('삭제');
+        state.loading = false;
+        // state.userData = payload;
+        state.msg = 'SUCCESS_DELETE_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(deleteCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_DELETE_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
+      })
+
+      // ALL
+      .addCase(getAllCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(getAllCalendar.fulfilled, (state, {payload}) => {
+        console.log('통신 성공 : ', payload);
+        state.loading = false;
+        // state.userData = payload;
+        state.msg = 'SUCCESS_GET_ALL_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(getAllCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_GET_ALL_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
+      })
+
+      // Month
+      .addCase(getMonthCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(getMonthCalendar.fulfilled, (state, {payload}) => {
+        console.log('통신 성공 : ', payload);
+        state.loading = false;
+        state.calendarData = payload;
+        state.msg = 'SUCCESS_GET_MONTH_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(getMonthCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_GET_MONTH_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
+      });
+  },
 });
 
 // // 리듀서 액션
-export const {
-  createScheduleActionInfo,
-  createScheduleRepeatInfo,
-  initScheduleState,
-  initEditScheduleState,
-} = scheduleSlice.actions;
+export const {initCalendarErrorMessage} = calendarSlice.actions;
 
 // // useS
-export const selectSoundInfo = (state: RootState) => state.schedule.musicData;
-export const selectRepeatInfo = (state: RootState) => state.schedule.repeatData;
-// export const selectMsg = (state: RootState) => state.user.msg;
+export const selectCalendarErrorMsg = (state: RootState) =>
+  state.calendar.errorMessage;
+export const SelectCalendarData = (state: RootState) =>
+  state.calendar.calendarData;
 
-export default scheduleSlice.reducer;
+export default calendarSlice.reducer;

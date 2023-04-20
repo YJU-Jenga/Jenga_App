@@ -4,12 +4,13 @@ import {configureStore} from '@reduxjs/toolkit';
 import authReducer from './src/utils/redux/authSlice';
 import userReducer from './src/utils/redux/userSlice';
 import scheduleReducer from './src/utils/redux/scheduleSlice';
-
+import calendarReducer from './src/utils/redux/calendarSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     user: userReducer,
     schedule: scheduleReducer,
+    calendar: calendarReducer,
   },
 });
 

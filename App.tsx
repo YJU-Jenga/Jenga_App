@@ -110,7 +110,7 @@ export default function App() {
         await Font.loadAsync({
           TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
         });
-        // await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 100));
       } catch (e) {
         console.warn(e);
       } finally {

@@ -46,6 +46,7 @@ import {
 } from 'react-native';
 import {height, width} from '../config/globalStyles';
 import SplashScreen from '../screens/SplashScreen';
+import CalendarManagement from '../screens/CalendarManageScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
@@ -63,6 +64,11 @@ const SettingsNavigator = () => {
         options={{headerShown: true, title: ''}}
         component={InfoScreen}
       />
+      <Stack.Screen
+        //shopping으로 하면 웹뷰컴포넌트 충돌발생!! 임시로 여기에 둠
+        name="shoppingView"
+        component={ShoppingScreen}
+        options={{headerShown: false}}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -79,15 +85,6 @@ const ScheduleNavigator = () => {
         name="scheduleModal"
         options={{headerShown: false, presentation: 'modal'}}
         component={ScheduleModalScreen}></Stack.Screen>
-      <Stack.Screen
-        name="calendar"
-        options={{headerShown: false}}
-        component={CalendarScreen}></Stack.Screen>
-      {/* <Stack.Screen
-        name="scheduleDetail"
-        options={{headerShown: false, presentation: 'formSheet'}}
-        component={ScheduleDetailScreen}
-      /> */}
     </Stack.Navigator>
   );
 };
@@ -111,7 +108,34 @@ export const LoginNavigator = () => {
   );
 };
 
+function CalendarStack(props) {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="calendar"
+        options={{headerShown: false}}
+        children={() => <CalendarScreen {...props} />}
+      />
+      <Stack.Screen
+        name="manageCalendar"
+        options={{headerShown: false}}
+        children={() => <CalendarManagement {...props} />}></Stack.Screen>
+      {/* 다른 스크린을 추가할 수 있습니다 */}
+    </Stack.Navigator>
+  );
+}
+
 export const AppNavigator = () => {
+  const _ui = useSelector(selectUserData);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    const getUI = async () => {
+      const accessToken = await AsyncStorage.getItem('access-token');
+      dispatch(getUser(accessToken));
+    };
+    getUI();
+  }, []);
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -128,14 +152,17 @@ export const AppNavigator = () => {
                 iconName = 'folder-music';
                 break;
               case '스케쥴':
-                iconName = 'calendar';
+                iconName = 'clock';
                 break;
               case '녹음':
                 iconName = 'modern-mic';
                 break;
-              case '쇼핑':
-                iconName = 'shop';
+              case '캘린더':
+                iconName = 'calendar';
                 break;
+              // case '쇼핑':
+              //   iconName = 'shop';
+              //   break;
               case '설정':
                 iconName = 'sound-mix';
                 break;
@@ -144,16 +171,23 @@ export const AppNavigator = () => {
             return <Icon name={iconName} size={25} color={iconColor} />;
           },
         })}>
-        <Tab.Screen
-          name="책과음악"
-          component={ListenScreen}
-          options={{headerShown: false}}
-        />
         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
         <Tab.Screen
           name="스케쥴"
           component={ScheduleNavigator}
           options={{headerShown: false}}
+        />
+        {/* <Tab.Screen
+          name="캘린더"
+          options={{headerShown: false}}
+          children={() => (
+            <CalendarScreen ui={_ui}></CalendarScreen>
+          )}></Tab.Screen> */}
+
+        <Tab.Screen
+          name="캘린더"
+          options={{headerShown: false}}
+          children={() => <CalendarStack ui={_ui} />}
         />
 
         <Tab.Screen
@@ -163,15 +197,17 @@ export const AppNavigator = () => {
             headerShown: false,
           })}
         />
+        <Tab.Screen
+          name="책과음악"
+          component={ListenScreen}
+          options={{headerShown: false}}
+        />
         {/* <Tab.Screen
           name="쇼핑"
           component={ShoppingNavigator}
           options={{headerShown: false}}
         /> */}
-        <Tab.Screen
-          name="쇼핑"
-          component={ShoppingScreen}
-          options={{headerShown: false}}></Tab.Screen>
+
         <Tab.Screen
           name="설정"
           component={SettingsNavigator}
@@ -184,7 +220,6 @@ export const AppNavigator = () => {
 
 export const MainNavigator = () => {
   const [isSignIn, setIsSignIn] = React.useState<boolean | null>(null);
-  const [token, setToken] = React.useState();
   const [isLoading, setIsLoading] = React.useState(true);
 
   const _msg = useSelector(selectMsg);
@@ -193,8 +228,6 @@ export const MainNavigator = () => {
   const dispatch = useDispatch();
 
   const Result = () => {
-    console.log(isLoading);
-    console.log(isSignIn);
     if (isLoading) {
       React.useEffect(() => {
         let timer = setTimeout(() => {
@@ -208,10 +241,11 @@ export const MainNavigator = () => {
       } else if (isSignIn === false || !isSignIn) {
         return <LoginNavigator />;
       } else {
-        return <SplashScreen />;
+        return <></>;
       }
     }
   };
+
   React.useEffect(() => {
     switch (_msg) {
       case 'SUCCESS_REGISTER':
@@ -243,7 +277,6 @@ export const MainNavigator = () => {
         //   // handle error here
         //   console.log(rejectedValueOrSerializedError);
         // });
-        // dispatch(getUser(accessToken));
       }
     };
     funcRefresh();

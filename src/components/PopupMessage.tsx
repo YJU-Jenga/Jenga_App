@@ -7,7 +7,7 @@ import {
   View,
   Animated,
 } from 'react-native';
-import {height, width} from '../config/globalStyles';
+import {colors, height, width} from '../config/globalStyles';
 const PopupMessage = ({onPress, msg}) => {
   const startValue = useRef(new Animated.Value(1)).current;
   const fadeIn = () => {
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   container: {
     paddingVertical: height * 15,
     paddingHorizontal: width * 20,
-    backgroundColor: '#ffe7e6',
+    backgroundColor: colors.babyPink,
     marginTop: height * 60,
     borderRadius: 30,
     shadowColor: '#ffe7e6',

@@ -170,8 +170,6 @@ const SignUpScreen = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View
-      style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
       <View>
         {/* <Snackbar
         visible={snackbarVisible}

@@ -1,0 +1,90 @@
+import React, {useEffect} from 'react';
+import {Flex, List} from '@ant-design/react-native';
+import {View} from 'react-native';
+import {Text} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {colors} from '../../config/globalStyles';
+
+const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
+  const [time, setTime] = React.useState();
+
+  useEffect(() => {
+    console.log(data.title);
+    console.log(data.start);
+    console.log(data.end);
+  }, []);
+  return (
+    <List.Item onPress={updateCalendar}>
+      <Flex>
+        <Flex.Item>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 5,
+            }}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 20,
+                fontFamily: 'TheJamsilOTF_Regular',
+                marginVertical: 10,
+              }}>
+              {data.title}
+            </Text>
+          </View>
+
+          <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
+            <Icon
+              name="comment-processing-outline"
+              size={20}
+              color={colors.iconPink}
+            />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 20,
+                marginEnd: 10,
+                color: '#555',
+                fontFamily: 'TheJamsilOTF_Light',
+                marginBottom: 5,
+              }}>
+              {data.description}
+            </Text>
+          </View>
+
+          <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
+            <Icon name="map-marker" size={20} color={colors.iconPink} />
+            <Text
+              style={{
+                fontSize: 20,
+                color: '#555',
+                fontFamily: 'TheJamsilOTF_Light',
+                marginBottom: 5,
+              }}>
+              {data.location}
+            </Text>
+          </View>
+        </Flex.Item>
+        <Icon
+          onPress={() => removeCalendar(data.id)}
+          name="delete"
+          size={30}
+          color={colors.red}
+        />
+      </Flex>
+
+      {/* <Text
+                  onPress={() => {
+                    setVisibleModal(true);
+                    setMode('EDIT');
+                    setEditItem(item);
+                  }}>
+                  수정
+                </Text> */}
+    </List.Item>
+  );
+};
+export default CalendarDailyItem;

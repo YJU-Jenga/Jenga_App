@@ -201,13 +201,11 @@ const ListenScreen = ({navigation}) => {
   const handleOpenDocumentPicker = async () => {
     try {
       if (Platform.OS === 'android') await requestDocumentPermission();
-      console.log('죽어라 안드로이드');
 
       const result = await DocumentPicker.getDocumentAsync({
         type: 'audio/*',
       });
 
-      console.log('ㅏ아아아아ㅏㅇ');
       if (result.type !== 'cancel') {
         // const data = ;
 

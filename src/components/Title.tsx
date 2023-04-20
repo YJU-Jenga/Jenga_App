@@ -1,10 +1,12 @@
 import {Flex} from '@ant-design/react-native';
 import React from 'react';
-import {Text, SafeAreaView, Image} from 'react-native';
-import {useSelector} from 'react-redux';
-import {selectUserData} from '../utils/redux/userSlice';
+import {Text, SafeAreaView, Image, View} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUser, selectUserData} from '../utils/redux/userSlice';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Pressable} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {refreshToken} from '../utils/redux/authSlice';
 
 interface Props {
   title: string;
@@ -13,6 +15,17 @@ interface Props {
 const Title: React.FC<Props> = ({title, onPress}) => {
   const _userData = useSelector(selectUserData);
 
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    const funcRefresh = async () => {
+      const token = await AsyncStorage.getItem('refresh-token');
+
+      if (token) {
+        dispatch(refreshToken());
+      }
+    };
+    funcRefresh();
+  }, [title]);
   return (
     <SafeAreaView>
       <Flex
@@ -20,7 +33,7 @@ const Title: React.FC<Props> = ({title, onPress}) => {
         style={{
           marginHorizontal: 25,
           marginTop: 0,
-          marginBottom: 20,
+          marginBottom: 10,
           backgroundColor: 'white',
         }}>
         <Text
@@ -31,23 +44,26 @@ const Title: React.FC<Props> = ({title, onPress}) => {
           }}>
           {title}
         </Text>
-        {title === 'Schedule' && (
-          <Pressable onPress={onPress}>
-            <Icon color={'#f29999'} size={30} name="calendar-month"></Icon>
-          </Pressable>
-        )}
-        {title === 'Monthly' && (
-          <Pressable onPress={onPress}>
-            <Icon color={'#99ccff'} size={30} name="calendar-week"></Icon>
-          </Pressable>
-        )}
 
-        {/* <Image
-          source={require('./../scpark.jpeg')}
-          style={{width: 30, height: 30, borderRadius: 40}}></Image> */}
+        {(title === 'Calendar' || title === 'Management') && (
+          <View
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              flexDirection: 'row',
+              gap: 5,
+            }}>
+            <Pressable onPress={onPress}>
+              <Icon
+                color={'#333'}
+                size={30}
+                name={
+                  title === 'Calendar' ? 'calendar-search' : 'calendar-heart'
+                }></Icon>
+            </Pressable>
+          </View>
+        )}
       </Flex>
-      {/* <Text>프사 누르면 {_userData['name']}이랑..</Text>
-      <Text>장바구니 탭도 넣을 거임</Text> */}
     </SafeAreaView>
   );
 };

@@ -48,7 +48,6 @@ const LoginScreen = ({route, navigation}) => {
   const _errorMessage = useSelector(selectErrorMsg);
   const dispatch = useDispatch();
 
-  React.useEffect(() => {}, []);
   React.useEffect(() => {
     setErrorMessage(_errorMessage);
     dispatch(initErrorMessage());
@@ -65,38 +64,38 @@ const LoginScreen = ({route, navigation}) => {
   // React.useEffect(() => {}, [errorMessage]);
 
   // 이메일
-  const onChangeEmail = useCallback((e: string) => {
-    const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    // const emailCurrent = e;
-    setEmail(e);
+  // const onChangeEmail = useCallback((e: string) => {
+  //   const emailRegex =
+  //     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+  //   // const emailCurrent = e;
+  //   setEmail(e);
 
-    if (!emailRegex.test(e)) {
-      setEmailMessage('이메일 형식이 틀렸어요');
-      setIsEmail(false);
-    } else {
-      setEmailMessage('올바른 이메일 형식이에요');
-      setIsEmail(true);
-    }
-  }, []);
+  //   if (!emailRegex.test(e)) {
+  //     setEmailMessage('이메일 형식이 틀렸어요');
+  //     setIsEmail(false);
+  //   } else {
+  //     setEmailMessage('올바른 이메일 형식이에요');
+  //     setIsEmail(true);
+  //   }
+  // }, []);
 
   // 비밀번호
-  const onChangePassword = useCallback((e: string) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
-    // const passwordCurrent = e;
-    setPassword(e);
+  // const onChangePassword = useCallback((e: string) => {
+  //   const passwordRegex =
+  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+  //   // const passwordCurrent = e;
+  //   setPassword(e);
 
-    if (!passwordRegex.test(e)) {
-      setPasswordMessage(
-        '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
-      );
-      setIsPassword(false);
-    } else {
-      setPasswordMessage('안전한 비밀번호에요');
-      setIsPassword(true);
-    }
-  }, []);
+  //   if (!passwordRegex.test(e)) {
+  //     setPasswordMessage(
+  //       '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
+  //     );
+  //     setIsPassword(false);
+  //   } else {
+  //     setPasswordMessage('안전한 비밀번호에요');
+  //     setIsPassword(true);
+  //   }
+  // }, []);
 
   const handleVerifyLogin = async () => {
     if (email.trim() !== '' && password.trim() !== '') {
@@ -106,8 +105,6 @@ const LoginScreen = ({route, navigation}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View
-        style={{backgroundColor: '#fba0b5', widht: '100%', height: 150}}></View> */}
       <View>
         <Text style={styles.header}>로그인</Text>
         <WingBlank size="lg">
@@ -115,14 +112,14 @@ const LoginScreen = ({route, navigation}) => {
             <InputItem
               clear
               value={email}
-              onChange={e => onChangeEmail(e)}
+              onChange={e => setEmail(e)}
               placeholder="Email"
             />
             <InputItem
               type="password"
               clear
               value={password}
-              onChangeText={e => onChangePassword(e)}
+              onChangeText={e => setPassword(e)}
               placeholder="Password"
             />
           </Flex>
@@ -131,7 +128,7 @@ const LoginScreen = ({route, navigation}) => {
 
           <Button
             type="warning"
-            disabled={!(isEmail && isPassword)}
+            disabled={isEmail && isPassword}
             onPress={handleVerifyLogin}>
             Sign In
           </Button>

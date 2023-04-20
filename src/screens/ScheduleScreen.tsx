@@ -24,10 +24,9 @@ import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {Pressable} from 'react-native';
 import FloatingButton from '../components/FloatingButton';
-import {height} from '../config/globalStyles';
+import {colors, height} from '../config/globalStyles';
 
 const ScheduleScreen = ({route, navigation}) => {
   const [scheduleList, setScheduleList] = useState(null);
@@ -69,7 +68,7 @@ const ScheduleScreen = ({route, navigation}) => {
 
       list[index] = data;
       await AsyncStorage.setItem('schedules', JSON.stringify(list));
-      await onLoadSchedules('왜이래');
+      await onLoadSchedules();
     },
     [scheduleList],
   );
@@ -116,7 +115,8 @@ const ScheduleScreen = ({route, navigation}) => {
         }}>
         <Title
           title="Schedule"
-          onPress={() => navigation.navigate('calendar')}></Title>
+          // onPress={() => navigation.navigate('calendar')}
+        ></Title>
 
         <WingBlank style={{}}>
           <ScrollView
@@ -155,12 +155,12 @@ const ScheduleScreen = ({route, navigation}) => {
                           {item.isScheduleOn === true ? (
                             <Icon
                               size={25}
-                              color={'#ff6e6e'}
+                              color={colors.iconPink}
                               name="heart"></Icon>
                           ) : (
                             <Icon
                               size={25}
-                              color={'#ff6e6e'}
+                              color={colors.iconPink}
                               name="heart-o"></Icon>
                           )}
                         </Pressable>

@@ -133,8 +133,10 @@ export const refreshToken = createAsyncThunk<
       })
       .then(json => {
         console.log(json);
-        AsyncStorage.setItem('refresh-token', json.refresh_token);
-        AsyncStorage.setItem('access-token', json.access_token);
+        if (json && json.refresh_token && json.access_token) {
+          AsyncStorage.setItem('refresh-token', json.refresh_token);
+          AsyncStorage.setItem('access-token', json.access_token);
+        }
       });
     // console.log(data);
     // if (data.refresh_token) {
