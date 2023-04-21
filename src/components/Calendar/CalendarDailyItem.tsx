@@ -1,18 +1,16 @@
-import React, {useEffect} from 'react';
+import React, {PureComponent, useEffect} from 'react';
 import {Flex, List} from '@ant-design/react-native';
 import {View} from 'react-native';
 import {Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../config/globalStyles';
+import {DateTime} from 'luxon';
 
 const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
-  const [time, setTime] = React.useState();
+  const startDate = DateTime.fromISO(data.start).toFormat('MM/dd HH:mm');
+  const endDate = DateTime.fromISO(data.end).toFormat('MM/dd HH:mm');
 
-  useEffect(() => {
-    console.log(data.title);
-    console.log(data.start);
-    console.log(data.end);
-  }, []);
+  useEffect(() => {}, [data]);
   return (
     <List.Item onPress={updateCalendar}>
       <Flex>
@@ -27,11 +25,39 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
               numberOfLines={1}
               ellipsizeMode="tail"
               style={{
-                fontSize: 20,
+                fontSize: 18,
                 fontFamily: 'TheJamsilOTF_Regular',
                 marginVertical: 10,
+                color: 'black',
               }}>
               {data.title}
+            </Text>
+          </View>
+
+          <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
+            <Icon name="alarm" size={20} color={colors.iconPink} />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 18,
+                color: '#aaa',
+                fontFamily: 'TheJamsilOTF_Light',
+                marginBottom: 5,
+              }}>
+              {startDate}
+              {'  '}
+            </Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 18,
+                color: '#aaa',
+                fontFamily: 'TheJamsilOTF_Light',
+                marginBottom: 5,
+              }}>
+              {endDate}
             </Text>
           </View>
 
@@ -47,7 +73,7 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
               style={{
                 fontSize: 20,
                 marginEnd: 10,
-                color: '#555',
+                color: '#777',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>
@@ -60,7 +86,7 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
             <Text
               style={{
                 fontSize: 20,
-                color: '#555',
+                color: '#777',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>
@@ -87,4 +113,4 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
     </List.Item>
   );
 };
-export default CalendarDailyItem;
+export default React.memo(CalendarDailyItem);

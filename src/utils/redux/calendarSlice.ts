@@ -67,6 +67,7 @@ export const getAllCalendar = createAsyncThunk<
   {rejectValue: IError}
 >('calendar/getAllCalendar', async (userId, thunkAPI) => {
   try {
+    console.log(userId);
     const accessToken = await AsyncStorage.getItem('access-token');
 
     const {data} = await axios.post(`${SERVER_URL}/calendar/all`, userId, {
@@ -89,6 +90,7 @@ export const getMonthCalendar = createAsyncThunk<
   object,
   {rejectValue: IError}
 >('calendar/getMonthCalendar', async (info, thunkAPI) => {
+  console.log('이게 정보임 : ', info);
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
@@ -343,7 +345,7 @@ export const {initCalendarErrorMessage} = calendarSlice.actions;
 // // useS
 export const selectCalendarErrorMsg = (state: RootState) =>
   state.calendar.errorMessage;
-export const SelectCalendarData = (state: RootState) =>
+export const selectCalendarData = (state: RootState) =>
   state.calendar.calendarData;
 
 export default calendarSlice.reducer;

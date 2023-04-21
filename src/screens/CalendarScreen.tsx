@@ -24,10 +24,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DateTime} from 'luxon';
 import WriteCalendar from '../components/Calendar/WriteCalendar';
 import {
-  SelectCalendarData,
   deleteCalendar,
   getMonthCalendar,
   initCalendarErrorMessage,
+  selectCalendarData,
   selectCalendarErrorMsg,
   updateCalendar,
 } from '../utils/redux/calendarSlice';
@@ -37,12 +37,14 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {refreshToken} from '../utils/redux/authSlice';
 import CalendarDailyItem from '../components/Calendar/CalendarDailyItem';
 import EditCalendar from '../components/Calendar/EditCalendar';
+import {colors} from '../config/globalStyles';
 
 const CalendarScreen = ({ui}) => {
   const [date, setDate] = React.useState(new Date());
   const [currDate, setCurrDate] = React.useState<string>(
     DateTime.local().toFormat('yyyy-MM-dd'),
   );
+  const [isCurrMonth, setIsCurrMonth] = React.useState(true);
   const [currDataList, setCurrDataList] = React.useState([]);
 
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
@@ -52,7 +54,7 @@ const CalendarScreen = ({ui}) => {
 
   const _errorMessage = useSelector(selectCalendarErrorMsg);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const _calendarData = useSelector(SelectCalendarData);
+  const _calendarData = useSelector(selectCalendarData);
   const [calendarData, setCalendarData] = React.useState();
   const [isCalendarMode, setIsCalendarMode] = React.useState(true);
   const [editItem, setEditItem] = React.useState<object>();
@@ -79,19 +81,19 @@ const CalendarScreen = ({ui}) => {
       const obj = {userId: ui.id, dateString: new Date().toISOString()};
       dispatch(getMonthCalendar(obj));
       console.log('헤헤');
-    }, [dispatch, ui.id]),
+    }, []),
   );
 
-  React.useEffect(() => {
-    setCalendarData(_calendarData);
-    //convertCurrCalendar(DateTime.local().c.day);
-  }, [dispatch, calendarData]);
+  // React.useEffect(() => {
+  //   setCalendarData(_calendarData);
+  //   //convertCurrCalendar(DateTime.local().c.day);
+  // }, [dispatch, calendarData]);
 
   React.useEffect(() => {
-    setCalendarData(_calendarData);
+    //setCalendarData(_calendarData);
     //convertCurrCalendar(DateTime.local().c.day, _calendarData);
     console.log(_calendarData);
-    convertCurrCalendar(DateTime.fromISO(currDate).c.day, _calendarData);
+    convertCurrCalendar(DateTime.fromISO(currDate), _calendarData);
     if (Object.keys(_calendarData).length !== 0)
       generateCalendarDots(_calendarData);
   }, [_calendarData]);
@@ -100,10 +102,6 @@ const CalendarScreen = ({ui}) => {
     const obj = {userId: ui.id, dateString: new Date(currDate).toISOString()};
     dispatch(getMonthCalendar(obj));
   };
-
-  React.useEffect(() => {
-    executeGetMonthCalendar();
-  }, [ui]);
 
   const removeCalendar = React.useCallback(id => {
     const obj = {
@@ -115,44 +113,63 @@ const CalendarScreen = ({ui}) => {
       .then(() => executeGetMonthCalendar());
   }, []);
 
-  const convertCurrCalendar = React.useCallback((date: object, data) => {
-    if (Object.entries(data).length === 0 || data.length === 0) {
+  const convertCurrCalendar = React.useCallback((date: object, items) => {
+    if (Object.entries(items).length === 0 || items.length === 0) {
       setCurrDataList([]);
     } else {
-      const filteredData = data.filter(item1 => {
-        const itemStartDate = new Date(item1.start);
-        const itemEndDate = new Date(item1.end);
-        // const targetDate = new Date(date);
+      const filteredData = items.filter(item1 => {
+        // const itemStartDate = new Date(item1.start);
+        // const itemEndDate = new Date(item1.end);
+        // // const targetDate = new Date(date);
 
-        // console.log(date);
-        // console.log(itemStartDate.getDate());
+        // // console.log(date);
+        // // console.log(itemStartDate.getDate());
 
-        return date >= itemStartDate.getDate() && date <= itemEndDate.getDate();
+        // return date >= itemStartDate.getDate() && date <= itemEndDate.getDate();
+        const itemStartDate = DateTime.fromISO(item1.start);
+        const itemEndDate = DateTime.fromISO(item1.end);
+        const targetDate = DateTime.fromISO(date);
+
+        return (
+          targetDate.toISODate() >= itemStartDate.toISODate() &&
+          targetDate.toISODate() <= itemEndDate.toISODate()
+        );
       });
       console.log(filteredData);
       setCurrDataList(currDataList => [...filteredData]);
     }
   }, []);
 
-  React.useEffect(() => {
-    if (!(Array.isArray(currDataList) && currDataList.length === 0)) {
-      // arr이 빈 배열인 경우 처리할 코드
-      console.log('헤헤..');
-      generateCalendarDots(calendarData);
-    }
-  }, [currDataList]);
+  const pickCurrDate = React.useCallback(
+    time => {
+      if (DateTime.fromISO(currDate).c.month !== time.month) {
+        //setIsCurrMonth(false);
+        const obj = {
+          userId: ui.id,
+          dateString: new Date(time.year, time.month - 1, 15).toISOString(),
+        };
+        // dispatch(getMonthCalendar(obj));
+        // onClickAnotherMonth(obj);
+        //onMonthChange(time);
+      }
+      setCurrDate(time.dateString);
+      console.log(time.month);
+    },
+    [currDate],
+  );
+
+  const onClickAnotherMonth = React.useCallback(obj => {
+    console.log(obj);
+    dispatch(getMonthCalendar(obj));
+  }, []);
 
   React.useEffect(() => {
-    console.log(calendarDots);
-  }, [calendarDots]);
+    console.log('소중하게');
 
-  const pinkCurrDate = time => {
-    setCurrDate(time.dateString);
-    const d = new Date(time.year, time.month, time.day);
-    convertCurrCalendar(time.day, calendarData);
-  };
+    convertCurrCalendar(currDate, _calendarData);
+  }, [currDate]);
 
-  const onMonthChange = time => {
+  const onMonthChange = React.useCallback(time => {
     const y = time.year;
     // month 는 1빼줘야하는듯,,
     const m = time.month - 1;
@@ -161,36 +178,42 @@ const CalendarScreen = ({ui}) => {
       userId: ui.id,
       dateString: new Date(y, m, d).toISOString(),
     };
-    dispatch(getMonthCalendar(obj));
-  };
-
-  const generateCalendarDots = data => {
-    let obj = {};
-    console.log(data);
-    data?.forEach(item => {
-      // let key = item.start;
-      new Date(item.start);
-      const startDate = new Date(item.start);
-      const endDate = new Date(item.end);
-
-      const startDateObj = DateTime.fromJSDate(new Date(startDate));
-      const endDateObj = DateTime.fromJSDate(endDate);
-      const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
-      let currentDate = startDateObj;
-      while (currentDate <= endDateObj) {
-        const formattedDate = currentDate.toFormat('yyyy-MM-dd');
-        obj[formattedDate] = {
-          marked: true,
-          //selected: formattedDate == currDate,
-          selectedColor: '#f29999',
-        };
-        // move to next day
-        currentDate = currentDate.plus({days: 1});
-      }
-    });
     console.log(obj);
-    setCalendarDots(obj);
-  };
+    dispatch(getMonthCalendar(obj));
+  }, []);
+
+  const generateCalendarDots = React.useCallback(
+    data => {
+      let obj = {};
+      console.log(data);
+      _calendarData.forEach(item => {
+        // let key = item.start;
+        new Date(item.start);
+        const startDate = new Date(item.start);
+        const endDate = new Date(item.end);
+
+        const startDateStr =
+          DateTime.fromJSDate(startDate).toFormat('yyyy-MM-dd');
+        const endDateStr = DateTime.fromJSDate(endDate).toFormat('yyyy-MM-dd');
+        //const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
+        let currDate = DateTime.fromJSDate(startDate);
+
+        if (startDateStr === endDateStr) {
+          obj[startDateStr] = {marked: true};
+          return;
+        } else {
+          const n = new Date(endDate - startDate).getDate();
+          for (let i = 0; i < n; i++) {
+            let formattedDate = currDate.toFormat('yyyy-MM-dd');
+            currDate = currDate.plus({days: 1});
+            obj[formattedDate] = {marked: true};
+          }
+        }
+      });
+      setCalendarDots(obj);
+    },
+    [_calendarData],
+  );
 
   return (
     <SafeAreaView
@@ -201,13 +224,12 @@ const CalendarScreen = ({ui}) => {
       }}>
       <Title
         onPress={() => {
-          navigation.navigate('manageCalendar');
+          navigation.navigate('manageCalendar', {ui: ui});
         }}
         title={title}></Title>
 
-      <>
-        <CalendarProvider></CalendarProvider>
-        <Calendar
+      <CalendarProvider date={currDate}>
+        <ExpandableCalendar
           customHeaderTitle={
             <Text
               style={{
@@ -221,37 +243,36 @@ const CalendarScreen = ({ui}) => {
           }
           current={currDate}
           onMonthChange={onMonthChange}
-          onDayPress={pinkCurrDate}
+          onDayPress={pickCurrDate}
           markedDates={calendarDots}
           theme={{
-            selectedDayTextColor: 'blue',
+            selectedDayTextColor: 'white',
+            selectedDayBackgroundColor: '#ff6e6e',
             todayTextColor: '#ff6e6e',
             monthTextColor: 'black',
             arrowColor: '#ff6e6e',
             dotColor: '#ff6e6e',
+            calendarBackground: 'white',
           }}
+          allowShadow={false}
           style={{
-            borderBottomWidth: 1,
-            borderBottomColor: '#e0e0e0',
-          }}
-        />
-        <SafeAreaView style={{flex: 1}}>
-          <FlatList
-            onEndReached={() => console.log('다닿았어')}
-            data={currDataList}
-            renderItem={({item, index}) => (
-              <CalendarDailyItem
-                data={item}
-                index={index}
-                removeCalendar={() => removeCalendar(item.id)}
-                updateCalendar={() => {
-                  setEditItem(item);
-                  setMode('EDIT');
-                  setVisibleModal(true);
-                }}></CalendarDailyItem>
-            )}></FlatList>
-        </SafeAreaView>
-      </>
+            borderBottomWidth: 0.5,
+            borderBottomColor: '#bbb',
+          }}></ExpandableCalendar>
+        <FlatList
+          data={currDataList}
+          renderItem={({item, index}) => (
+            <CalendarDailyItem
+              data={item}
+              index={index}
+              removeCalendar={() => removeCalendar(item.id)}
+              updateCalendar={() => {
+                setEditItem(item);
+                setMode('EDIT');
+                setVisibleModal(true);
+              }}></CalendarDailyItem>
+          )}></FlatList>
+      </CalendarProvider>
 
       <FloatingButton
         onPress={() => {
