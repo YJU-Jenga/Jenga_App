@@ -20,6 +20,7 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
               display: 'flex',
               flexDirection: 'row',
               gap: 5,
+              justifyContent: 'space-between',
             }}>
             <Text
               numberOfLines={1}
@@ -27,33 +28,39 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
               style={{
                 fontSize: 18,
                 fontFamily: 'TheJamsilOTF_Regular',
-                marginVertical: 10,
+                marginVertical: 5,
                 color: 'black',
               }}>
               {data.title}
             </Text>
           </View>
 
-          <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
-            <Icon name="alarm" size={20} color={colors.iconPink} />
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: 5,
+              marginBottom: 5,
+            }}>
+            {/* <Icon name="alarm" size={16} color={colors.iconPink} /> */}
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
               style={{
-                fontSize: 18,
-                color: '#aaa',
+                fontSize: 16,
+                color: '#888',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>
               {startDate}
-              {'  '}
+              {'   ~ '}
             </Text>
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
               style={{
-                fontSize: 18,
-                color: '#aaa',
+                fontSize: 16,
+                color: '#888',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>
@@ -64,16 +71,16 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
             <Icon
               name="comment-processing-outline"
-              size={20}
+              size={18}
               color={colors.iconPink}
             />
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
               style={{
-                fontSize: 20,
+                fontSize: 18,
                 marginEnd: 10,
-                color: '#777',
+                color: '#555',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>
@@ -82,11 +89,11 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
           </View>
 
           <View style={{display: 'flex', flexDirection: 'row', gap: 5}}>
-            <Icon name="map-marker" size={20} color={colors.iconPink} />
+            <Icon name="map-marker" size={18} color={colors.iconPink} />
             <Text
               style={{
-                fontSize: 20,
-                color: '#777',
+                fontSize: 18,
+                color: '#555',
                 fontFamily: 'TheJamsilOTF_Light',
                 marginBottom: 5,
               }}>

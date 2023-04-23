@@ -7,7 +7,7 @@
 //   .then(response => response.json())
 //   .then(data => console.log(data));
 
-export const web_address = 'http://13.125.180.187:5000';
+export const web_address = 'http://13.125.180.187';
 export const back_address = 'http://13.125.180.187:5000';
 export const android_address = 'http://192.168.0.6:5001';
 export const ios_address = 'http://127.0.0.1:5001';

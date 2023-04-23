@@ -25,7 +25,7 @@ import {
 } from '@ant-design/react-native';
 import React, {useEffect, useState} from 'react';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
-import {ActionComponent, RepeatComponent} from './ScheduleDetailScreen';
+import {ActionComponent, RepeatComponent} from './AlarmDetailScreen';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   initEditScheduleState,
@@ -39,7 +39,7 @@ import DeleteButton from '../components/DeleteButton';
 import {Snackbar} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const ScheduleModalScreen = ({route, navigation}) => {
+const AlarmModalScreen = ({route, navigation}) => {
   const [valuehours, setValuehours] = React.useState(new Date());
   const [visibleRepeatModal, setVisibleRepeatModal] = React.useState(false);
   const [visibleSoundsModal, setVisibleSoundsModal] = React.useState(false);
@@ -139,7 +139,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
       await AsyncStorage.setItem('schedules', JSON.stringify(loadedSchedules));
     }
 
-    navigation.navigate('schedule');
+    navigation.navigate('alarm');
   };
 
   const onDelete = async () => {
@@ -150,7 +150,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
     );
     await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
 
-    navigation.navigate('schedule');
+    navigation.navigate('alarm');
   };
 
   const generateId = () => {
@@ -202,7 +202,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
               name="md-caret-back-outline"
               size={30}
               color={'#ff6e6e'}
-              onPress={() => navigation.navigate('schedule')}></Icon>
+              onPress={() => navigation.navigate('alarm')}></Icon>
             <Text
               style={{
                 fontSize: 24,
@@ -224,6 +224,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
           </Flex>
           <WingBlank size="lg">
             <DatePickerView
+              style={{marginBottom: height * 10}}
               itemStyle={{fontFamily: 'TheJamsilOTF_Light'}}
               mode="time"
               value={valuehours}
@@ -246,14 +247,14 @@ const ScheduleModalScreen = ({route, navigation}) => {
                   style={{
                     color: 'black',
                     fontSize: 17,
-                    fontFamily: 'TheJamsilOTF_Light',
+                    fontFamily: 'TheJamsilOTF_Regular',
                   }}>
                   반복
                 </Text>
               </List.Item>
               <List.Item
                 extra={
-                  <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>
+                  <Text style={{fontFamily: 'TheJamsilOTF_Regular'}}>
                     {_currSound?.name}
                   </Text>
                 }
@@ -263,7 +264,7 @@ const ScheduleModalScreen = ({route, navigation}) => {
                 arrow="horizontal">
                 <Text
                   style={{
-                    fontFamily: 'TheJamsilOTF_Light',
+                    fontFamily: 'TheJamsilOTF_Regular',
                     color: 'black',
                     fontSize: 17,
                   }}>
@@ -273,11 +274,13 @@ const ScheduleModalScreen = ({route, navigation}) => {
               <InputItem
                 value={sentence}
                 onChange={v => setSentence(v)}
-                style={{fontFamily: 'TheJamsilOTF_Light'}}
+                style={{
+                  fontFamily: 'TheJamsilOTF_Regular',
+                }}
                 placeholder="아이에게 할 말을 입력하세요">
                 <Text
                   style={{
-                    fontFamily: 'TheJamsilOTF_Light',
+                    fontFamily: 'TheJamsilOTF_Regular',
                     color: 'black',
                     fontSize: 17,
                   }}>
@@ -385,4 +388,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScheduleModalScreen;
+export default AlarmModalScreen;

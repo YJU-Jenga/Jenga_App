@@ -10,6 +10,8 @@ import {
 } from '../utils/redux/calendarSlice';
 import CalendarDailyItem from '../components/Calendar/CalendarDailyItem';
 import EditCalendar from '../components/Calendar/EditCalendar';
+import {WingBlank} from '@ant-design/react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const ManagementCalendar = () => {
   const [orderedCalendar, setOrderedCalendar] = React.useState<
@@ -59,17 +61,19 @@ const ManagementCalendar = () => {
           navigation.goBack();
         }}
         title="Management"></Title>
-      <FlatList
-        data={orderedCalendar}
-        renderItem={({item, index}) => (
-          <CalendarDailyItem
-            data={item}
-            removeCalendar={() => removeCalendar(item)}
-            updateCalendar={() => {
-              setEditItem(item);
-              setVisibleModal(true);
-            }}></CalendarDailyItem>
-        )}></FlatList>
+      <WingBlank size="lg">
+        <FlatList
+          data={orderedCalendar}
+          renderItem={({item, index}) => (
+            <CalendarDailyItem
+              data={item}
+              removeCalendar={() => removeCalendar(item)}
+              updateCalendar={() => {
+                setEditItem(item);
+                setVisibleModal(true);
+              }}></CalendarDailyItem>
+          )}></FlatList>
+      </WingBlank>
       <Modal
         presentationStyle="formSheet"
         animationType="slide"

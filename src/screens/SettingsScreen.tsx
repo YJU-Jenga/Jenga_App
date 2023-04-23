@@ -8,6 +8,7 @@ import {
   Button,
   SafeAreaView,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import Title from '../components/Title';
 import {Flex, List, WingBlank} from '@ant-design/react-native';
@@ -19,6 +20,7 @@ import DefaultButton from '../components/DefaultButton';
 import {getUser, selectUserData} from '../utils/redux/userSlice';
 import Font from 'react-native-vector-icons/AntDesign';
 import {Modal} from 'react-native';
+import {colors} from '../config/globalStyles';
 const Item = List.Item;
 const Brief = Item.Brief;
 function SettingsScreen({navigation}) {
@@ -54,7 +56,7 @@ function SettingsScreen({navigation}) {
       <Title title="Settings"></Title>
       <List renderHeader={'내 정보'}>
         <Item arrow="horizontal">
-          {userData && <Text>{userData?.name}</Text>}
+          {userData && <Text style={{color: 'black'}}>{userData?.name}</Text>}
         </Item>
         <DefaultButton title="로그아웃" onPress={Logout}></DefaultButton>
       </List>
@@ -64,12 +66,26 @@ function SettingsScreen({navigation}) {
             setVisibleModal(true);
           }}
           arrow="horizontal">
-          <Text style={{color: 'black'}}>인형 추가하기</Text>
+          <Text style={{color: 'black', fontFamily: 'TheJamsilOTF_Regular'}}>
+            인형 추가하기
+          </Text>
         </Item>
         <Item>
           <Text>미미</Text>
         </Item>
       </List>
+      <Pressable
+        onPress={() => navigation.navigate('shoppingView')}
+        style={{
+          padding: 20,
+          backgroundColor: '#f29999',
+          display: 'flex',
+          alignItems: 'center',
+          borderRadius: 30,
+          margin: 20,
+        }}>
+        <Text style={{color: 'white', fontSize: 18}}>쇼핑하러가기</Text>
+      </Pressable>
       {/* <List renderHeader={'Setting'}>
         <Item>재녹음</Item>
       </List> */}

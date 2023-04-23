@@ -28,7 +28,7 @@ import {Pressable} from 'react-native';
 import FloatingButton from '../components/FloatingButton';
 import {colors, height} from '../config/globalStyles';
 
-const ScheduleScreen = ({route, navigation}) => {
+const AlarmScreen = ({route, navigation}) => {
   const [scheduleList, setScheduleList] = useState(null);
   const [displayScheduleList, setDisplayScheduleList] = useState([]);
 
@@ -101,10 +101,6 @@ const ScheduleScreen = ({route, navigation}) => {
     //onLoadSchedules();
   }, []);
 
-  const NavigateToCalendar = () => {
-    console.log('헤헤');
-  };
-
   return (
     <Provider locale={enUS}>
       <SafeAreaView
@@ -114,7 +110,7 @@ const ScheduleScreen = ({route, navigation}) => {
           backgroundColor: 'white',
         }}>
         <Title
-          title="Schedule"
+          title="Alarm"
           // onPress={() => navigation.navigate('calendar')}
         ></Title>
 
@@ -127,7 +123,13 @@ const ScheduleScreen = ({route, navigation}) => {
               !scheduleList
             ) ? (
               scheduleList?.map((item, i) => {
-                console.log('scheduleList 맵함수 : ', i, item.isScheduleOn);
+                let repeat = '';
+                const repeatData = item.repeat
+                  .filter(el1 => el1.isChecked)
+                  .map(el2 => {
+                    repeat = repeat.concat(el2.day.slice(0, 1) + ' ');
+                  });
+
                 const date = new Date(item.time);
                 const h =
                   10 > date.getHours()
@@ -149,62 +151,87 @@ const ScheduleScreen = ({route, navigation}) => {
                         color: 'white',
                       },
                     ]}>
-                    <List.Item
-                      extra={
-                        <Pressable onPress={e => onChangeSwitch(item)}>
-                          {item.isScheduleOn === true ? (
-                            <Icon
-                              size={25}
-                              color={colors.iconPink}
-                              name="heart"></Icon>
-                          ) : (
-                            <Icon
-                              size={25}
-                              color={colors.iconPink}
-                              name="heart-o"></Icon>
-                          )}
-                        </Pressable>
-                      }>
-                      <Pressable
-                        onPress={() =>
-                          navigation.navigate('scheduleModal', {
-                            type: 'EDIT',
-                            data: item,
-                          })
+                    <View style={{}}>
+                      <List.Item
+                        style={{}}
+                        extra={
+                          <Pressable onPress={e => onChangeSwitch(item)}>
+                            {item.isScheduleOn === true ? (
+                              <Icon
+                                size={25}
+                                color={colors.iconPink}
+                                name="heart"></Icon>
+                            ) : (
+                              <Icon
+                                size={25}
+                                color={colors.iconPink}
+                                name="heart-o"></Icon>
+                            )}
+                          </Pressable>
                         }>
-                        <WingBlank>
-                          <Flex>
+                        <Pressable
+                          onPress={() =>
+                            navigation.navigate('alarmModal', {
+                              type: 'EDIT',
+                              data: item,
+                            })
+                          }
+                          style={{
+                            paddingVertical: height * 30,
+                            display: 'flex',
+                          }}>
+                          <View
+                            style={{
+                              backgroundColor: 'white',
+                              display: 'flex',
+                              // flexDirection: 'row',
+                            }}>
                             <Text
                               style={{
                                 fontSize: 32,
                                 color: '#444',
                                 fontFamily: 'IMcreSoojinOTF',
-                                paddingTop: height * 20,
                               }}>
                               {h} {`:`} {m}
                             </Text>
-                          </Flex>
-                          {item.repeat.length > 0 && (
-                            <Text
-                              style={{
-                                fontSize: 13,
-                                color: 'black',
-                                marginTop: 5,
-                                fontFamily: 'TheJamsilOTF_Light',
-                                marginBottom: 3,
-                              }}>
-                              {item.sentence}
-                            </Text>
-                          )}
+                            <Flex style={{gap: 5}}>
+                              {(repeat.length > 0 || item.sentence) && (
+                                <Icon
+                                  style={{marginEnd: 2}}
+                                  color={colors.iconPink}
+                                  name="quote-left"></Icon>
+                              )}
 
-                          {/* {item.soundFile.uri && (
-                            <Text style={{fontSize: 12, color: 'gray'}}>
-                              {item.soundFile.name}
-                            </Text>
-                          )} */}
-                        </WingBlank>
-                      </Pressable>
-                    </List.Item>
+                              {repeat.length > 0 && (
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#333',
+                                    marginTop: 5,
+                                    fontFamily: 'TheJamsilOTF_Regular',
+                                    marginBottom: 3,
+                                  }}>
+                                  {repeat}
+                                  {'  '}
+                                </Text>
+                              )}
+                              {item.sentence && (
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#333',
+                                    marginTop: 5,
+                                    fontFamily: 'TheJamsilOTF_Regular',
+                                    marginBottom: 3,
+                                  }}>
+                                  {item.sentence}
+                                </Text>
+                              )}
+                            </Flex>
+                          </View>
+                        </Pressable>
+                      </List.Item>
+                    </View>
                   </SwipeAction>
                 );
               })
@@ -230,7 +257,7 @@ const ScheduleScreen = ({route, navigation}) => {
         </WingBlank>
         <FloatingButton
           onPress={() => {
-            navigation.navigate('scheduleModal', {type: 'CREATE'});
+            navigation.navigate('alarmModal', {type: 'CREATE'});
             //setVisibleModal(true);
           }}></FloatingButton>
       </SafeAreaView>
@@ -269,4 +296,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ScheduleScreen;
+export default AlarmScreen;

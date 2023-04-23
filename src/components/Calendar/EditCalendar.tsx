@@ -23,7 +23,7 @@ import {
 } from '@ant-design/react-native';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {height} from '../../config/globalStyles';
+import {colors, height} from '../../config/globalStyles';
 
 import {useSelector, useDispatch} from 'react-redux';
 import {useState} from 'react';
@@ -32,11 +32,13 @@ import DatePickerTitle from './DatePickerTitle';
 import {DateTime} from 'luxon';
 import {
   createCalendar,
+  deleteCalendar,
   initCalendarErrorMessage,
   selectCalendarErrorMsg,
   updateCalendar,
 } from '../../utils/redux/calendarSlice';
 import {Snackbar} from 'react-native-paper';
+import DeleteButton from '../DeleteButton';
 const EditCalendar = ({editItem, ui, onClose}) => {
   const [calendarForm, setCalendarForm] = useState<ICalendarForm>({
     id: editItem.id,
@@ -158,7 +160,6 @@ const EditCalendar = ({editItem, ui, onClose}) => {
       <View
         style={{
           flex: 1,
-          paddingTop: 12,
           backgroundColor: 'white',
           width: '100%',
         }}>
@@ -201,15 +202,18 @@ const EditCalendar = ({editItem, ui, onClose}) => {
           }}>
           <WingBlank>
             <View style={{paddingStart: 15, marginBottom: height * 15}}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: 'black',
-                  fontFamily: 'TheJamsilOTF_Regular',
-                  paddingVertical: 10,
-                }}>
-                일정 정보
-              </Text>
+              <Flex style={{gap: 15, marginBottom: height * 10}}>
+                <Icon name="heart" size={18} color={colors.iconPink} />
+                <Text
+                  style={{
+                    fontSize: 24,
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    paddingVertical: 10,
+                  }}>
+                  일정 정보
+                </Text>
+              </Flex>
               <TextInput
                 onChangeText={e => {
                   setCalendarForm({...calendarForm, title: e});
@@ -236,16 +240,21 @@ const EditCalendar = ({editItem, ui, onClose}) => {
                 placeholder="장소"></TextInput>
             </View>
 
-            <Flex justify="between" style={{marginVertical: height * 10}}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: 'black',
-                  fontFamily: 'TheJamsilOTF_Regular',
-                  marginStart: 15,
-                }}>
-                하루종일
-              </Text>
+            <Flex
+              justify="between"
+              style={{marginVertical: height * 10, paddingStart: 15}}>
+              <Flex style={{}}>
+                <Icon name="heart" size={18} color={colors.iconPink} />
+                <Text
+                  style={{
+                    fontSize: 24,
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    marginStart: 15,
+                  }}>
+                  하루종일
+                </Text>
+              </Flex>
               <Switch
                 onChange={() => {
                   setIsAllDay(!isAllDay);
@@ -325,6 +334,12 @@ const EditCalendar = ({editItem, ui, onClose}) => {
                 <Text>버튼클릭</Text>
               </Pressable>
             </Flex> */}
+            <DeleteButton
+              onPress={() =>
+                dispatch(deleteCalendar(editItem.id))
+                  .unwrap()
+                  .then(() => onClose())
+              }></DeleteButton>
           </WingBlank>
         </ScrollView>
       </View>
@@ -347,7 +362,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'TheJamsilOTF_Light',
 
-    marginVertical: 10,
+    marginBottom: 10,
   },
 });
 

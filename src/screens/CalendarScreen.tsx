@@ -237,6 +237,7 @@ const CalendarScreen = ({ui}) => {
                 fontSize: 20,
                 fontFamily: 'TheJamsilOTF_Regular',
                 marginVertical: 10,
+                color: 'black',
               }}>
               {currDate}
             </Text>

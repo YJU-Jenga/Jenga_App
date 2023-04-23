@@ -16,10 +16,15 @@ const DefaultButton = ({onPress, title, type}) => {
         break;
     }
   }, []);
-
   return (
     <TouchableOpacity style={{padding: 15}} onPress={onPress}>
-      <Text style={{textAlign: 'center', color: color, fontSize: 18}}>
+      <Text
+        style={{
+          textAlign: 'center',
+          color: color,
+          fontSize: 18,
+          fontFamily: 'TheJamsilOTF_Light',
+        }}>
         {title}
       </Text>
     </TouchableOpacity>

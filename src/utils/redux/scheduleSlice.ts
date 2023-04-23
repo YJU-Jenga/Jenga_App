@@ -86,35 +86,7 @@ export const scheduleSlice = createSlice({
           !state.repeatData[findDay].isChecked;
       }
     },
-    // deleteScheduleRepeatInfo: (state, action) {
-
-    // }
   },
-
-  //   extraReducers: builder => {
-  //     builder
-  //       // 통신 중
-  //       .addCase(getUser.pending, state => {
-  //         state.error = null;
-  //         state.loading = true;
-  //         state.errorMessage = '';
-  //       })
-  //       // 통신 성공
-  //       .addCase(getUser.fulfilled, (state, {payload}) => {
-  //         console.log('payload : ', payload);
-  //         state.error = null;
-  //         state.loading = false;
-  //         state.userData = payload;
-  //         state.msg = 'SUCCESS_GET_USER';
-  //         state.errorMessage = '';
-  //       })
-  //       // 통신 에러
-  //       .addCase(getUser.rejected, (state, {payload}) => {
-  //         state.loading = false;
-  //         state.msg = 'FAILED_GET_USER';
-  //         state.errorMessage = payload?.errorMessage;
-  //       });
-  //   },
 });
 
 // // 리듀서 액션

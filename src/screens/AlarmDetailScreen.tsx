@@ -45,15 +45,20 @@ export const RepeatComponent = ({index}: {index: any}) => {
       {/* <Text>{_currRepeat}</Text> */}
       {_currRepeat && (
         <List.Item
+          onPress={() => {
+            setIsChecked(!isChecked);
+            dispatch(createScheduleRepeatInfo({day, isChecked}));
+          }}
           thumb={
             <Checkbox
               checked={isChecked}
-              onChange={() => {
-                setIsChecked(!isChecked);
-                dispatch(createScheduleRepeatInfo({day, isChecked}));
-              }}></Checkbox>
+              // onChange={() => {
+              //   setIsChecked(!isChecked);
+              //   dispatch(createScheduleRepeatInfo({day, isChecked}));
+              // }}
+            ></Checkbox>
           }>
-          <Text style={{fontFamily: 'TheJamsilOTF_Light', color: 'black'}}>
+          <Text style={{fontFamily: 'TheJamsilOTF_Regular', color: 'black'}}>
             {day}마다 반복
           </Text>
         </List.Item>

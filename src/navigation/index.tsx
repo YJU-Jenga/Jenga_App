@@ -13,8 +13,8 @@ import {useDispatch} from 'react-redux';
 
 // Screens
 import LoginScreen from '../screens/LoginScreen';
-import ScheduleScreen from '../screens/ScheduleScreen';
-import ScheduleModalScreen from '../screens/ScheduleModalScreen';
+import AlarmScreen from '../screens/AlarmScreen';
+import AlarmModalScreen from '../screens/AlarmModalScreen';
 import CalendarScreen from '../screens/CalendarScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
@@ -77,14 +77,14 @@ const ScheduleNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="schedule"
+        name="alarm"
         options={{headerShown: false}}
-        component={ScheduleScreen}
+        component={AlarmScreen}
       />
       <Stack.Screen
-        name="scheduleModal"
+        name="alarmModal"
         options={{headerShown: false, presentation: 'modal'}}
-        component={ScheduleModalScreen}></Stack.Screen>
+        component={AlarmModalScreen}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -141,6 +141,7 @@ export const AppNavigator = () => {
       <Tab.Navigator
         // initialRouteName="책과음악"
         screenOptions={({route}) => ({
+          tabBarShowLabel: false,
           tabBarHideOnKeyboard: true,
           tabBarActiveTintColor: '#ff6e6e',
           tabBarInactiveTintColor: '#f5abab',
@@ -151,7 +152,7 @@ export const AppNavigator = () => {
               case '책과음악':
                 iconName = 'folder-music';
                 break;
-              case '스케쥴':
+              case '알람':
                 iconName = 'clock';
                 break;
               case '녹음':
@@ -173,7 +174,7 @@ export const AppNavigator = () => {
         })}>
         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
         <Tab.Screen
-          name="스케쥴"
+          name="알람"
           component={ScheduleNavigator}
           options={{headerShown: false}}
         />

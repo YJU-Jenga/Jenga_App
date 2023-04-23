@@ -24,7 +24,7 @@ import {
 } from '@ant-design/react-native';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {height} from '../../config/globalStyles';
+import {colors, height} from '../../config/globalStyles';
 import TextAreaItem from '@ant-design/react-native/lib/textarea-item';
 import {useSelector, useDispatch} from 'react-redux';
 import {selectUserData} from '../../utils/redux/userSlice';
@@ -255,7 +255,6 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
       <View
         style={{
           flex: 1,
-          paddingTop: 12,
           backgroundColor: 'white',
           width: '100%',
         }}>
@@ -298,15 +297,19 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
           }}>
           <WingBlank>
             <View style={{paddingStart: 15, marginBottom: height * 15}}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: 'black',
-                  fontFamily: 'TheJamsilOTF_Regular',
-                  paddingVertical: 10,
-                }}>
-                일정 정보
-              </Text>
+              <Flex style={{gap: 15, marginBottom: height * 10}}>
+                <Icon name="heart" size={18} color={colors.iconPink} />
+                <Text
+                  style={{
+                    fontSize: 24,
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    paddingVertical: 10,
+                  }}>
+                  일정 정보
+                </Text>
+              </Flex>
+
               <TextInput
                 onChangeText={e => {
                   setCalendarForm({...calendarForm, title: e});
@@ -332,16 +335,22 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 style={styles.inputStyle}
                 placeholder="장소"></TextInput>
             </View>
-            <Flex justify="between" style={{marginVertical: height * 10}}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  color: 'black',
-                  fontFamily: 'TheJamsilOTF_Regular',
-                  marginStart: 15,
-                }}>
-                하루종일
-              </Text>
+            <Flex
+              justify="between"
+              style={{marginVertical: height * 10, paddingStart: 15}}>
+              <Flex style={{}}>
+                <Icon name="heart" size={18} color={colors.iconPink} />
+                <Text
+                  style={{
+                    fontSize: 24,
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    marginStart: 15,
+                  }}>
+                  하루종일
+                </Text>
+              </Flex>
+
               <Switch
                 onChange={() => {
                   setIsAllDay(!isAllDay);
@@ -443,8 +452,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 20,
     fontFamily: 'TheJamsilOTF_Light',
-
-    marginVertical: 10,
+    marginBottom: 10,
   },
 });
 

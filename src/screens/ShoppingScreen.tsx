@@ -14,10 +14,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import WebView from 'react-native-webview';
 import {web_address} from '../config/address';
-let SERVER_URL = 'http://127.0.0.1:3000';
-if (Platform.OS === 'android') {
-  SERVER_URL = 'http://10.0.2.2:3000';
-}
 
 const ShoppingScreen = () => {
   /** webview 로딩 완료시 */
