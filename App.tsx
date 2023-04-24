@@ -31,8 +31,8 @@ const getToken = async () => {
             withCredentials: true,
           },
         )
-        .then(res => {
-          AsyncStorage.setItem('access-token', res.data.access_token);
+        .then(async res => {
+          await AsyncStorage.setItem('access-token', res.data.access_token);
           // console.log('REFRESH TOKEN: ', JSON.stringify(jwt_decode(token)));
           return token;
         })
@@ -110,7 +110,7 @@ export default function App() {
         await Font.loadAsync({
           TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
         });
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {

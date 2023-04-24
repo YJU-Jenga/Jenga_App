@@ -65,8 +65,8 @@ export const registerAccount = createAsyncThunk<
     const {data} = await axios.post(`${SERVER_URL}/auth/local/signup`, obj, {
       withCredentials: true,
     });
-    AsyncStorage.setItem('refresh-token', data.refresh_token);
-    AsyncStorage.setItem('access-token', data.access_token);
+    await AsyncStorage.setItem('refresh-token', data.refresh_token);
+    await AsyncStorage.setItem('access-token', data.access_token);
     return data;
   } catch (e) {
     console.error(e);
@@ -94,11 +94,10 @@ export const loginAccount = createAsyncThunk<
       },
     );
     console.log(data);
-    AsyncStorage.setItem('refresh-token', data.refresh_token);
-    AsyncStorage.setItem('access-token', data.access_token);
+    await AsyncStorage.setItem('refresh-token', data.refresh_token);
+    await AsyncStorage.setItem('access-token', data.access_token);
     return data;
   } catch (e) {
-    console.error(e);
     return thunkAPI.rejectWithValue({
       errorMessage: e.response.data.message,
     });
@@ -131,11 +130,11 @@ export const refreshToken = createAsyncThunk<
         return res.json();
         //AsyncStorage.multiRemove(['access-token', 'refresh-token']);
       })
-      .then(json => {
+      .then(async json => {
         console.log(json);
         if (json && json.refresh_token && json.access_token) {
-          AsyncStorage.setItem('refresh-token', json.refresh_token);
-          AsyncStorage.setItem('access-token', json.access_token);
+          await AsyncStorage.setItem('refresh-token', json.refresh_token);
+          await AsyncStorage.setItem('access-token', json.access_token);
         }
       });
     // console.log(data);
@@ -163,8 +162,8 @@ export const logout = createAsyncThunk<
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       credentials: 'include',
-    }).then(() => {
-      AsyncStorage.multiRemove(['access-token', 'refresh-token']);
+    }).then(async () => {
+      await AsyncStorage.multiRemove(['access-token', 'refresh-token']);
     });
   } catch (e) {
     // rejectWithValue를 사용하여 에러 핸들링이 가능하다
