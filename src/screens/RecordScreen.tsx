@@ -490,8 +490,14 @@ const RecordScreen = ({navigation}) => {
               setPromptVisible(false);
             }}
             onSubmit={text => {
-              setPromptVisible(false);
-              saveRecord(text);
+              if (text.length == 0) {
+                setPromptVisible(false);
+                saveRecord('무제');
+                return;
+              } else {
+                setPromptVisible(false);
+                saveRecord(text);
+              }
             }}
           />
         </SafeAreaView>
