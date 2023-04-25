@@ -191,6 +191,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
         userId: ui.id,
         start: startDate.toISOString(),
         end: endDate.toISOString(),
+        //utcOffset: new Date().getTimezoneOffset()*-1,
       };
 
       dispatch(createCalendar(data))

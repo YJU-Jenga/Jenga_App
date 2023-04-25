@@ -17,6 +17,7 @@ interface CalendarState {
   msg: string;
   loading: boolean;
   calendarData: object;
+  calendarDateData: object;
   errorMessage: string;
 }
 
@@ -25,6 +26,7 @@ const initialState: CalendarState = {
   msg: '',
   loading: false,
   calendarData: {},
+  calendarDateData: {},
   errorMessage: '',
 };
 
@@ -41,13 +43,18 @@ export const createCalendar = createAsyncThunk<
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1; // 클라이언트의 UTC offset
+    const headers = {'utc-offset': clientUtcOffset};
+
     const {data} = await axios.post(
       `${SERVER_URL}/calendar/create`,
       calendarData,
       {
         headers: {
           authorization: 'Bearer ' + accessToken,
+          'utc-offset': clientUtcOffset,
         },
+
         withCredentials: true,
       },
     );
@@ -69,10 +76,14 @@ export const getAllCalendar = createAsyncThunk<
   try {
     console.log(userId);
     const accessToken = await AsyncStorage.getItem('access-token');
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1;
+    const clientDate = new Date().toUTCString();
 
     const {data} = await axios.post(`${SERVER_URL}/calendar/all`, userId, {
       headers: {
         authorization: 'Bearer ' + accessToken,
+        'utc-offset': clientUtcOffset,
+        date: clientDate,
       },
       withCredentials: true,
     });
@@ -93,6 +104,8 @@ export const getMonthCalendar = createAsyncThunk<
   console.log('이게 정보임 : ', info);
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1; // 클라이언트의 UTC offset
+    const clientDate = new Date().toUTCString();
 
     const {data} = await axios.post(`${SERVER_URL}/calendar/month`, info, {
       headers: {
@@ -116,6 +129,8 @@ export const getWeekCalendar = createAsyncThunk<
 >('calendar/getWeekCalendar', async (userId, thunkAPI) => {
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1; // 클라이언트의 UTC offset
+    const clientDate = new Date().toUTCString();
 
     const {data} = await axios.post(`${SERVER_URL}/calendar/week`, userId, {
       headers: {
@@ -138,7 +153,10 @@ export const getDateCalendar = createAsyncThunk<
   {rejectValue: IError}
 >('calendar/getDateCalendar', async (userId, thunkAPI) => {
   try {
+    console.log('usreid는 ', userId);
     const accessToken = await AsyncStorage.getItem('access-token');
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1; // 클라이언트의 UTC offset
+    const clientDate = new Date().toUTCString();
 
     const {data} = await axios.post(`${SERVER_URL}/calendar/date`, userId, {
       headers: {
@@ -146,6 +164,8 @@ export const getDateCalendar = createAsyncThunk<
       },
       withCredentials: true,
     });
+
+    console.log('데이트 캘린더 \n\n\n', data);
 
     return data;
   } catch (e) {
@@ -171,6 +191,7 @@ export const updateCalendar = createAsyncThunk<
     const calendarId = info.id;
     console.log(info);
     const accessToken = await AsyncStorage.getItem('access-token');
+    const clientUtcOffset = new Date().getTimezoneOffset() * -1; // 클라이언트의 UTC offset
 
     const {data} = await axios.patch(
       `${SERVER_URL}/calendar/update_calendar/${info.id}`,
@@ -178,6 +199,7 @@ export const updateCalendar = createAsyncThunk<
       {
         headers: {
           authorization: 'Bearer ' + accessToken,
+          'utc-offset': clientUtcOffset,
         },
         withCredentials: true,
       },
@@ -335,6 +357,27 @@ export const calendarSlice = createSlice({
         state.loading = false;
         state.msg = 'FAILED_GET_MONTH_CALENDAR';
         state.errorMessage = payload?.errorMessage;
+      })
+
+      // Date
+      .addCase(getDateCalendar.pending, state => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      // 통신 성공
+      .addCase(getDateCalendar.fulfilled, (state, {payload}) => {
+        console.log('통신 성공 : ', payload);
+        state.loading = false;
+        state.calendarDateData = payload;
+        state.msg = 'SUCCESS_GET_DATE_CALENDAR';
+        state.errorMessage = '';
+      })
+      // 통신 에러
+      .addCase(getDateCalendar.rejected, (state, {payload}) => {
+        console.log('통신 실패 : ', payload);
+        state.loading = false;
+        state.msg = 'FAILED_GET_DATE_CALENDAR';
+        state.errorMessage = payload?.errorMessage;
       });
   },
 });
@@ -347,5 +390,7 @@ export const selectCalendarErrorMsg = (state: RootState) =>
   state.calendar.errorMessage;
 export const selectCalendarData = (state: RootState) =>
   state.calendar.calendarData;
+export const selectCalendarDateData = (state: RootState) =>
+  state.calendar.calendarDateData;
 
 export default calendarSlice.reducer;

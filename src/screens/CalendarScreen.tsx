@@ -25,9 +25,11 @@ import {DateTime} from 'luxon';
 import WriteCalendar from '../components/Calendar/WriteCalendar';
 import {
   deleteCalendar,
+  getDateCalendar,
   getMonthCalendar,
   initCalendarErrorMessage,
   selectCalendarData,
+  selectCalendarDateData,
   selectCalendarErrorMsg,
   updateCalendar,
 } from '../utils/redux/calendarSlice';
@@ -56,6 +58,7 @@ const CalendarScreen = ({ui}) => {
   const [errorMessage, setErrorMessage] = React.useState('');
   const _calendarData = useSelector(selectCalendarData);
   const [calendarData, setCalendarData] = React.useState();
+  const _calendarDateData = useSelector(selectCalendarDateData);
   const [isCalendarMode, setIsCalendarMode] = React.useState(true);
   const [editItem, setEditItem] = React.useState<object>();
 
@@ -92,8 +95,8 @@ const CalendarScreen = ({ui}) => {
   React.useEffect(() => {
     //setCalendarData(_calendarData);
     //convertCurrCalendar(DateTime.local().c.day, _calendarData);
-    console.log(_calendarData);
-    convertCurrCalendar(DateTime.fromISO(currDate), _calendarData);
+    executeGetDateCalendar();
+    //convertCurrCalendar(DateTime.fromISO(currDate), _calendarData);
     if (Object.keys(_calendarData).length !== 0)
       generateCalendarDots(_calendarData);
   }, [_calendarData]);
@@ -101,6 +104,11 @@ const CalendarScreen = ({ui}) => {
   const executeGetMonthCalendar = () => {
     const obj = {userId: ui.id, dateString: new Date(currDate).toISOString()};
     dispatch(getMonthCalendar(obj));
+  };
+
+  const executeGetDateCalendar = () => {
+    const obj = {userId: ui.id, dateString: new Date(currDate).toISOString()};
+    dispatch(getDateCalendar(obj));
   };
 
   const removeCalendar = React.useCallback(id => {
@@ -113,32 +121,24 @@ const CalendarScreen = ({ui}) => {
       .then(() => executeGetMonthCalendar());
   }, []);
 
-  const convertCurrCalendar = React.useCallback((date: object, items) => {
-    if (Object.entries(items).length === 0 || items.length === 0) {
-      setCurrDataList([]);
-    } else {
-      const filteredData = items.filter(item1 => {
-        // const itemStartDate = new Date(item1.start);
-        // const itemEndDate = new Date(item1.end);
-        // // const targetDate = new Date(date);
+  // const convertCurrCalendar = React.useCallback((date: object, items) => {
+  //   if (Object.entries(items).length === 0 || items.length === 0) {
+  //     setCurrDataList([]);
+  //   } else {
+  //     const filteredData = items.filter(item1 => {
+  //       const itemStartDate = DateTime.fromISO(item1.start);
+  //       const itemEndDate = DateTime.fromISO(item1.end);
+  //       const targetDate = DateTime.fromISO(date);
 
-        // // console.log(date);
-        // // console.log(itemStartDate.getDate());
-
-        // return date >= itemStartDate.getDate() && date <= itemEndDate.getDate();
-        const itemStartDate = DateTime.fromISO(item1.start);
-        const itemEndDate = DateTime.fromISO(item1.end);
-        const targetDate = DateTime.fromISO(date);
-
-        return (
-          targetDate.toISODate() >= itemStartDate.toISODate() &&
-          targetDate.toISODate() <= itemEndDate.toISODate()
-        );
-      });
-      console.log(filteredData);
-      setCurrDataList(currDataList => [...filteredData]);
-    }
-  }, []);
+  //       return (
+  //         targetDate.toISODate() >= itemStartDate.toISODate() &&
+  //         targetDate.toISODate() <= itemEndDate.toISODate()
+  //       );
+  //     });
+  //     console.log(filteredData);
+  //     setCurrDataList(currDataList => [...filteredData]);
+  //   }
+  // }, []);
 
   const pickCurrDate = React.useCallback(
     time => {
@@ -153,20 +153,15 @@ const CalendarScreen = ({ui}) => {
         //onMonthChange(time);
       }
       setCurrDate(time.dateString);
-      console.log(time.month);
     },
     [currDate],
   );
 
-  const onClickAnotherMonth = React.useCallback(obj => {
-    console.log(obj);
-    dispatch(getMonthCalendar(obj));
-  }, []);
-
   React.useEffect(() => {
     console.log('소중하게');
+    executeGetDateCalendar();
 
-    convertCurrCalendar(currDate, _calendarData);
+    //convertCurrCalendar(currDate, _calendarData);
   }, [currDate]);
 
   const onMonthChange = React.useCallback(time => {
@@ -261,7 +256,8 @@ const CalendarScreen = ({ui}) => {
             borderBottomColor: '#bbb',
           }}></ExpandableCalendar>
         <FlatList
-          data={currDataList}
+          //data={currDataList}
+          data={_calendarDateData}
           renderItem={({item, index}) => (
             <CalendarDailyItem
               data={item}
