@@ -52,7 +52,7 @@ export const createCalendar = createAsyncThunk<
       {
         headers: {
           authorization: 'Bearer ' + accessToken,
-          'utc-offset': clientUtcOffset,
+          'utc-offset': new Date().getTimezoneOffset() * -1,
         },
 
         withCredentials: true,
@@ -83,7 +83,6 @@ export const getAllCalendar = createAsyncThunk<
       headers: {
         authorization: 'Bearer ' + accessToken,
         'utc-offset': clientUtcOffset,
-        date: clientDate,
       },
       withCredentials: true,
     });
@@ -187,6 +186,7 @@ export const updateCalendar = createAsyncThunk<
       end: info.end,
       location: info.location,
       description: info.description,
+      utcOffset: info.utcOffset,
     };
     const calendarId = info.id;
     console.log(info);
@@ -324,15 +324,14 @@ export const calendarSlice = createSlice({
       })
       // 통신 성공
       .addCase(getAllCalendar.fulfilled, (state, {payload}) => {
-        console.log('통신 성공 : ', payload);
         state.loading = false;
-        // state.userData = payload;
+        state.calendarData = payload;
         state.msg = 'SUCCESS_GET_ALL_CALENDAR';
         state.errorMessage = '';
       })
       // 통신 에러
       .addCase(getAllCalendar.rejected, (state, {payload}) => {
-        console.log('통신 실패 : ', payload);
+        console.log('통신 실패 :ㅠㅠ ', payload);
         state.loading = false;
         state.msg = 'FAILED_GET_ALL_CALENDAR';
         state.errorMessage = payload?.errorMessage;
@@ -345,7 +344,6 @@ export const calendarSlice = createSlice({
       })
       // 통신 성공
       .addCase(getMonthCalendar.fulfilled, (state, {payload}) => {
-        console.log('통신 성공 : ', payload);
         state.loading = false;
         state.calendarData = payload;
         state.msg = 'SUCCESS_GET_MONTH_CALENDAR';
@@ -366,7 +364,6 @@ export const calendarSlice = createSlice({
       })
       // 통신 성공
       .addCase(getDateCalendar.fulfilled, (state, {payload}) => {
-        console.log('통신 성공 : ', payload);
         state.loading = false;
         state.calendarDateData = payload;
         state.msg = 'SUCCESS_GET_DATE_CALENDAR';

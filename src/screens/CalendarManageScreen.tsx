@@ -41,7 +41,8 @@ const ManagementCalendar = () => {
   }, [_calendarData]);
 
   const getAllCalendarData = () => {
-    dispatch(getAllCalendar({userId: route.params?.ui.userId}));
+    console.log(route.params);
+    dispatch(getAllCalendar({userId: route.params?.ui.id}));
   };
 
   const removeCalendar = React.useCallback((data: object) => {
@@ -63,6 +64,7 @@ const ManagementCalendar = () => {
         title="Management"></Title>
       <WingBlank size="lg">
         <FlatList
+          contentContainerStyle={{paddingBottom: '30%'}}
           data={orderedCalendar}
           renderItem={({item, index}) => (
             <CalendarDailyItem

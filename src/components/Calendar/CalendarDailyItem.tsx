@@ -5,10 +5,45 @@ import {Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../config/globalStyles';
 import {DateTime} from 'luxon';
-
 const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
-  const startDate = DateTime.fromISO(data.start).toFormat('MM/dd HH:mm');
-  const endDate = DateTime.fromISO(data.end).toFormat('MM/dd HH:mm');
+  const hour = new Date(data.strat).getHours();
+
+  const generateDate = (date: Date) => {
+    const mm = (date?.getUTCMonth() + 1).toString().padStart(2, '0');
+    const dd =
+      date?.getUTCDate() <= 10
+        ? '0' + date?.getUTCDate()
+        : date?.getUTCDate().toString();
+    return `${mm}/${dd}`;
+  };
+
+  const generateTime = (date: Date) => {
+    const h =
+      date.getUTCHours() < 10
+        ? '0' + date.getUTCHours()
+        : date.getUTCHours().toString();
+    const m =
+      date.getUTCMinutes() < 10
+        ? '0' + date.getUTCMinutes()
+        : date.getUTCMinutes();
+    return `${h}:${m}`;
+  };
+
+  const utcOffset = new Date().getTimezoneOffset() * -1;
+  // const start = new Date(
+  //   new Date(data.start).getTime() - utcOffset * 60000,
+  // ).toString();
+  // const end = new Date(
+  //   new Date(data.end).getTime() - parseInt(utcOffset) * 60000,
+  // ).toString();
+
+  const startDate =
+    generateDate(new Date(data.start)) +
+    ' ' +
+    generateTime(new Date(data.start));
+
+  const endDate =
+    generateDate(new Date(data.end)) + ' ' + generateTime(new Date(data.end));
 
   useEffect(() => {}, [data]);
   return (
@@ -108,15 +143,6 @@ const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
           color={colors.red}
         />
       </Flex>
-
-      {/* <Text
-                  onPress={() => {
-                    setVisibleModal(true);
-                    setMode('EDIT');
-                    setEditItem(item);
-                  }}>
-                  수정
-                </Text> */}
     </List.Item>
   );
 };

@@ -119,8 +119,9 @@ const AlarmScreen = ({route, navigation}) => {
             contentContainerStyle={{paddingBottom: '50%'}}
             style={{minHeight: '100%'}}>
             {!(
-              (Array.isArray(scheduleList) && scheduleList.length === 0) ||
-              !scheduleList
+              (Array.isArray(scheduleList) && scheduleList.length === 0)
+              // ||
+              // !scheduleList
             ) ? (
               scheduleList?.map((item, i) => {
                 let repeat = '';

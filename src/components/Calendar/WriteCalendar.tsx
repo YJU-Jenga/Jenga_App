@@ -50,16 +50,13 @@ interface ICalendarForm {
 }
 
 const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
+  const utcOffset = new Date().getTimezoneOffset() * -1;
   const [calendarForm, setCalendarForm] = useState<ICalendarForm>({
     userId: ui.id,
     title: '',
     // start: new Date(currDate).toISOString(),
-    start: DateTime.fromISO(new Date(currDate).toISOString(), {
-      zone: 'Asia/Seoul',
-    }),
-    end: DateTime.fromISO(new Date(currDate).toISOString(), {
-      zone: 'Asia/Seoul',
-    }),
+    start: new Date(new Date(currDate).getTime() - utcOffset * 60000),
+    end: new Date(new Date(currDate).getTime() - utcOffset * 60000),
     location: '',
     description: '',
   });
@@ -74,6 +71,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
     date: new Date(currDate),
     time: {h: 0, m: 0},
   });
+
   const [isAllDay, setIsAllDay] = useState<boolean>(false);
   const [visibleStartDate, setVisibleStartDate] = useState<boolean>(false);
   const [visibleStartTime, setVisibleStartTime] = useState<boolean>(false);
@@ -89,30 +87,6 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
   const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = React.useState('');
 
-  useEffect(() => {
-    if (mode === 'EDIT') {
-      console.log(editItem.title);
-      setCalendarForm(prevCalendarForm => ({
-        ...prevCalendarForm,
-        userId: editItem.userId,
-        title: editItem.title,
-        start: editItem.start,
-        end: editItem.end,
-        location: editItem.location,
-        description: editItem.description,
-      }));
-
-      setStartInfo({date: new Date(editItem.start), time: {h: 0, m: 0}});
-      setEndInfo({date: new Date(editItem.end), time: {h: 0, m: 0}});
-
-      console.log('끝');
-    }
-  }, [mode]);
-
-  useEffect(() => {
-    console.log('호출끝', calendarForm);
-  }, [setCalendarForm]);
-
   React.useEffect(() => {
     setErrorMessage(_errorMessage);
     dispatch(initCalendarErrorMessage());
@@ -124,6 +98,30 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
       setErrorMessage('');
     }
   }, [errorMessage]);
+
+  useEffect(() => {
+    const date = new Date(startInfo.date);
+    const h = startInfo.time.h;
+    const m = startInfo.time.m;
+    date.setUTCHours(h);
+    date.setUTCMinutes(m);
+    setCalendarForm({
+      ...calendarForm,
+      start: new Date(new Date(date).getTime() - utcOffset * 60000),
+    });
+  }, [startInfo]);
+
+  useEffect(() => {
+    const date = new Date(endInfo.date);
+    const h = endInfo.time.h;
+    const m = endInfo.time.m;
+    date.setUTCHours(h);
+    date.setUTCMinutes(m);
+    setCalendarForm({
+      ...calendarForm,
+      end: new Date(new Date(date).getTime() - utcOffset * 60000),
+    });
+  }, [endInfo]);
 
   /**
    * 시작, 종료 캘린더 component를 visible해줌. 보이기를 원하는 것은 !state, 나머지는 false
@@ -138,10 +136,6 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
     setVisibleEndDate(ed);
     setVisibleEndTime(et);
   };
-
-  useEffect(() => {
-    console.log('캘린더폼 렌더링 ', calendarForm);
-  }, [calendarForm]);
 
   const onSubmitCalendarForm = () => {
     if (calendarForm.title === '') {
@@ -162,94 +156,57 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
       return;
     }
     // isAllDay 체크 ->
-    if (endInfo.date >= startInfo.date) {
-      let startDate;
-      let endDate;
+    if (calendarForm.start < calendarForm.end) {
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      let startDate = startInfo.date;
+      let endDate = endInfo.date;
+      let startTime = startInfo.time.h;
+      let endTime = startInfo.time.m;
       if (isAllDay) {
         console.log(calendarForm.start);
         startDate = startInfo.date;
-        startDate.setHours(0, 0, 0, 0);
+        startDate.setUTCHours(0, 0, 0, 0);
         endDate = endInfo.date;
-        endDate.setHours(23, 59, 59, 999);
+        endDate.setUTCHours(23, 59, 59, 999);
       } else {
-        startDate = startInfo.date;
-        console.log(startInfo);
-        console.log(endInfo);
-        //console.log(calendarForm.start);
-        startDate.setHours(startInfo.time.h, startInfo.time.m, 0, 0);
-        endDate = endInfo.date;
-        endDate.setHours(endInfo.time.h, endInfo.time.m, 0, 0);
-        if (startDate >= endDate) {
-          setSnackbarContent('종료 시간을 늦춰주세요');
-          setVisibleSnackbar(true);
-          return;
-        }
+        startDate = DateTime.fromJSDate(startInfo.date, {zone: timeZone}).set({
+          hours: startInfo.time.h,
+          minutes: startInfo.time.m,
+        });
+
+        endDate = DateTime.fromJSDate(endInfo.date, {zone: timeZone}).set({
+          hours: endInfo.time.h,
+          minutes: endInfo.time.m,
+        });
+
+        // console.log('캘린더 end');
+        // startDate = startInfo.date;
+        // endDate = endInfo.date;
+        // endDate.setUTCHours();
+
+        console.log(endTime);
+        // startDate.setHours(startInfo.time.h, startInfo.time.m, 0, 0);
+
+        const data = {
+          ...calendarForm,
+          userId: ui.id,
+          utcOffset: new Date().getTimezoneOffset() * -1,
+        };
+
+        console.log(data);
+
+        dispatch(createCalendar(data))
+          .unwrap()
+          .then(() => onClose());
       }
-
-      const data = {
-        ...calendarForm,
-        userId: ui.id,
-        start: startDate.toISOString(),
-        end: endDate.toISOString(),
-        //utcOffset: new Date().getTimezoneOffset()*-1,
-      };
-
-      dispatch(createCalendar(data))
-        .unwrap()
-        .then(() => onClose());
     } else {
+      console.log(calendarForm.start);
+      console.log(calendarForm.end);
       setSnackbarContent('올바른 날짜를 입력하세요');
       setVisibleSnackbar(true);
       return;
     }
   };
-
-  useEffect(() => {
-    const date = startInfo.date;
-    const y = date.getFullYear();
-
-    const m = date.getMonth();
-    const d = date.getDate();
-    const hours = startInfo.time?.h ? startInfo.time.h : 0;
-    const minutes = startInfo.time?.m ? startInfo.time.m : 0;
-
-    setCalendarForm({
-      ...calendarForm,
-      // start: DateTime.fromISO(new Date(y, m, d, hours, minutes).toISOString(), {
-      //   zone: 'Asia/Seoul',
-      // }),
-      start: new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        hours,
-        minutes,
-      ).toISOString(),
-    });
-  }, [startInfo]);
-
-  useEffect(() => {
-    const date = endInfo.date;
-    const y = date.getFullYear();
-    const m = date.getMonth();
-    const d = date.getDate();
-    const hours = endInfo.time?.h ? endInfo.time.h : 0;
-    const minutes = endInfo.time?.m ? endInfo.time.m : 0;
-
-    setCalendarForm({
-      ...calendarForm,
-      // end: DateTime.fromISO(new Date(y, m, d, hours, minutes).toISOString(), {
-      //   zone: 'Asia/Seoul',
-      // }),
-      end: new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate(),
-        hours,
-        minutes,
-      ).toISOString(),
-    });
-  }, [endInfo]);
 
   return (
     <Provider locale={enUS}>
@@ -272,7 +229,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
               color: 'black',
               fontFamily: 'TheJamsilOTF_Regular',
             }}>
-            {mode === 'CREATE' ? '일정 생성' : '일정 편집'}
+            일정 생성
           </Text>
           <Pressable
             style={{
@@ -374,7 +331,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
             {visibleStartDate && (
               <CalendarDatePicker
                 onChange={e => {
-                  console.log(e);
+                  console.log('start 날짜가 변함 ', e);
                   setStartInfo({...startInfo, date: e});
                 }}
                 currDate={calendarForm.start}
@@ -383,7 +340,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
             {visibleStartTime && (
               <CalendarDatePicker
                 onChange={e => {
-                  console.log(e);
+                  console.log('start 시간가 변함 ', e);
                   setStartInfo({...startInfo, time: e});
                 }}
                 currDate={calendarForm.start}

@@ -63,9 +63,10 @@ const RecordScreen = ({navigation}) => {
       sound?.getStatusAsync().then((res: AVPlaybackStatus) => {
         setDisplayPosition(res.positionMillis);
 
-        if (res.positionMillis == res.durationMillis) {
+        if (res.positionMillis >= res.durationMillis) {
           setIsPlaying(false);
           setPosition(0);
+          sound?.pauseAsync();
           sound.setPositionAsync(0);
         }
       });
@@ -190,6 +191,19 @@ const RecordScreen = ({navigation}) => {
     setSound(null);
     setSoundPath(null);
   }
+
+  React.useEffect(
+    () =>
+      navigation.addListener('blur', async () => {
+        console.log('초기화');
+        setIsPlaying(false);
+        setRecordingInfo(null);
+        setRecordingUri(null);
+        setSound(null);
+        setSoundPath(null);
+      }),
+    [],
+  );
 
   async function saveRecord(e) {
     //이름만 바꾸고 경로는 안 바꿀게요^^~~~~

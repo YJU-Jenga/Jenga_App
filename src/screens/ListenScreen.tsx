@@ -110,9 +110,9 @@ const ListenScreen = ({navigation}) => {
         console.log(res.positionMillis);
         setPosition(res.positionMillis);
 
-        if (res.positionMillis == res.durationMillis) {
+        if (res.positionMillis >= res.durationMillis) {
           setIsPlaying(false);
-          console.log('object');
+          sound?.pauseAsync();
           setPosition(0);
           sound.setPositionAsync(0);
         }
@@ -132,7 +132,7 @@ const ListenScreen = ({navigation}) => {
   React.useEffect(
     () =>
       navigation.addListener('blur', async () => {
-        console.log('초기화');
+        console.log('초기화!!!!!!!!');
         setIsPlaying(false);
         //setSoundPath(null);
         // setRecordingInfo(null);
@@ -140,6 +140,7 @@ const ListenScreen = ({navigation}) => {
         setPosition(0);
         setDuration(null);
         setSound(null);
+        setVisibleModal(false);
         //setSoundPath(null);
         //setRecording(null);
       }),
@@ -240,7 +241,7 @@ const ListenScreen = ({navigation}) => {
             ]),
           );
         }
-        getSoundList();
+        getSoundList('handle open');
       } else if (result?.type === 'cancel') {
         return;
       }
@@ -252,27 +253,30 @@ const ListenScreen = ({navigation}) => {
   const onCloseModal = () => {
     setVisibleModal(false);
     setIsPlaying(false);
-    console.log('object');
     setPosition(0);
     sound?.setPositionAsync(0);
     sound?.pauseAsync();
   };
 
-  const getSoundList = async () => {
+  const getSoundList = React.useCallback(async clg => {
     //AsyncStorage.removeItem('sounds');
+    console.log(clg);
     const d = await AsyncStorage.getItem('sounds');
     if (d) {
       setSoundList(JSON.parse(d));
     }
     //console.log('getSOUND : ', d);
-  };
+  }, []);
 
-  const fetchGetSoundList = navigation.addListener('focus', () => {
-    getSoundList();
-  });
+  // const fetchGetSoundList = navigation.addListener('focus', () => {
+  //   getSoundList('포커스할때,,,');
+  // });
 
   React.useEffect(() => {
-    return () => fetchGetSoundList();
+    // return () => fetchGetSoundList();
+    navigation.addListener('focus', async () =>
+      getSoundList('알람스크린베끼기'),
+    );
   }, []);
 
   const deleteSound = index => {
@@ -285,7 +289,7 @@ const ListenScreen = ({navigation}) => {
           newSoundList.splice(index, 1);
           setSoundList(newSoundList);
           await AsyncStorage.setItem('sounds', JSON.stringify(newSoundList));
-          getSoundList();
+          getSoundList('삭제용');
           setVisibleModal(false);
 
           if (soundList[index].type === 'record') {

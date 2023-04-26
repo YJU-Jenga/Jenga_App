@@ -3,16 +3,16 @@ import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {colors, height, width} from '../../config/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {DateTime} from 'luxon';
 
 const DatePickerTitle = ({onPressDate, onPressTime, title, date, isAllDay}) => {
   const [formatDate, setFormatDate] = useState();
   const [formatTime, setFormatTime] = useState();
 
   const format = () => {
-    const data = new Date(date);
-
-    setFormatDate(generateDate(data));
-    setFormatTime(generateTime(data));
+    console.log('포맷행지 ', date);
+    setFormatDate(generateDate(new Date(date)));
+    setFormatTime(generateTime(new Date(date)));
   };
 
   const generateDate = (date: Date) => {
@@ -27,11 +27,9 @@ const DatePickerTitle = ({onPressDate, onPressTime, title, date, isAllDay}) => {
 
   const generateTime = (date: Date) => {
     const h =
-      date?.getHours() < 10
-        ? '0' + date?.getHours()
-        : date?.getHours().toString();
+      date.getHours() < 10 ? '0' + date.getHours() : date.getHours().toString();
     const m =
-      date?.getMinutes() < 10 ? '0' + date?.getMinutes() : date?.getMinutes();
+      date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
     return `${h}:${m}`;
   };
 

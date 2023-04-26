@@ -87,11 +87,6 @@ const CalendarScreen = ({ui}) => {
     }, []),
   );
 
-  // React.useEffect(() => {
-  //   setCalendarData(_calendarData);
-  //   //convertCurrCalendar(DateTime.local().c.day);
-  // }, [dispatch, calendarData]);
-
   React.useEffect(() => {
     //setCalendarData(_calendarData);
     //convertCurrCalendar(DateTime.local().c.day, _calendarData);
@@ -121,25 +116,6 @@ const CalendarScreen = ({ui}) => {
       .then(() => executeGetMonthCalendar());
   }, []);
 
-  // const convertCurrCalendar = React.useCallback((date: object, items) => {
-  //   if (Object.entries(items).length === 0 || items.length === 0) {
-  //     setCurrDataList([]);
-  //   } else {
-  //     const filteredData = items.filter(item1 => {
-  //       const itemStartDate = DateTime.fromISO(item1.start);
-  //       const itemEndDate = DateTime.fromISO(item1.end);
-  //       const targetDate = DateTime.fromISO(date);
-
-  //       return (
-  //         targetDate.toISODate() >= itemStartDate.toISODate() &&
-  //         targetDate.toISODate() <= itemEndDate.toISODate()
-  //       );
-  //     });
-  //     console.log(filteredData);
-  //     setCurrDataList(currDataList => [...filteredData]);
-  //   }
-  // }, []);
-
   const pickCurrDate = React.useCallback(
     time => {
       if (DateTime.fromISO(currDate).c.month !== time.month) {
@@ -158,10 +134,7 @@ const CalendarScreen = ({ui}) => {
   );
 
   React.useEffect(() => {
-    console.log('소중하게');
     executeGetDateCalendar();
-
-    //convertCurrCalendar(currDate, _calendarData);
   }, [currDate]);
 
   const onMonthChange = React.useCallback(time => {
@@ -177,30 +150,44 @@ const CalendarScreen = ({ui}) => {
     dispatch(getMonthCalendar(obj));
   }, []);
 
+  const generateDate = (date: Date) => {
+    const yyyy = date?.getUTCFullYear();
+    const mm = (date?.getUTCMonth() + 1).toString().padStart(2, '0');
+    const dd =
+      date?.getUTCDate() <= 10
+        ? '0' + date?.getUTCDate()
+        : date?.getUTCDate().toString();
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
   const generateCalendarDots = React.useCallback(
     data => {
       let obj = {};
-      console.log(data);
       _calendarData.forEach(item => {
         // let key = item.start;
-        new Date(item.start);
+        const utcOffset = new Date().getTimezoneOffset() * -1;
+
         const startDate = new Date(item.start);
         const endDate = new Date(item.end);
+        const startStr = generateDate(startDate);
 
-        const startDateStr =
-          DateTime.fromJSDate(startDate).toFormat('yyyy-MM-dd');
-        const endDateStr = DateTime.fromJSDate(endDate).toFormat('yyyy-MM-dd');
-        //const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
-        let currDate = DateTime.fromJSDate(startDate);
+        const endStr = generateDate(endDate);
+        // const startDateStr = item.start.slice(0, 10);
 
-        if (startDateStr === endDateStr) {
-          obj[startDateStr] = {marked: true};
+        // const endDateStr = item.end.slice(0, 10);
+        // const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
+        let currDate = startDate;
+
+        if (startStr === endStr) {
+          obj[startStr] = {marked: true};
           return;
         } else {
-          const n = new Date(endDate - startDate).getDate();
+          const n = new Date(endDate - startDate).getUTCDate();
           for (let i = 0; i < n; i++) {
-            let formattedDate = currDate.toFormat('yyyy-MM-dd');
-            currDate = currDate.plus({days: 1});
+            let formattedDate = generateDate(currDate);
+            // currDate = currDate.setDate(currDate.getUTCDate() + 1);
+            currDate = new Date(currDate.getTime() + 24 * 60 * 60 * 1000);
+            //currDate = currDate.plus({days: 1});
             obj[formattedDate] = {marked: true};
           }
         }
@@ -209,6 +196,10 @@ const CalendarScreen = ({ui}) => {
     },
     [_calendarData],
   );
+
+  React.useEffect(() => {
+    // calendarDots 상태 변수가 변경될 때마다 컴포넌트를 다시 렌더링하도록 함
+  }, [calendarDots]);
 
   return (
     <SafeAreaView
