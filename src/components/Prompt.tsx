@@ -38,7 +38,7 @@ const Prompt = ({visible, title, message, onCancel, onSubmit}) => {
           style={{
             width: '100%',
             borderRadius: 20,
-            height: height * 190,
+            height: height * 160,
             shadowColor: '#000',
             shadowOpacity: 0.3,
             shadowRadius: 4,

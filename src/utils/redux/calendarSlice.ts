@@ -164,8 +164,6 @@ export const getDateCalendar = createAsyncThunk<
       withCredentials: true,
     });
 
-    console.log('데이트 캘린더 \n\n\n', data);
-
     return data;
   } catch (e) {
     return thunkAPI.rejectWithValue({

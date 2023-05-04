@@ -146,7 +146,6 @@ const CalendarScreen = ({ui}) => {
       userId: ui.id,
       dateString: new Date(y, m, d).toISOString(),
     };
-    console.log(obj);
     dispatch(getMonthCalendar(obj));
   }, []);
 

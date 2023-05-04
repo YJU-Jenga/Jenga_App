@@ -21,7 +21,6 @@ const CalendarItem = ({mode, currDate, onChange}) => {
     const dd = e.getUTCDate();
     const h = dateTime.c.hour;
     const m = dateTime.c.minute;
-    console.log('dateTime은 ', dateTime);
     if (mode === 'time') {
       onChange({h, m});
     } else {

@@ -10,7 +10,6 @@ const DatePickerTitle = ({onPressDate, onPressTime, title, date, isAllDay}) => {
   const [formatTime, setFormatTime] = useState();
 
   const format = () => {
-    console.log('포맷행지 ', date);
     setFormatDate(generateDate(new Date(date)));
     setFormatTime(generateTime(new Date(date)));
   };
