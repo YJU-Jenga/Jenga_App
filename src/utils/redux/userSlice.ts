@@ -85,7 +85,6 @@ export const userSlice = createSlice({
       })
       // 통신 성공
       .addCase(getUser.fulfilled, (state, {payload}) => {
-        console.log('payload : ', payload);
         state.error = null;
         state.loading = false;
         state.userData = payload;

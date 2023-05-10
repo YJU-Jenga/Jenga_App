@@ -3,14 +3,16 @@ import {configureStore} from '@reduxjs/toolkit';
 // Slice -> Reducer of ~~Slice
 import authReducer from './src/utils/redux/authSlice';
 import userReducer from './src/utils/redux/userSlice';
-import scheduleReducer from './src/utils/redux/scheduleSlice';
+import alarmReducer from './src/utils/redux/alarmSlice';
 import calendarReducer from './src/utils/redux/calendarSlice';
+import deviceReducer from './src/utils/redux/deviceSlice';
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     user: userReducer,
-    schedule: scheduleReducer,
+    alarm: alarmReducer,
     calendar: calendarReducer,
+    device: deviceReducer,
   },
 });
 

@@ -15,7 +15,7 @@ import {
   createScheduleRepeatInfo,
   selectRepeatInfo,
   selectSoundInfo,
-} from '../utils/redux/scheduleSlice';
+} from '../utils/redux/alarmSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 

@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   SafeAreaView,
   Text,
@@ -26,7 +26,7 @@ import {
   selectMsg,
 } from '../utils/redux/authSlice';
 
-import {HelperText} from 'react-native-paper';
+import {HelperText, Snackbar} from 'react-native-paper';
 
 const LoginScreen = ({route, navigation}) => {
   const [email, setEmail] = React.useState('');
@@ -44,58 +44,27 @@ const LoginScreen = ({route, navigation}) => {
   const [isEmail, setIsEmail] = React.useState<boolean>(false);
   const [isPassword, setIsPassword] = React.useState<boolean>(false);
 
-  const _msg = useSelector(selectMsg);
+  const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
+  const [snackbarContent, setSnackbarContent] = useState<string>('');
+
   const _errorMessage = useSelector(selectErrorMsg);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     setErrorMessage(_errorMessage);
     dispatch(initErrorMessage());
+    if (_errorMessage !== '') {
+      setVisibleSnackbar(true);
+      setSnackbarContent('다시 시도해주세요');
+    }
   }, [_errorMessage]);
 
-  React.useEffect(() => {
-    console.log(_errorMessage.length);
-    if (errorMessage !== '') {
-      Alert.alert(errorMessage);
-      setErrorMessage('');
-    }
-  }, [errorMessage]);
-
-  // React.useEffect(() => {}, [errorMessage]);
-
-  // 이메일
-  // const onChangeEmail = useCallback((e: string) => {
-  //   const emailRegex =
-  //     /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-  //   // const emailCurrent = e;
-  //   setEmail(e);
-
-  //   if (!emailRegex.test(e)) {
-  //     setEmailMessage('이메일 형식이 틀렸어요');
-  //     setIsEmail(false);
-  //   } else {
-  //     setEmailMessage('올바른 이메일 형식이에요');
-  //     setIsEmail(true);
+  // React.useEffect(() => {
+  //   if (errorMessage !== '') {
+  //     Alert.alert(errorMessage);
+  //     setErrorMessage('');
   //   }
-  // }, []);
-
-  // 비밀번호
-  // const onChangePassword = useCallback((e: string) => {
-  //   const passwordRegex =
-  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
-  //   // const passwordCurrent = e;
-  //   setPassword(e);
-
-  //   if (!passwordRegex.test(e)) {
-  //     setPasswordMessage(
-  //       '숫자+영문자+특수문자 조합으로 8자리 이상 입력해주세요',
-  //     );
-  //     setIsPassword(false);
-  //   } else {
-  //     setPasswordMessage('안전한 비밀번호에요');
-  //     setIsPassword(true);
-  //   }
-  // }, []);
+  // }, [errorMessage]);
 
   const handleVerifyLogin = async () => {
     if (email.trim() !== '' && password.trim() !== '') {
@@ -159,21 +128,15 @@ const LoginScreen = ({route, navigation}) => {
         </WingBlank>
       </View>
 
-      {/* {loading && (
-        <View style={styles.loadingArea}>
-          <ActivityIndicator size="large" color="#fff" />
-          <Text style={styles.loadingText}>로딩중...</Text>
-        </View>
-      )}
-
-      <Text style={styles.status}>{status}</Text>
-
-      {showCupom && (
-        <View style={styles.cupomArea}>
-          <Text style={styles.cupomTitle}>로그인성공함 </Text>
-          <Text style={styles.cupomCode}>123</Text>
-        </View>
-      )} */}
+      <Snackbar
+        visible={visibleSnackbar}
+        onDismiss={() => {
+          setVisibleSnackbar(false);
+          setSnackbarContent('');
+        }}
+        duration={2500}>
+        {snackbarContent}
+      </Snackbar>
     </SafeAreaView>
   );
 };

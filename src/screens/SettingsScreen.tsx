@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useRef} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -10,41 +10,85 @@ import {
   TouchableOpacity,
   Pressable,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import Title from '../components/Title';
-import {Flex, List, WingBlank} from '@ant-design/react-native';
-import axios from 'axios';
+import {Flex, InputItem, List, WingBlank} from '@ant-design/react-native';
+import DefaultButton from '../components/DefaultButton';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {logout} from '../utils/redux/authSlice';
-import DefaultButton from '../components/DefaultButton';
 import {getUser, selectUserData} from '../utils/redux/userSlice';
+import {
+  deleteDevice,
+  getSyncedDeviceData,
+  selectDeviceData,
+  syncDevice,
+} from '../utils/redux/deviceSlice';
+
 import Font from 'react-native-vector-icons/AntDesign';
 import {Modal} from 'react-native';
-import {colors} from '../config/globalStyles';
+import {colors, height} from '../config/globalStyles';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+
 const Item = List.Item;
-const Brief = Item.Brief;
-function SettingsScreen({navigation}) {
+
+function SettingsScreen({ui}) {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const _userData = useSelector(selectUserData);
+  const _deviceData = useSelector(selectDeviceData);
   const [userData, setUserData] = React.useState<object>();
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
-  const getUserInfo = async () => {
-    const accessToken = await AsyncStorage.getItem('access-token');
-    dispatch(getUser(accessToken));
-  };
+  const [macAddress, setMacAddress] =
+    React.useState<string>('e4:5f:01:74:a7:45');
+
+  const macAddrRef = useRef();
 
   React.useEffect(() => {
-    getUserInfo();
-  }, []);
-
-  React.useEffect(() => {
-    console.log(_userData);
     setUserData(_userData);
   }, [_userData]);
 
   const Logout = () => {
     dispatch(logout());
   };
+
+  const onSyncDevice = useCallback(
+    e => {
+      console.log('ggg ', macAddress);
+      dispatch(syncDevice({userId: ui.id, macAddress: macAddress}))
+        .unwrap()
+        .then(() => {
+          setVisibleModal(false);
+          loadSyncedDeviceData();
+        });
+      // macAddrRef.current!.value,
+    },
+    [macAddrRef],
+  );
+
+  const onDeleteDevice = device => {
+    dispatch(
+      deleteDevice({
+        deviceId: device.id,
+        macAddress: device.macAddress,
+        name: device.name,
+      }),
+    )
+      .unwrap()
+      .then(() => loadSyncedDeviceData());
+  };
+
+  const loadSyncedDeviceData = React.useCallback(() => {
+    dispatch(getSyncedDeviceData(ui.id));
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getSyncedDeviceData(ui.id));
+    }, []),
+  );
 
   return (
     <SafeAreaView
@@ -66,13 +110,29 @@ function SettingsScreen({navigation}) {
             setVisibleModal(true);
           }}
           arrow="horizontal">
-          <Text style={{color: 'black', fontFamily: 'TheJamsilOTF_Regular'}}>
-            인형 추가하기
+          <Text style={{color: 'black', fontFamily: 'TheJamsilOTF_Light'}}>
+            인형 연동하기
           </Text>
         </Item>
-        <Item>
-          <Text>미미</Text>
-        </Item>
+        {_deviceData.length >= 1 ? (
+          _deviceData.map((device, index) => (
+            <Item key={index}>
+              <Flex justify="between">
+                <Text
+                  style={{color: 'black', fontFamily: 'TheJamsilOTF_Light'}}>
+                  {device.name}
+                </Text>
+                <Icon
+                  onPress={() => onDeleteDevice(device)}
+                  color={colors.red}
+                  size={16}
+                  name="delete"></Icon>
+              </Flex>
+            </Item>
+          ))
+        ) : (
+          <></>
+        )}
       </List>
       <Pressable
         onPress={() => navigation.navigate('shoppingView')}
@@ -111,10 +171,38 @@ function SettingsScreen({navigation}) {
                   color: 'black',
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}>
-                인형 추가하기
+                인형 연동하기
               </Text>
             </Flex>
-            <Text>AI팀과 상의 후 추가하겠습니닷!</Text>
+
+            <View
+              style={{marginHorizontal: 10, marginTop: 20, marginBottom: 20}}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '600',
+                  color: colors.iconPink,
+                  fontFamily: 'TheJamsilOTF_Regular',
+                  marginTop: 4,
+                  marginBottom: height * 20,
+                }}>
+                기기 주소 입력
+              </Text>
+
+              <InputItem
+                onChange={e => {
+                  setMacAddress(e);
+                  console.log(e);
+                }}
+                value={macAddress}
+                placeholder="기기 주소를 입력해주세요">
+                <Icon name="smileo" size={20} color="#555" />
+              </InputItem>
+              <DefaultButton
+                onPress={e => onSyncDevice(e)}
+                title="Register"
+                type="default"></DefaultButton>
+            </View>
           </WingBlank>
         </SafeAreaView>
       </Modal>

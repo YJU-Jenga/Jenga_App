@@ -51,18 +51,13 @@ import CalendarManagement from '../screens/CalendarManageScreen';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator<BottomTabNavigatorParamList>();
 
-const SettingsNavigator = () => {
+const SettingsNavigator = props => {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="setting"
         options={{headerShown: false}}
-        component={SettingsScreen}
-      />
-      <Stack.Screen
-        name="info"
-        options={{headerShown: true, title: ''}}
-        component={InfoScreen}
+        children={() => <SettingsScreen {...props} />}
       />
       <Stack.Screen
         //shopping으로 하면 웹뷰컴포넌트 충돌발생!! 임시로 여기에 둠
@@ -73,18 +68,18 @@ const SettingsNavigator = () => {
   );
 };
 
-const ScheduleNavigator = () => {
+const AlarmNavigator = props => {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="alarm"
         options={{headerShown: false}}
-        component={AlarmScreen}
+        children={() => <AlarmScreen {...props} />}
       />
       <Stack.Screen
         name="alarmModal"
         options={{headerShown: false, presentation: 'modal'}}
-        component={AlarmModalScreen}></Stack.Screen>
+        children={() => <AlarmModalScreen {...props} />}></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -175,7 +170,7 @@ export const AppNavigator = () => {
         {/* <Tab.Screen name="스케쥴" component={HomeStackNavigator} /> */}
         <Tab.Screen
           name="알람"
-          component={ScheduleNavigator}
+          children={() => <AlarmNavigator ui={_ui} />}
           options={{headerShown: false}}
         />
         {/* <Tab.Screen
@@ -211,7 +206,7 @@ export const AppNavigator = () => {
 
         <Tab.Screen
           name="설정"
-          component={SettingsNavigator}
+          children={() => <SettingsNavigator ui={_ui} />}
           options={{headerShown: false}}
         />
       </Tab.Navigator>

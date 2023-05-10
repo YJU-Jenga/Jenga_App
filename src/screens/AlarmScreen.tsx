@@ -27,14 +27,23 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Pressable} from 'react-native';
 import FloatingButton from '../components/FloatingButton';
 import {colors, height} from '../config/globalStyles';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  createAlarm,
+  getAllAlarm,
+  selectAlarmData,
+} from '../utils/redux/alarmSlice';
 
-const AlarmScreen = ({route, navigation}) => {
-  const [scheduleList, setScheduleList] = useState(null);
+const AlarmScreen = ({ui}) => {
+  const [scheduleList, setScheduleList] = useState([]);
   const [displayScheduleList, setDisplayScheduleList] = useState([]);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const dispatch = useDispatch();
+  const _alarmData = useSelector(selectAlarmData);
 
-  const onLoadSchedules = React.useCallback(async (clg?) => {
-    console.log(clg);
-    console.log('나 그만불러');
+  const onLoadSchedules = React.useCallback(async () => {
     //await AsyncStorage.removeItem('schedules');
     const data = JSON.parse(await AsyncStorage.getItem('schedules'));
     if (data) {
@@ -64,7 +73,7 @@ const AlarmScreen = ({route, navigation}) => {
       let list = scheduleList;
       const index = scheduleList.findIndex(item => item.id === data.id);
 
-      data.isScheduleOn = !data.isScheduleOn;
+      data.isAlarmOn = !data.isAlarmOn;
 
       list[index] = data;
       await AsyncStorage.setItem('schedules', JSON.stringify(list));
@@ -76,28 +85,15 @@ const AlarmScreen = ({route, navigation}) => {
   const onSwipeDelete = React.useCallback(async data => {
     const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
     await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
-    await onLoadSchedules('swipe');
+    await onLoadSchedules();
   }, []);
 
-  // useEffect(() => {
-  //   const orderedScheduleList = scheduleList?.sort(orderFunction);
-  //   setDisplayScheduleList(orderedScheduleList);
-  // }, [scheduleList]);
-
-  // const fetchGetSoundList = navigation.addListener('focus', () => {
-  //   onLoadSchedules('fetchSoundList');
-  // });
-
-  // React.useEffect(() => {
-  //   onLoadSchedules('useEffect');
-  //   return () => fetchGetSoundList();
-  // }, []);
+  useEffect(() => {
+    dispatch(getAllAlarm());
+  }, []);
 
   useEffect(() => {
-    navigation.addListener(
-      'focus',
-      async () => await onLoadSchedules('우아앙'),
-    );
+    navigation.addListener('focus', async () => await onLoadSchedules());
     //onLoadSchedules();
   }, []);
 
@@ -157,7 +153,7 @@ const AlarmScreen = ({route, navigation}) => {
                         style={{}}
                         extra={
                           <Pressable onPress={e => onChangeSwitch(item)}>
-                            {item.isScheduleOn === true ? (
+                            {item.isAlarmOn === true ? (
                               <Icon
                                 size={25}
                                 color={colors.iconPink}
@@ -258,7 +254,8 @@ const AlarmScreen = ({route, navigation}) => {
         </WingBlank>
         <FloatingButton
           onPress={() => {
-            navigation.navigate('alarmModal', {type: 'CREATE'});
+            dispatch(createAlarm(ui.id));
+            //navigation.navigate('alarmModal', {type: 'CREATE'});
             //setVisibleModal(true);
           }}></FloatingButton>
       </SafeAreaView>

@@ -32,14 +32,18 @@ import {
   initScheduleState,
   selectRepeatInfo,
   selectSoundInfo,
-} from '../utils/redux/scheduleSlice';
+} from '../utils/redux/alarmSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {height} from '../config/globalStyles';
 import DeleteButton from '../components/DeleteButton';
 import {Snackbar} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
-const AlarmModalScreen = ({route, navigation}) => {
+const AlarmModalScreen = ({ui}) => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
   const [valuehours, setValuehours] = React.useState(new Date());
   const [visibleRepeatModal, setVisibleRepeatModal] = React.useState(false);
   const [visibleSoundsModal, setVisibleSoundsModal] = React.useState(false);
@@ -100,7 +104,7 @@ const AlarmModalScreen = ({route, navigation}) => {
               sentence: sentence,
               soundFile: _currSound,
               time: valuehours,
-              isScheduleOn: true,
+              isAlarmOn: true,
             },
             ...loadedSchedules,
           ]),
@@ -115,7 +119,7 @@ const AlarmModalScreen = ({route, navigation}) => {
               sentence,
               soundFile: _currSound,
               time: valuehours,
-              isScheduleOn: true,
+              isAlarmOn: true,
             },
           ]),
         );

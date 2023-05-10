@@ -93,7 +93,6 @@ export const loginAccount = createAsyncThunk<
         },
       },
     );
-    console.log(data);
     await AsyncStorage.setItem('refresh-token', data.refresh_token);
     await AsyncStorage.setItem('access-token', data.access_token);
     return data;
@@ -131,7 +130,6 @@ export const refreshToken = createAsyncThunk<
         //AsyncStorage.multiRemove(['access-token', 'refresh-token']);
       })
       .then(async json => {
-        console.log(json);
         if (json && json.refresh_token && json.access_token) {
           await AsyncStorage.setItem('refresh-token', json.refresh_token);
           await AsyncStorage.setItem('access-token', json.access_token);

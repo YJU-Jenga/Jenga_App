@@ -189,7 +189,7 @@ const SignUpScreen = ({route, navigation}) => {
               value={signUpInfo.email}
               onChange={e => onChangeEmail(e)}
               placeholder="Email">
-              <Icon name="delete-sweep" size={30} color="#aaa" />
+              <Icon name="email-outline" size={30} color="#aaa" />
             </InputItem>
             <HelperText type="error" visible={!isEmail}>
               {emailMessage}
@@ -199,7 +199,7 @@ const SignUpScreen = ({route, navigation}) => {
               value={signUpInfo.name}
               onChange={e => onChangeName(e)}
               placeholder="Name">
-              <Icon name="delete-sweep" size={30} color="#aaa" />
+              <Icon name="account-outline" size={30} color="#aaa" />
             </InputItem>
             <HelperText type="error" visible={!isName}>
               {nameMessage}
@@ -210,7 +210,7 @@ const SignUpScreen = ({route, navigation}) => {
               value={signUpInfo.phone}
               onChange={e => onChangePhone(e)}
               placeholder="Phone Number">
-              <Icon name="delete-sweep" size={30} color="#aaa" />
+              <Icon name="phone-outline" size={30} color="#aaa" />
             </InputItem>
             <HelperText type="error" visible={!isPhone}>
               {phoneMessage}
@@ -222,7 +222,7 @@ const SignUpScreen = ({route, navigation}) => {
               value={signUpInfo.password}
               onChange={e => onChangePassword(e)}
               placeholder="Password">
-              <Icon name="delete-sweep" size={30} color="#aaa" />
+              <Icon name="lock-outline" size={30} color="#aaa" />
             </InputItem>
             <HelperText type="error" visible={!isPassword}>
               {passwordMessage}
@@ -234,7 +234,7 @@ const SignUpScreen = ({route, navigation}) => {
               value={signUpInfo.confirmPassword}
               onChange={e => onChangePasswordConfirm(e)}
               placeholder="Confirm Password">
-              <Icon name="delete-sweep" size={30} color="#aaa" />
+              <Icon name="lock-outline" size={30} color="#aaa" />
             </InputItem>
           </Flex>
 
