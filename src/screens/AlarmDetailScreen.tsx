@@ -26,20 +26,11 @@ interface ISound {
   isRecording?: boolean;
 }
 
-export const RepeatComponent = ({index}: {index: any}) => {
+export const RepeatComponent = ({data, index}) => {
   //const [day, setDay] = useState<string>();
   const [isChecked, setIsChecked] = useState<boolean>(false);
-
+  console.log('리핏 컴포넌트 : ', data[index]);
   const dispatch = useDispatch();
-  const _currRepeat = useSelector(selectRepeatInfo);
-  const day = _currRepeat[index].day;
-  // const _isChecked = _currRepeat[index].isChecked;
-
-  useEffect(() => {
-    setIsChecked(_currRepeat[index].isChecked);
-  }, []);
-
-  //console.log(data);
   return (
     <List>
       {/* <Text>{_currRepeat}</Text> */}
@@ -158,7 +149,7 @@ export const ActionComponent = () => {
 };
 
 const SelectedSoundItem = (): JSX.Element => {
-  const _currSound = useSelector(selectSoundInfo);
+  //const _currSound = useSelector(selectSoundInfo);
 
   // console.log(selectSoundInfo())
 
@@ -171,7 +162,7 @@ const SelectedSoundItem = (): JSX.Element => {
         <Flex style={{paddingVertical: 15, marginStart: 15}}>
           <Icon name="playlist-music" size={25} color="#aaa" />
           <Text style={{marginStart: 15, fontFamily: 'TheJamsilOTF_Light'}}>
-            {_currSound?.name}
+            {/* {_currSound?.name} */}
           </Text>
         </Flex>
       </List>

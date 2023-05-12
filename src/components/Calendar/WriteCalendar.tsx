@@ -340,7 +340,6 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
             {visibleStartTime && (
               <CalendarDatePicker
                 onChange={e => {
-                  console.log('start 시간가 변함 ', e);
                   setStartInfo({...startInfo, time: e});
                 }}
                 currDate={calendarForm.start}

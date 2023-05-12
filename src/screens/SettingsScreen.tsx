@@ -12,7 +12,13 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Title from '../components/Title';
-import {Flex, InputItem, List, WingBlank} from '@ant-design/react-native';
+import {
+  Checkbox,
+  Flex,
+  InputItem,
+  List,
+  WingBlank,
+} from '@ant-design/react-native';
 import DefaultButton from '../components/DefaultButton';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,7 +35,7 @@ import {
 
 import Font from 'react-native-vector-icons/AntDesign';
 import {Modal} from 'react-native';
-import {colors, height} from '../config/globalStyles';
+import {colors, height, width} from '../config/globalStyles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 const Item = List.Item;
@@ -198,11 +204,85 @@ function SettingsScreen({ui}) {
                 placeholder="기기 주소를 입력해주세요">
                 <Icon name="smileo" size={20} color="#555" />
               </InputItem>
-              <DefaultButton
-                onPress={e => onSyncDevice(e)}
-                title="Register"
-                type="default"></DefaultButton>
             </View>
+
+            <View
+              style={{
+                marginHorizontal: 10,
+                marginTop: 20,
+                marginBottom: height * 40,
+              }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '600',
+                  color: colors.red,
+                  fontFamily: 'TheJamsilOTF_Regular',
+                  marginTop: 4,
+                  marginBottom: height * 20,
+                }}>
+                주의할 점
+              </Text>
+              <Flex style={{gap: width * 15, marginBottom: height * 15}}>
+                <Icon name="pushpino" size={20} color={colors.red} />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: 'black',
+                    fontFamily: 'TheJamsilOTF_Light',
+                  }}>
+                  인형을 먹으면 안 돼요
+                </Text>
+              </Flex>
+              <Flex style={{gap: width * 15, marginBottom: height * 15}}>
+                <Icon name="pushpino" size={20} color={colors.red} />
+                <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
+                  고온의 장소나 물이 있는 곳에 두지마세요
+                </Text>
+              </Flex>
+              <Flex style={{gap: width * 15, marginBottom: height * 15}}>
+                <Icon name="pushpino" size={20} color={colors.red} />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'TheJamsilOTF_Light',
+                    flexWrap: 'wrap',
+                  }}>
+                  구매 후 1년간 무상으로 AS를 제공합니다
+                </Text>
+              </Flex>
+              <Flex style={{gap: width * 15, marginBottom: height * 15}}>
+                <Icon name="pushpino" size={20} color={colors.red} />
+                <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
+                  터질 수도 있으니 조심하세요
+                </Text>
+              </Flex>
+              <Flex style={{gap: width * 15, marginBottom: height * 15}}>
+                <Icon name="pushpino" size={20} color={colors.red} />
+                <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
+                  부부싸움 할 때 던지지 마세요
+                </Text>
+              </Flex>
+            </View>
+            <Flex
+              justify="center"
+              direction="column"
+              style={{gap: height * 10, marginBottom: height * 20}}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontFamily: 'TheJamsilOTF_Regular',
+                  color: 'black',
+                }}>
+                상기 사항을 잘 숙지했으면
+              </Text>
+              <Icon name="arrowdown" size={20} color={colors.iconPink} />
+            </Flex>
+
+            <DefaultButton
+              onPress={e => onSyncDevice(e)}
+              title="기기 등록하기"
+              type="default"></DefaultButton>
           </WingBlank>
         </SafeAreaView>
       </Modal>

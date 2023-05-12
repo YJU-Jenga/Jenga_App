@@ -22,23 +22,28 @@ import {
   SwipeAction,
   InputItem,
   Button,
+  Checkbox,
 } from '@ant-design/react-native';
 import React, {useEffect, useState} from 'react';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import {ActionComponent, RepeatComponent} from './AlarmDetailScreen';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  initEditScheduleState,
-  initScheduleState,
-  selectRepeatInfo,
-  selectSoundInfo,
-} from '../utils/redux/alarmSlice';
+import DatePicker from 'react-native-date-picker';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {height} from '../config/globalStyles';
 import DeleteButton from '../components/DeleteButton';
 import {Snackbar} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  createAlarm,
+  createScheduleRepeatInfo,
+  deleteAlarm,
+  getAllAlarm,
+  selectAlarmData,
+  updateAlarm,
+} from '../utils/redux/alarmSlice';
 
 const AlarmModalScreen = ({ui}) => {
   const navigation = useNavigation();
@@ -47,9 +52,11 @@ const AlarmModalScreen = ({ui}) => {
   const [valuehours, setValuehours] = React.useState(new Date());
   const [visibleRepeatModal, setVisibleRepeatModal] = React.useState(false);
   const [visibleSoundsModal, setVisibleSoundsModal] = React.useState(false);
+  const [displayRepeat, setDisplayRepeat] = React.useState();
   //const [repeatInformation, setRepeatInformation] = React.useState();
   const [repeatInfo, setRepeatInfo] = React.useState([]);
   const [sentence, setSentence] = React.useState('');
+  const [name, setName] = useState<string>('');
 
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
@@ -57,35 +64,59 @@ const AlarmModalScreen = ({ui}) => {
   const mode = route.params?.type === 'EDIT' ? '예약 편집' : '예약 생성';
 
   const dispatch = useDispatch();
-  const _currSound = useSelector(selectSoundInfo);
-  const _currRepeat = useSelector(selectRepeatInfo);
+  const _alarms = useSelector(selectAlarmData);
+  // const _currSound = route.params?.data.file;
+  //const _currRepeat = route.params?.data.repeat;
+
+  const _currSound = route.params?.type === 'EDIT' ? route.params.file : '';
+
+  const [submitRepeat, setSubmitRepeat] = useState(
+    route.params?.type === 'EDIT' ? route.params?.data.repeat : '0000000',
+  );
+
+  //const _currSound = useSelector(selectSoundInfo);
+  // const _currRepeat = useSelector(selectRepeatInfo);
 
   useEffect(() => {
     if (route.params?.type === 'CREATE') {
-      dispatch(initScheduleState());
+      //dispatch(initScheduleState());
     } else if (route.params?.type === 'EDIT') {
-      dispatch(initEditScheduleState(route.params.data));
+      //dispatch(initEditScheduleState(route.params.data));
+      const hours = parseInt(route.params.data.time_id.substring(0, 2));
+      const minutes = parseInt(route.params.data.time_id.substring(2));
+      const utcDate = new Date(2001, 7 - 1, 6, hours, minutes);
+
+      const localDate = new Date(
+        utcDate.getTime() - utcDate.getTimezoneOffset() * 60000,
+      );
+
+      setName(route.params.data.name);
       setSentence(route.params.data.sentence);
-      setValuehours(new Date(route.params.data.time));
+      setValuehours(utcDate);
+      console.log(route.params.data.repeat);
+      let str = '';
+
+      ['일', '월', '화', '수', '목', '금', '토'].forEach((day, i) => {
+        str += submitRepeat[i] === '1' ? day + ' ' : '';
+      });
+
+      setDisplayRepeat(str);
     }
   }, []);
 
-  useEffect(() => {
-    let str = '';
-    setRepeatInfo('없음');
-    const data = _currRepeat
-      .filter(el1 => el1.isChecked)
-      .map(el2 => {
-        str = str.concat(el2.day.slice(0, 1) + ' ');
-        setRepeatInfo(str);
-      });
-  }, [visibleRepeatModal]);
+  const generateId = () => {
+    console.log(valuehours.getHours());
+    const hour = valuehours.getHours().toString().padStart(2, '0');
+    const min = valuehours.getMinutes().toString().padStart(2, '0');
+    const res = hour + min;
+    return res;
+  };
 
   const onSave = async () => {
-    const data = await AsyncStorage.getItem('schedules');
-    let loadedSchedules = await JSON.parse(data);
+    // const data = await AsyncStorage.getItem('schedules');
+    // let loadedSchedules = await JSON.parse(data);
 
-    const isDuplicated = checkDuplicationSchedule(loadedSchedules);
+    const isDuplicated = checkDuplicationSchedule();
     console.log('isDuplicated 결과 : ', isDuplicated);
     if (route.params.type === 'CREATE') {
       if (isDuplicated) {
@@ -93,96 +124,77 @@ const AlarmModalScreen = ({ui}) => {
         setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
         return;
       }
-      if (loadedSchedules) {
-        console.log(loadedSchedules);
-        await AsyncStorage.setItem(
-          'schedules',
-          JSON.stringify([
-            {
-              id: generateId(),
-              repeat: _currRepeat,
-              sentence: sentence,
-              soundFile: _currSound,
-              time: valuehours,
-              isAlarmOn: true,
-            },
-            ...loadedSchedules,
-          ]),
-        );
-      } else {
-        await AsyncStorage.setItem(
-          'schedules',
-          JSON.stringify([
-            {
-              id: generateId(),
-              repeat: _currRepeat,
-              sentence,
-              soundFile: _currSound,
-              time: valuehours,
-              isAlarmOn: true,
-            },
-          ]),
-        );
+      if (name.length < 1) {
+        setSnackbarVisible(true);
+        setSnackbarContent('알람 이름을 입력하세요');
+        return;
       }
+      dispatch(
+        createAlarm({
+          user_id: ui.id,
+          time_id: generateId(),
+          name: name,
+          sentence: sentence,
+          state: true,
+          repeat: submitRepeat,
+        }),
+      );
     } else if (route.params.type === 'EDIT') {
       if (isDuplicated) {
         setSnackbarVisible(true);
         setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
         return;
       }
-      const index = loadedSchedules.findIndex(
-        item => item.id === route.params.data.id,
-      );
-
-      loadedSchedules[index].id = generateId();
-      loadedSchedules[index].repeat = _currRepeat;
-      loadedSchedules[index].sentence = sentence;
-      loadedSchedules[index].soundFile = _currSound;
-      loadedSchedules[index].time = valuehours;
-
-      await AsyncStorage.setItem('schedules', JSON.stringify(loadedSchedules));
+      // const timeInfo = new Date(
+      //   valuehours.getTime() - valuehours.getTimezoneOffset() * 60000,
+      // );
+      dispatch(
+        updateAlarm({
+          time_id: generateId(),
+          repeat: submitRepeat,
+          user_id: ui.id,
+          sentence: sentence,
+          state: true,
+          name: name,
+          id: route.params.data.id,
+        }),
+      )
+        .unwrap()
+        .then(() => {
+          dispatch(getAllAlarm(ui.id));
+        });
     }
 
     navigation.navigate('alarm');
   };
 
   const onDelete = async () => {
-    const data = await AsyncStorage.getItem('schedules');
-    let loadedSchedules = JSON.parse(data);
-    const filteredSchedules = loadedSchedules.filter(
-      item => item.id !== route.params.data.id,
-    );
-    await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
+    dispatch(deleteAlarm(route.params?.data.id))
+      .unwrap()
+      .then(() => {
+        dispatch(getAllAlarm(ui.id));
+      });
 
     navigation.navigate('alarm');
   };
 
-  const generateId = () => {
-    console.log(valuehours.getHours());
-    const hour = valuehours.getHours().toString();
-    const min = valuehours.getMinutes().toString();
-    const res = Number(hour + min);
-    return res;
-  };
-
-  const checkDuplicationSchedule = scheduleList => {
+  const checkDuplicationSchedule = () => {
     const id = generateId();
+
+    const foundItem = _alarms.find(item => item.time_id === id);
+
     if (route.params.type === 'EDIT') {
-      const editId = route.params.data.id;
-      console.log('안녕 : ', id, editId);
+      const editId = route.params.data.time_id;
+      console.log(editId, id);
       if (id === editId) {
         return false;
+      } else {
+        if (foundItem) {
+          return true;
+        } else {
+          return false;
+        }
       }
-      return scheduleList.some(el => el.id === id);
-    }
-    if (
-      (Array.isArray(scheduleList) && scheduleList.length === 0) ||
-      !scheduleList
-    ) {
-      return false;
-    } else {
-      console.log('서케쥴은 ', scheduleList);
-      return scheduleList.some(el => el.id === id);
     }
   };
 
@@ -227,20 +239,49 @@ const AlarmModalScreen = ({ui}) => {
             </Text>
           </Flex>
           <WingBlank size="lg">
-            <DatePickerView
-              style={{marginBottom: height * 10}}
-              itemStyle={{fontFamily: 'TheJamsilOTF_Light'}}
+            <DatePicker
+              onDateChange={e => setValuehours(e)}
               mode="time"
-              value={valuehours}
-              onChange={v => setValuehours(v)}
-            />
+              date={valuehours}></DatePicker>
 
             <List>
+              <InputItem
+                value={name}
+                onChange={v => setName(v)}
+                style={{
+                  fontFamily: 'TheJamsilOTF_Regular',
+                }}
+                placeholder="알람의 이름을 입력하세요">
+                <Text
+                  style={{
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    color: 'black',
+                    fontSize: 17,
+                  }}>
+                  제목
+                </Text>
+              </InputItem>
+              <InputItem
+                value={sentence}
+                onChange={v => setSentence(v)}
+                style={{
+                  fontFamily: 'TheJamsilOTF_Regular',
+                }}
+                placeholder="아이에게 할 말을 입력하세요">
+                <Text
+                  style={{
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    color: 'black',
+                    fontSize: 17,
+                  }}>
+                  TTS
+                </Text>
+              </InputItem>
               <List.Item
                 extra={
                   <Text
                     style={{fontFamily: 'TheJamsilOTF_Regular', color: 'gray'}}>
-                    {repeatInfo}
+                    {displayRepeat}
                   </Text>
                 }
                 onPress={() => {
@@ -275,22 +316,6 @@ const AlarmModalScreen = ({ui}) => {
                   액션
                 </Text>
               </List.Item>
-              <InputItem
-                value={sentence}
-                onChange={v => setSentence(v)}
-                style={{
-                  fontFamily: 'TheJamsilOTF_Regular',
-                }}
-                placeholder="아이에게 할 말을 입력하세요">
-                <Text
-                  style={{
-                    fontFamily: 'TheJamsilOTF_Regular',
-                    color: 'black',
-                    fontSize: 17,
-                  }}>
-                  명령어
-                </Text>
-              </InputItem>
             </List>
             <WhiteSpace size="xl" />
             {route.params?.type === 'EDIT' && (
@@ -307,7 +332,6 @@ const AlarmModalScreen = ({ui}) => {
           animationType="slide"
           onRequestClose={() => {
             setVisibleRepeatModal(false);
-            // setRepeatInformation(_currRepeat);
           }}>
           <SafeAreaView
             style={{
@@ -328,8 +352,47 @@ const AlarmModalScreen = ({ui}) => {
               </Text>
             </Flex>
             <WhiteSpace size="lg" />
-            {_currRepeat.map((v, i) => {
-              return <RepeatComponent key={i} index={i}></RepeatComponent>;
+            {[
+              '일요일',
+              '월요일',
+              '화요일',
+              '수요일',
+              '목요일',
+              '금요일',
+              '토요일',
+            ].map((day, i) => {
+              return (
+                <List.Item
+                  onPress={() => {
+                    //setIsChecked(!isChecked);
+                    const arr = submitRepeat.split('');
+                    if (arr[i] === '1') {
+                      arr[i] = '0';
+                      const submitArr = arr.join('');
+                      setSubmitRepeat(submitArr);
+                    }
+                    if (arr[i] === '0') {
+                      arr[i] = '1';
+                      const submitArr = arr.join('');
+                      setSubmitRepeat(submitArr);
+                    }
+                  }}
+                  thumb={
+                    <Checkbox
+                      checked={submitRepeat[i] === '1'}
+                      onChange={() => {
+                        //dispatch(updateAlarm({day, isChecked}));
+                      }}></Checkbox>
+                  }>
+                  <Text
+                    style={{
+                      fontFamily: 'TheJamsilOTF_Regular',
+                      color: 'black',
+                    }}>
+                    {day}마다 반복
+                  </Text>
+                </List.Item>
+              );
             })}
           </SafeAreaView>
         </Modal>

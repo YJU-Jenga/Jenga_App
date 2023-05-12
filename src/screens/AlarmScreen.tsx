@@ -27,32 +27,33 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Pressable} from 'react-native';
 import FloatingButton from '../components/FloatingButton';
 import {colors, height} from '../config/globalStyles';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   createAlarm,
   getAllAlarm,
   selectAlarmData,
+  updateAlarm,
 } from '../utils/redux/alarmSlice';
 
 const AlarmScreen = ({ui}) => {
   const [scheduleList, setScheduleList] = useState([]);
-  const [displayScheduleList, setDisplayScheduleList] = useState([]);
   const navigation = useNavigation();
   const route = useRoute();
   const dispatch = useDispatch();
   const _alarmData = useSelector(selectAlarmData);
 
+  useEffect(() => {
+    let sortedData = [..._alarmData].sort(orderFunction);
+    setScheduleList(sortedData);
+  }, [_alarmData]);
+
   const onLoadSchedules = React.useCallback(async () => {
-    //await AsyncStorage.removeItem('schedules');
-    const data = JSON.parse(await AsyncStorage.getItem('schedules'));
-    if (data) {
-      let sortedData = data.sort(orderFunction);
-      setScheduleList(sortedData);
-      // setScheduleList(data);
-      // let d = data.sort(orderFunction);
-      // setDisplayScheduleList(d);
-    }
+    dispatch(getAllAlarm(ui.id));
     //const orderedScheduleList = JSON.parse(data).sort(orderFunction);
     //setDisplayScheduleList(orderedScheduleList)
   }, []);
@@ -67,20 +68,10 @@ const AlarmScreen = ({ui}) => {
     return num1 > num2 ? 1 : -1;
   };
 
-  const onChangeSwitch = React.useCallback(
-    async data => {
-      console.log(data);
-      let list = scheduleList;
-      const index = scheduleList.findIndex(item => item.id === data.id);
-
-      data.isAlarmOn = !data.isAlarmOn;
-
-      list[index] = data;
-      await AsyncStorage.setItem('schedules', JSON.stringify(list));
-      await onLoadSchedules();
-    },
-    [scheduleList],
-  );
+  const onChangeSwitch = React.useCallback(async data => {
+    dispatch(updateAlarm({...data, state: !data.state}));
+    await onLoadSchedules();
+  }, []);
 
   const onSwipeDelete = React.useCallback(async data => {
     const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
@@ -88,14 +79,19 @@ const AlarmScreen = ({ui}) => {
     await onLoadSchedules();
   }, []);
 
-  useEffect(() => {
-    dispatch(getAllAlarm());
-  }, []);
-
-  useEffect(() => {
-    navigation.addListener('focus', async () => await onLoadSchedules());
-    //onLoadSchedules();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const onLoadSchedules = async () => {
+        try {
+          dispatch(getAllAlarm(ui.id));
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      onLoadSchedules();
+      return () => {};
+    }, [ui]),
+  );
 
   return (
     <Provider locale={enUS}>
@@ -112,30 +108,31 @@ const AlarmScreen = ({ui}) => {
 
         <WingBlank style={{}}>
           <ScrollView
-            contentContainerStyle={{paddingBottom: '50%'}}
+            contentContainerStyle={{paddingBottom: '30%'}}
             style={{minHeight: '100%'}}>
             {!(
               (Array.isArray(scheduleList) && scheduleList.length === 0)
               // ||
               // !scheduleList
             ) ? (
-              scheduleList?.map((item, i) => {
-                let repeat = '';
-                const repeatData = item.repeat
-                  .filter(el1 => el1.isChecked)
-                  .map(el2 => {
-                    repeat = repeat.concat(el2.day.slice(0, 1) + ' ');
-                  });
+              _alarmData.map((item, i) => {
+                let repeat = ['일', '월', '화', '수', '목', '금', '토'];
+                let currRepeat = '';
+                // const repeatData = item.repeat
+                //   .split('')
+                //   .map((isChecked, index) => {
+                //     if (isChecked === '1') {
+                //       currRepeat = currRepeat.concat(repeat[index] + ' ');
+                //       return repeat[index];
+                //     }
+                //     return null;
+                //   })
+                //   .filter(day => day !== null);
 
-                const date = new Date(item.time);
-                const h =
-                  10 > date.getHours()
-                    ? '0' + date.getHours()
-                    : date.getHours();
-                const m =
-                  10 > date.getMinutes()
-                    ? '0' + date.getMinutes()
-                    : date.getMinutes();
+                const h = item.time_id.slice(0, 2);
+                const m = item.time_id.slice(2, 4);
+
+                const name = item.name;
 
                 return (
                   <SwipeAction
@@ -148,12 +145,11 @@ const AlarmScreen = ({ui}) => {
                         color: 'white',
                       },
                     ]}>
-                    <View style={{}}>
+                    <View key={i}>
                       <List.Item
-                        style={{}}
                         extra={
                           <Pressable onPress={e => onChangeSwitch(item)}>
-                            {item.isAlarmOn === true ? (
+                            {item.state === true ? (
                               <Icon
                                 size={25}
                                 color={colors.iconPink}
@@ -199,7 +195,7 @@ const AlarmScreen = ({ui}) => {
                                   name="quote-left"></Icon>
                               )}
 
-                              {repeat.length > 0 && (
+                              {/* {repeat.length > 0 && (
                                 <Text
                                   style={{
                                     fontSize: 16,
@@ -208,11 +204,11 @@ const AlarmScreen = ({ui}) => {
                                     fontFamily: 'TheJamsilOTF_Regular',
                                     marginBottom: 3,
                                   }}>
-                                  {repeat}
+                                  {currRepeat}
                                   {'  '}
                                 </Text>
-                              )}
-                              {item.sentence && (
+                              )} */}
+                              {item.name && (
                                 <Text
                                   style={{
                                     fontSize: 16,
@@ -221,7 +217,7 @@ const AlarmScreen = ({ui}) => {
                                     fontFamily: 'TheJamsilOTF_Regular',
                                     marginBottom: 3,
                                   }}>
-                                  {item.sentence}
+                                  {name}
                                 </Text>
                               )}
                             </Flex>
@@ -254,8 +250,11 @@ const AlarmScreen = ({ui}) => {
         </WingBlank>
         <FloatingButton
           onPress={() => {
-            dispatch(createAlarm(ui.id));
-            //navigation.navigate('alarmModal', {type: 'CREATE'});
+            //dispatch(createAlarm(ui.id));
+            navigation.navigate('alarmModal', {
+              type: 'CREATE',
+              //data: item,
+            });
             //setVisibleModal(true);
           }}></FloatingButton>
       </SafeAreaView>

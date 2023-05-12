@@ -6,29 +6,20 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {back_address} from '../../config/address';
 
-let SERVER_URL = back_address;
-// let SERVER_URL = 'http://127.0.0.1:5001';
-// if (Platform.OS === 'android') {
-//   SERVER_URL = 'http://10.0.2.2:5001';
-// }
-
 // // Define a type for the slice state
-interface AlarmState {
+interface MusicState {
   msg: string;
   loading: boolean;
-  alarmData: any;
-  repeatData: string;
+  musicData: any;
   error: null;
   errorMessage: string;
 }
 
-// Define the initial state using that type
-const initialState: AlarmState = {
+const initialState: MusicState = {
   msg: '',
   loading: false,
   error: null,
-  alarmData: [],
-  repeatData: '0000000',
+  musicData: [],
   errorMessage: '',
 };
 
@@ -37,31 +28,34 @@ interface IError {
   errorMessage: string;
 }
 
-export const createAlarm = createAsyncThunk<
-  AlarmState[],
+export const createMusic = createAsyncThunk<
+  MusicState[],
   object,
   {rejectValue: IError}
->('alarm/createAlarm', async (info, thunkAPI) => {
-  const obj = {
-    user_id: info.user_id,
-    time_id: info.time_id,
-    name: info.name,
-    sentence: info.sentence,
-    file: 'uploads/music/asdf.mp3',
-    state: info.state,
-    repeat: info.repeat,
-  };
-
+>('music/createMusic', async (info, thunkAPI) => {
   // body.append('file', {
   //   uri: 'file:///Users/aedin/Library/Developer/CoreSimulator/Devices/0C76F39F-CEFE-4E03-836E-9F412AFC5F86/data/Containers/Data/Application/29F21345-25DE-4117-AC9A-6851A91E8F60/Library/Caches/DocumentPicker/AE5B3089-BFF1-4951-A9F4-8C14E33FBDA3.mp3',
   //   type: 'audio/mpeg',
   //   name: 'Part_02.mp3',
   // });
+  const obj = {
+    user_id: info.userId,
+    name: info.name,
+  };
+
+  const {data} = await axios.post(`${SERVER_URL}/music/create`, body, {
+    headers: {
+      authorization: 'Bearer ' + accessToken,
+      'Content-Type': 'Multipart/form-data',
+    },
+    withCredentials: true,
+  });
+  return data;
 
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    const {data} = await axios.post(`${SERVER_URL}/alarm/create`, obj, {
+    const {data} = await axios.post(`${SERVER_URL}/music/create`, obj, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
@@ -75,15 +69,15 @@ export const createAlarm = createAsyncThunk<
   }
 });
 
-export const getAllAlarm = createAsyncThunk<
-  AlarmState[],
+export const getAllMusic = createAsyncThunk<
+  MusicState[],
   number,
   {rejectValue: IError}
->('alarm/getAllAlarm', async (userId, thunkAPI) => {
+>('music/getAllMusic', async (userId, thunkAPI) => {
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    const {data} = await axios.get(`${SERVER_URL}/alarm/getAll/${userId}`, {
+    const {data} = await axios.get(`${SERVER_URL}/music/getAll/${userId}`, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
@@ -107,15 +101,15 @@ export const getAllAlarm = createAsyncThunk<
   }
 });
 
-export const getOneAlarm = createAsyncThunk<
-  AlarmState[],
+export const getOneMusic = createAsyncThunk<
+  MusicState[],
   object,
   {rejectValue: IError}
->('alarm/getOneAlarm', async (alarmId, thunkAPI) => {
+>('music/getOneMusic', async (musicId, thunkAPI) => {
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    const {data} = await axios.get(`${SERVER_URL}/alarm/getOne/${alarmId}`, {
+    const {data} = await axios.get(`${SERVER_URL}/music/getOne/${musicId}`, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
@@ -129,11 +123,11 @@ export const getOneAlarm = createAsyncThunk<
   }
 });
 
-export const updateAlarm = createAsyncThunk<
-  AlarmState[],
+export const updateMusic = createAsyncThunk<
+  MusicState[],
   object,
   {rejectValue: IError}
->('alarm/updateAlarm', async (info, thunkAPI) => {
+>('music/updateMusic', async (info, thunkAPI) => {
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
@@ -158,7 +152,7 @@ export const updateAlarm = createAsyncThunk<
 
     const id = info.id;
 
-    const {data} = await axios.patch(`${SERVER_URL}/alarm/update/${id}`, obj, {
+    const {data} = await axios.patch(`${SERVER_URL}/music/update/${id}`, obj, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
@@ -174,16 +168,15 @@ export const updateAlarm = createAsyncThunk<
   }
 });
 
-export const deleteAlarm = createAsyncThunk<
-  AlarmState[],
+export const deleteMusic = createAsyncThunk<
+  MusicState[],
   number,
   {rejectValue: IError}
->('alarm/deleteAlarm', async (alarmId, thunkAPI) => {
+>('music/deleteMusic', async (musicId, thunkAPI) => {
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    console.log('DELETE ALARM');
-    const {data} = await axios.delete(`${SERVER_URL}/alarm/delete/${alarmId}`, {
+    const {data} = await axios.delete(`${SERVER_URL}/music/delete/${musicId}`, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
@@ -197,25 +190,25 @@ export const deleteAlarm = createAsyncThunk<
   }
 });
 
-export const scheduleSlice = createSlice({
+export const musicSlice = createSlice({
   // 슬라이스 이름 정의
-  name: 'schedule',
+  name: 'music',
   // 초기 값
   initialState,
   reducers: {
-    initScheduleState: state => {
+    initMusicState: state => {
       state.repeatData = '0000000';
       state.musicData = [];
     },
-    initEditScheduleState: (state, action) => {
+    initEditMusicState: (state, action) => {
       console.log(action.payload);
       state.repeatData = action.payload.repeat;
       state.musicData = action.payload.soundFile;
     },
-    createScheduleActionInfo: (state, action) => {
+    createMusicActionInfo: (state, action) => {
       state.musicData = action.payload;
     },
-    // createScheduleRepeatInfo: (state, action) => {
+    // createMusicRepeatInfo: (state, action) => {
     //   console.log(action.payload, 'gg');
     //   state.repeatData = action.payload;
     // },
@@ -223,12 +216,12 @@ export const scheduleSlice = createSlice({
   extraReducers: builder => {
     builder
       // 통신 중
-      .addCase(createAlarm.pending, state => {
+      .addCase(createMusic.pending, state => {
         state.error = null;
         state.loading = true;
       })
       // 통신 성공
-      .addCase(createAlarm.fulfilled, (state, {payload}) => {
+      .addCase(createMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
         state.userData = payload;
@@ -237,7 +230,7 @@ export const scheduleSlice = createSlice({
         console.log(payload);
       })
       // 통신 에러
-      .addCase(createAlarm.rejected, (state, {payload}) => {
+      .addCase(createMusic.rejected, (state, {payload}) => {
         state.loading = false;
         state.msg = 'FAILED_LOGIN';
         state.errorMessage = payload?.errorMessage;
@@ -245,79 +238,71 @@ export const scheduleSlice = createSlice({
       })
 
       // GETALL
-      .addCase(getAllAlarm.pending, state => {
+      .addCase(getAllMusic.pending, state => {
         state.error = null;
         state.loading = true;
       })
       // 통신 성공
-      .addCase(getAllAlarm.fulfilled, (state, {payload}) => {
+      .addCase(getAllMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
-        state.alarmData = payload;
-        state.msg = 'SUCCESS_GET_ALL_ALARM';
+        state.musicData = payload;
+        state.msg = 'SUCCESS_GET_ALL_Music';
         state.errorMessage = '';
       })
       // 통신 에러
-      .addCase(getAllAlarm.rejected, (state, {payload}) => {
+      .addCase(getAllMusic.rejected, (state, {payload}) => {
         state.loading = false;
-        state.msg = 'FAILED_GET_ALL_ALARM';
+        state.msg = 'FAILED_GET_ALL_Music';
         state.errorMessage = payload?.errorMessage;
       })
 
-      // UPDATE ALARM
-      .addCase(updateAlarm.pending, state => {
+      // UPDATE Music
+      .addCase(updateMusic.pending, state => {
         state.error = null;
         state.loading = true;
       })
       // 통신 성공
-      .addCase(updateAlarm.fulfilled, (state, {payload}) => {
+      .addCase(updateMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
-        state.msg = 'SUCCESS_UPDATE_ALARM';
+        state.msg = 'SUCCESS_UPDATE_Music';
         state.errorMessage = '';
       })
       // 통신 에러
-      .addCase(updateAlarm.rejected, (state, {payload}) => {
+      .addCase(updateMusic.rejected, (state, {payload}) => {
         state.loading = false;
         console.log('fail', payload);
-        state.msg = 'FAILED_UPDATE_ALARM';
+        state.msg = 'FAILED_UPDATE_Music';
         state.errorMessage = payload?.errorMessage;
       })
 
-      // DELETE ALARM
-      .addCase(deleteAlarm.pending, state => {
+      // DELETE Music
+      .addCase(deleteMusic.pending, state => {
         state.error = null;
         state.loading = true;
       })
       // 통신 성공
-      .addCase(deleteAlarm.fulfilled, (state, {payload}) => {
+      .addCase(deleteMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
-        state.msg = 'SUCCESS_DELETE_ALARM';
+        state.msg = 'SUCCESS_DELETE_Music';
         state.errorMessage = '';
       })
       // 통신 에러
-      .addCase(deleteAlarm.rejected, (state, {payload}) => {
+      .addCase(deleteMusic.rejected, (state, {payload}) => {
         state.loading = false;
         console.log('fail', payload);
-        state.msg = 'FAILED_DELETE_ALARM';
+        state.msg = 'FAILED_DELETE_Music';
         state.errorMessage = payload?.errorMessage;
       });
   },
 });
 
 // // 리듀서 액션
-export const {
-  //createScheduleActionInfo,
-  //selectAlarmRepeatData,
-  //initScheduleState,
-  //initEditScheduleState,
-} = scheduleSlice.actions;
 
 // // useS
-export const selectAlarmData = (state: RootState) => state.alarm.alarmData;
-export const selectAlarmRepeatData = (state: RootState) =>
-  state.alarm.repeatData;
+export const selectMusicData = (state: RootState) => state.music.musicData;
 // export const selectMsg = (state: RootState) => state.user.msg;
 
-export default scheduleSlice.reducer;
+export default musicSlice.reducer;

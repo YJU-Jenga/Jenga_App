@@ -268,6 +268,8 @@ const ListenScreen = ({navigation}) => {
     //console.log('getSOUND : ', d);
   }, []);
 
+  const onAddMusic = () => {};
+
   // const fetchGetSoundList = navigation.addListener('focus', () => {
   //   getSoundList('포커스할때,,,');
   // });
@@ -548,13 +550,10 @@ const ListenScreen = ({navigation}) => {
 
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
-                {/* <Button
-                  title="DELETE"
-                  color="red"
-                  onPress={() => {
-                    setVisibleModal(false);
-                    deleteSound(currIdx);
-                  }}></Button> */}
+                <DefaultButton
+                  onPress={onAddMusic}
+                  type="register"
+                  title="알람용으로 등록"></DefaultButton>
                 <DeleteButton
                   onPress={() => {
                     deleteSound(currIdx);

@@ -83,7 +83,6 @@ const CalendarScreen = ({ui}) => {
     React.useCallback(() => {
       const obj = {userId: ui.id, dateString: new Date().toISOString()};
       dispatch(getMonthCalendar(obj));
-      console.log('헤헤');
     }, []),
   );
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import PropTypes from 'prop-types';
-const defaultValue = '#1E90FF';
+import {colors} from '../config/globalStyles';
 
 const DefaultButton = ({onPress, title, type}) => {
   const [color, setColor] = React.useState('#1E90FF');
@@ -13,6 +13,9 @@ const DefaultButton = ({onPress, title, type}) => {
         break;
       case 'cancel':
         setColor('red');
+        break;
+      case 'register':
+        setColor(colors.iconPink);
         break;
     }
   }, []);

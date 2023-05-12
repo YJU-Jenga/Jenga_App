@@ -111,7 +111,7 @@ const LoginScreen = ({route, navigation}) => {
               }
               style={{
                 fontSize: 15,
-                color: 'pink',
+                color: 'lightpink',
                 textAlign: 'right',
               }}>
               Create Account
@@ -119,7 +119,7 @@ const LoginScreen = ({route, navigation}) => {
             <Text
               style={{
                 fontSize: 15,
-                color: 'pink',
+                color: 'lightpink',
                 textAlign: 'right',
               }}>
               Forgot Password?
