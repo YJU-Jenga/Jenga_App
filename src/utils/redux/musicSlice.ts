@@ -6,6 +6,8 @@ import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {back_address} from '../../config/address';
 
+let SERVER_URL = back_address;
+
 // // Define a type for the slice state
 interface MusicState {
   msg: string;
@@ -33,34 +35,26 @@ export const createMusic = createAsyncThunk<
   object,
   {rejectValue: IError}
 >('music/createMusic', async (info, thunkAPI) => {
-  // body.append('file', {
-  //   uri: 'file:///Users/aedin/Library/Developer/CoreSimulator/Devices/0C76F39F-CEFE-4E03-836E-9F412AFC5F86/data/Containers/Data/Application/29F21345-25DE-4117-AC9A-6851A91E8F60/Library/Caches/DocumentPicker/AE5B3089-BFF1-4951-A9F4-8C14E33FBDA3.mp3',
-  //   type: 'audio/mpeg',
-  //   name: 'Part_02.mp3',
-  // });
-  const obj = {
-    user_id: info.userId,
-    name: info.name,
-  };
-
-  const {data} = await axios.post(`${SERVER_URL}/music/create`, body, {
-    headers: {
-      authorization: 'Bearer ' + accessToken,
-      'Content-Type': 'Multipart/form-data',
-    },
-    withCredentials: true,
+  const body = new FormData();
+  body.append('user_id', JSON.stringify({user_id: info.userId}));
+  body.append('name', JSON.stringify({name: info.name}));
+  body.append('file', {
+    uri: info.soundInfo?.uri,
+    name: info.soundInfo?.name,
+    type: info.soundInfo?.mimeType,
   });
-  return data;
 
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    const {data} = await axios.post(`${SERVER_URL}/music/create`, obj, {
+    const {data} = await axios.post(`${SERVER_URL}/music/create`, body, {
       headers: {
         authorization: 'Bearer ' + accessToken,
+        'Content-Type': 'Multipart/form-data',
       },
       withCredentials: true,
     });
+
     return data;
   } catch (e) {
     return thunkAPI.rejectWithValue({
@@ -84,14 +78,7 @@ export const getAllMusic = createAsyncThunk<
       withCredentials: true,
     });
 
-    // 시간 얻기
-    // const hours = parseInt(data[0].time_id.substring(0, 2));
-    // const minutes = parseInt(data[0].time_id.substring(2));
-    // const utcDate = new Date(2001, 7 - 1, 6, hours, minutes);
-
-    // const localDate = new Date(
-    //   utcDate.getTime() - utcDate.getTimezoneOffset() * 60000,
-    // );
+    console.log(data);
 
     return data;
   } catch (e) {
@@ -176,12 +163,15 @@ export const deleteMusic = createAsyncThunk<
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
+    console.log(musicId);
+
     const {data} = await axios.delete(`${SERVER_URL}/music/delete/${musicId}`, {
       headers: {
         authorization: 'Bearer ' + accessToken,
       },
       withCredentials: true,
     });
+
     return data;
   } catch (e) {
     return thunkAPI.rejectWithValue({
@@ -196,18 +186,6 @@ export const musicSlice = createSlice({
   // 초기 값
   initialState,
   reducers: {
-    initMusicState: state => {
-      state.repeatData = '0000000';
-      state.musicData = [];
-    },
-    initEditMusicState: (state, action) => {
-      console.log(action.payload);
-      state.repeatData = action.payload.repeat;
-      state.musicData = action.payload.soundFile;
-    },
-    createMusicActionInfo: (state, action) => {
-      state.musicData = action.payload;
-    },
     // createMusicRepeatInfo: (state, action) => {
     //   console.log(action.payload, 'gg');
     //   state.repeatData = action.payload;
@@ -224,17 +202,15 @@ export const musicSlice = createSlice({
       .addCase(createMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
-        state.userData = payload;
+        state.musicData = payload;
         state.msg = 'SUCCESS_LOGIN';
         state.errorMessage = '';
-        console.log(payload);
       })
       // 통신 에러
       .addCase(createMusic.rejected, (state, {payload}) => {
         state.loading = false;
         state.msg = 'FAILED_LOGIN';
         state.errorMessage = payload?.errorMessage;
-        console.log(payload);
       })
 
       // GETALL
@@ -242,18 +218,19 @@ export const musicSlice = createSlice({
         state.error = null;
         state.loading = true;
       })
+
       // 통신 성공
       .addCase(getAllMusic.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
         state.musicData = payload;
-        state.msg = 'SUCCESS_GET_ALL_Music';
+        state.msg = 'SUCCESS_GET_ALL_MUSIC';
         state.errorMessage = '';
       })
       // 통신 에러
       .addCase(getAllMusic.rejected, (state, {payload}) => {
         state.loading = false;
-        state.msg = 'FAILED_GET_ALL_Music';
+        state.msg = 'FAILED_GET_ALL_MUSIC';
         state.errorMessage = payload?.errorMessage;
       })
 
@@ -288,13 +265,14 @@ export const musicSlice = createSlice({
         state.loading = false;
         state.msg = 'SUCCESS_DELETE_Music';
         state.errorMessage = '';
+        console.log('SUCCESS ', payload);
       })
       // 통신 에러
       .addCase(deleteMusic.rejected, (state, {payload}) => {
         state.loading = false;
-        console.log('fail', payload);
         state.msg = 'FAILED_DELETE_Music';
         state.errorMessage = payload?.errorMessage;
+        console.log('FAILED_DELETE_Music' + payload);
       });
   },
 });

@@ -11,13 +11,24 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Audio} from 'expo-av';
 import {
+  changeMusicFile,
+  changeMusicName,
   createScheduleActionInfo,
   createScheduleRepeatInfo,
+  selectAlarmMusicName,
   selectRepeatInfo,
   selectSoundInfo,
 } from '../utils/redux/alarmSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  deleteMusic,
+  getAllMusic,
+  selectMusicData,
+} from '../utils/redux/musicSlice';
+import {selectUserData} from '../utils/redux/userSlice';
+import {back_address as SERVER_URL} from '../config/address';
+import {width} from '../config/globalStyles';
 
 interface ISound {
   mimeType: string;
@@ -26,54 +37,63 @@ interface ISound {
   isRecording?: boolean;
 }
 
-export const RepeatComponent = ({data, index}) => {
-  //const [day, setDay] = useState<string>();
-  const [isChecked, setIsChecked] = useState<boolean>(false);
-  console.log('리핏 컴포넌트 : ', data[index]);
-  const dispatch = useDispatch();
-  return (
-    <List>
-      {/* <Text>{_currRepeat}</Text> */}
-      {_currRepeat && (
-        <List.Item
-          onPress={() => {
-            setIsChecked(!isChecked);
-            dispatch(createScheduleRepeatInfo({day, isChecked}));
-          }}
-          thumb={
-            <Checkbox
-              checked={isChecked}
-              // onChange={() => {
-              //   setIsChecked(!isChecked);
-              //   dispatch(createScheduleRepeatInfo({day, isChecked}));
-              // }}
-            ></Checkbox>
-          }>
-          <Text style={{fontFamily: 'TheJamsilOTF_Regular', color: 'black'}}>
-            {day}마다 반복
-          </Text>
-        </List.Item>
-      )}
-    </List>
-  );
-};
+// export const RepeatComponent = ({data, index}) => {
+//   //const [day, setDay] = useState<string>();
+//   const [isChecked, setIsChecked] = useState<boolean>(false);
+//   const dispatch = useDispatch();
+//   return (
+//     <List>
+//       {/* <Text>{_currRepeat}</Text> */}
+//       {_currRepeat && (
+//         <List.Item
+//           onPress={() => {
+//             setIsChecked(!isChecked);
+//             dispatch(createScheduleRepeatInfo({day, isChecked}));
+//           }}
+//           thumb={
+//             <Checkbox
+//               checked={isChecked}
+//               // onChange={() => {
+//               //   setIsChecked(!isChecked);
+//               //   dispatch(createScheduleRepeatInfo({day, isChecked}));
+//               // }}
+//             ></Checkbox>
+//           }>
+//           <Text style={{fontFamily: 'TheJamsilOTF_Regular', color: 'black'}}>
+//             {day}마다 반복
+//           </Text>
+//         </List.Item>
+//       )}
+//     </List>
+//   );
+// };
 
 export const ActionComponent = () => {
-  const [soundInfo, setSoundInfo] = React.useState<ISound>();
   const [soundList, setSoundList] = React.useState([]);
 
-  const [isPlaying, setIsPlaying] = React.useState(false);
   const [sound, setSound] = React.useState();
-  const [isChecked, setIsChecked] = useState<boolean>();
-  const [position, setPosition] = React.useState();
+  const [selectedMusic, setSelectedMusic] = useState<string>();
 
   const dispatch = useDispatch();
+  const _ui = useSelector(selectUserData);
+  const _musicData = useSelector(selectMusicData);
+  const _musicName = useSelector(selectAlarmMusicName);
 
   const getSoundList = async () => {
-    //AsyncStorage.removeItem('sounds');
-    const d = await AsyncStorage.getItem('sounds');
-    setSoundList(JSON.parse(d));
-    //console.log('getSOUND : ', d);
+    dispatch(getAllMusic(_ui.id));
+    // .unwrap()
+    // .then(() => {
+    //   setSoundList(_musicData);
+    // });
+  };
+
+  const deleteSound = soundId => {
+    dispatch(deleteMusic(soundId))
+      .unwrap()
+      .then(() => {
+        dispatch(getAllMusic(_ui.id));
+        if (sound) sound?.unloadAsync();
+      });
   };
 
   async function loadSound(soundPath: string) {
@@ -86,19 +106,15 @@ export const ActionComponent = () => {
 
   async function playSound(sound) {
     //await sound.setPositionAsync(position);
-    console.log('Playing Sound');
     await sound.playAsync();
-    setIsPlaying(true);
+    //setIsPlaying(true);
   }
 
   async function pauseSound() {
-    setIsPlaying(false);
     sound?.unloadAsync();
   }
 
   useEffect(() => {
-    // setSound(null);
-    // setIsPlaying(false);
     getSoundList();
   }, []);
 
@@ -111,148 +127,83 @@ export const ActionComponent = () => {
       : undefined;
   }, [sound]);
 
+  const onDeselectCurrentMusic = () => {
+    setSelectedMusic('');
+    dispatch(changeMusicFile(''));
+    dispatch(changeMusicName(''));
+    sound.unloadAsync();
+  };
+
+  const onSelectCurrentMusic = (name, file) => {
+    setSelectedMusic(name);
+    dispatch(changeMusicFile(file));
+    dispatch(changeMusicName(name));
+  };
+
   return (
     <FlatList
       contentContainerStyle={{paddingBottom: '30%'}}
-      data={soundList}
-      ListHeaderComponent={SelectedSoundItem()}
+      data={_musicData}
+      ListHeaderComponent={() => (
+        <SelectedSoundItem
+          selectedMusic={_musicName}
+          onDeselect={onDeselectCurrentMusic}
+        />
+      )}
       renderItem={({item, index}) => {
         return (
-          //<SoundListItem
-          // loadSound={loadSound}
-          // playSound={playSound}
-          // pauseSound={pauseSound}
-          //key={index}
-          //data={item}
-          //onPress={() => {
-          //  console.log('안녕');
-          //}}></SoundListItem>
           <List.Item
-            style={{marginStart: 10, width: '100%'}}
-            onPress={() => {
-              loadSound(item?.uri);
-              dispatch(createScheduleActionInfo(item));
+            style={{
+              width: '100%',
+              display: 'flex',
             }}
-            // thumb={
-            //   <Checkbox
-            //     checked={isChecked}
-            //     onChange={() => {
-            //       setIsChecked(!isChecked);
-            //     }}></Checkbox>
-            // }
+            onPress={() => {
+              const soundPath = SERVER_URL + '/' + item.file;
+              onSelectCurrentMusic(item.name, item.file);
+              loadSound(soundPath);
+            }}
             key={item?.name}>
-            <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>{item?.name}</Text>
+            <Flex style={{marginStart: width * 10}} justify="between">
+              <Text style={{fontFamily: 'TheJamsilOTF_Light'}}>
+                {item?.name}
+              </Text>
+              <Icon
+                onPress={() => {
+                  deleteSound(item.id);
+                }}
+                name="delete-outline"
+                size={25}
+                color="#888"
+              />
+            </Flex>
           </List.Item>
         );
       }}></FlatList>
   );
 };
 
-const SelectedSoundItem = (): JSX.Element => {
-  //const _currSound = useSelector(selectSoundInfo);
+const SelectedSoundItem = React.memo(
+  ({selectedMusic, onDeselect}): JSX.Element => {
+    return (
+      // <WingBlank>
+      <View>
+        <List renderHeader={'선택된 파일'}>
+          <Flex
+            justify="between"
+            style={{paddingVertical: 15, marginHorizontal: width * 15}}>
+            <Flex>
+              <Icon name="playlist-music" size={25} color="#aaa" />
+              <Text style={{marginStart: 15, fontFamily: 'TheJamsilOTF_Light'}}>
+                {selectedMusic}
+              </Text>
+            </Flex>
 
-  // console.log(selectSoundInfo())
-
-  // console.log(selectSoundInfo(sound));
-
-  return (
-    // <WingBlank>
-    <View>
-      <List renderHeader={'선택된 파일'}>
-        <Flex style={{paddingVertical: 15, marginStart: 15}}>
-          <Icon name="playlist-music" size={25} color="#aaa" />
-          <Text style={{marginStart: 15, fontFamily: 'TheJamsilOTF_Light'}}>
-            {/* {_currSound?.name} */}
-          </Text>
-        </Flex>
-      </List>
-      <List renderHeader={'목록'}></List>
-    </View>
-    // </WingBlank>
-  );
-};
-
-// export const SoundListItem = ({data}: {data: string[]}): JSX.Element => {
-
-//   async function loadSound(soundPath: string) {
-//     console.log('Loading Sound : ', soundPath);
-//     const {sound} = await Audio.Sound.createAsync({uri: soundPath});
-//     setSound(sound);
-//     await playSound(sound);
-//   }
-//   async function playSound(sound) {
-//     //await sound.setPositionAsync(position);
-//     console.log('Playing Sound');
-//     await sound.playAsync();
-//     setIsPlaying(true);
-//   }
-
-//   async function pauseSound() {
-//     sound.getStatusAsync().then(res => {
-//       setPosition(res.positionMillis);
-//     });
-//     await sound.pauseAsync();
-//     sound.setPositionAsync(position);
-//     setIsPlaying(false);
-//     //clearInterval;
-//   }
-
-//   React.useEffect(() => {
-//     return sound
-//       ? () => {
-//           console.log('Unloading Sound');
-//           sound.unloadAsync();
-//         }
-//       : undefined;
-//   }, [sound]);
-
-//   return (
-//     data && (
-//       <List.Item
-//         thumb={
-//           <Checkbox
-//             checked={isChecked}
-//             onChange={() => {
-//               setIsChecked(!isChecked);
-//             }}></Checkbox>
-//         }
-//         key={data?.name}>
-//         <Pressable
-//           onPress={() => {
-//             if (sound) {
-//               console.log('사운드 객ㅔ 있ㅏ');
-//               pauseSound();
-//             } else {
-//               console.log('없다');
-//               setSound(null);
-//               loadSound(data?.uri);
-//             }
-//           }}>
-//           <Text>{data?.name}</Text>
-//         </Pressable>
-//       </List.Item>
-//     )
-//   );
-// };
-
-// const ScheduleDetailScreen = ({route, navigation}) => {
-//   return (
-//     <Pressable style={{flex: 1, backgroundColor: 'mistyrose'}}>
-//       <WingBlank>
-//         <Flex justify="between">
-//           <Text style={{fontSize: 24, color: '#444'}}>
-//             {route?.params?.type}
-//           </Text>
-//           <Button title="Save" onPress={() => navigation.goBack()}></Button>
-//         </Flex>
-//         {route?.params?.type === 'repeat' ? (
-//           <RepeatComponent></RepeatComponent>
-//         ) : (
-//           <ActionComponent></ActionComponent>
-//         )}
-//       </WingBlank>
-//     </Pressable>
-//   );
-// };
-
-//export default ScheduleDetailScreen;
+            <Icon onPress={onDeselect} name="delete" size={25} color="#aaa" />
+          </Flex>
+        </List>
+        <List renderHeader={'목록'}></List>
+      </View>
+      // </WingBlank>
+    );
+  },
+);

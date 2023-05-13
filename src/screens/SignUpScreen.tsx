@@ -55,12 +55,6 @@ const SignUpScreen = ({route, navigation}) => {
   const dispatch = useDispatch();
   const _errorMessage = useSelector(selectErrorMsg);
 
-  const failToast = () => {
-    Toast.fail({
-      content: _errorMessage,
-    });
-  };
-
   React.useEffect(() => {
     if (signUpInfo.password === signUpInfo.confirmPassword) {
       setConfirmPasswordMessage('비밀번호를 똑같이 입력했어요 : )');

@@ -7,10 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {back_address} from '../../config/address';
 
 let SERVER_URL = back_address;
-// let SERVER_URL = 'http://127.0.0.1:5001';
-// if (Platform.OS === 'android') {
-//   SERVER_URL = 'http://10.0.2.2:5001';
-// }
 
 // // Define a type for the slice state
 interface AlarmState {
@@ -18,6 +14,8 @@ interface AlarmState {
   loading: boolean;
   alarmData: any;
   repeatData: string;
+  musicFile: string;
+  musicName: string;
   error: null;
   errorMessage: string;
 }
@@ -28,8 +26,11 @@ const initialState: AlarmState = {
   loading: false,
   error: null,
   alarmData: [],
+
   repeatData: '0000000',
   errorMessage: '',
+  musicFile: '',
+  musicName: '',
 };
 
 // // 통신 에러 시 보여줄 에러 메세지의 타입
@@ -215,6 +216,12 @@ export const scheduleSlice = createSlice({
     createScheduleActionInfo: (state, action) => {
       state.musicData = action.payload;
     },
+    changeMusicFile: (state, action) => {
+      state.musicFile = action.payload;
+    },
+    changeMusicName: (state, action) => {
+      state.musicName = action.payload;
+    },
     // createScheduleRepeatInfo: (state, action) => {
     //   console.log(action.payload, 'gg');
     //   state.repeatData = action.payload;
@@ -312,12 +319,16 @@ export const {
   //selectAlarmRepeatData,
   //initScheduleState,
   //initEditScheduleState,
+  changeMusicFile,
+  changeMusicName,
 } = scheduleSlice.actions;
 
 // // useS
 export const selectAlarmData = (state: RootState) => state.alarm.alarmData;
 export const selectAlarmRepeatData = (state: RootState) =>
   state.alarm.repeatData;
+export const selectAlarmMusicFile = (state: RootState) => state.alarm.musicFile;
+export const selectAlarmMusicName = (state: RootState) => state.alarm.musicName;
 // export const selectMsg = (state: RootState) => state.user.msg;
 
 export default scheduleSlice.reducer;

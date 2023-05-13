@@ -6,6 +6,8 @@ import userReducer from './src/utils/redux/userSlice';
 import alarmReducer from './src/utils/redux/alarmSlice';
 import calendarReducer from './src/utils/redux/calendarSlice';
 import deviceReducer from './src/utils/redux/deviceSlice';
+import musicReducer from './src/utils/redux/musicSlice';
+
 export const store = configureStore({
   reducer: {
     auth: authReducer,
@@ -13,6 +15,7 @@ export const store = configureStore({
     alarm: alarmReducer,
     calendar: calendarReducer,
     device: deviceReducer,
+    music: musicReducer,
   },
 });
 

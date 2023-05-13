@@ -27,6 +27,7 @@ import {
   SearchBar,
   PickerView,
 } from '@ant-design/react-native';
+import {Snackbar} from 'react-native-paper';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import Slider from '@react-native-community/slider';
 import * as DocumentPicker from 'expo-document-picker';
@@ -42,6 +43,11 @@ import DefaultButton from '../components/DefaultButton';
 import * as FileSystem from 'expo-file-system';
 
 import {height} from '../config/globalStyles';
+import {useDispatch} from 'react-redux';
+import {createAlarm} from '../utils/redux/alarmSlice';
+import {useNavigation} from '@react-navigation/native';
+import {createMusic, getAllMusic, getOneMusic} from '../utils/redux/musicSlice';
+import Prompt from '../components/Prompt';
 
 interface ISound {
   mimeType: string;
@@ -72,7 +78,7 @@ const requestDocumentPermission = async () => {
   }
 };
 
-const ListenScreen = ({navigation}) => {
+const ListenScreen = ({ui}) => {
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
   const [soundInfo, setSoundInfo] = React.useState<ISound>();
   const [soundList, setSoundList] = React.useState([]);
@@ -83,13 +89,20 @@ const ListenScreen = ({navigation}) => {
   const [position, setPosition] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  const [name, setName] = useState<string>('');
+
   const [search, setSearch] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [listPerPage, setListPerPage] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState();
 
-  const [pickerValue, setPickerValue] = useState('1');
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
+  const [snackbarContent, setSnackbarContent] = useState<string>('');
+
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const updateSearch = search => {
     setSearch(search);
@@ -105,7 +118,6 @@ const ListenScreen = ({navigation}) => {
 
   useInterval(
     () => {
-      console.log('야호');
       sound.getStatusAsync().then(res => {
         console.log(res.positionMillis);
         setPosition(res.positionMillis);
@@ -132,17 +144,11 @@ const ListenScreen = ({navigation}) => {
   React.useEffect(
     () =>
       navigation.addListener('blur', async () => {
-        console.log('초기화!!!!!!!!');
         setIsPlaying(false);
-        //setSoundPath(null);
-        // setRecordingInfo(null);
-        // setRecordingUri(null);
         setPosition(0);
         setDuration(null);
         setSound(null);
         setVisibleModal(false);
-        //setSoundPath(null);
-        //setRecording(null);
       }),
     [],
   );
@@ -187,7 +193,6 @@ const ListenScreen = ({navigation}) => {
       setVisibleModal(false);
       return true;
     } else {
-      console.log('응애ㅠ');
       return false;
     }
   };
@@ -268,7 +273,21 @@ const ListenScreen = ({navigation}) => {
     //console.log('getSOUND : ', d);
   }, []);
 
-  const onAddMusic = () => {};
+  const onPressAddMusic = React.useCallback(
+    name => {
+      dispatch(createMusic({userId: ui.id, name: name, soundInfo: soundInfo}));
+      //setPromptVisible(true);
+    },
+    [soundInfo],
+  );
+
+  const onLoadAllMusic = React.useCallback(() => {
+    dispatch(getAllMusic(ui.id));
+  }, []);
+
+  const onLoadOneMusic = React.useCallback(() => {
+    dispatch(getOneMusic(ui.id));
+  }, []);
 
   // const fetchGetSoundList = navigation.addListener('focus', () => {
   //   getSoundList('포커스할때,,,');
@@ -444,17 +463,6 @@ const ListenScreen = ({navigation}) => {
           )}
         </WingBlank>
         <FloatingButton onPress={handleOpenDocumentPicker}></FloatingButton>
-        {/* <TouchableOpacity
-          activeOpacity={0.5}
-          // onPress={this.SampleFunction}
-          style={styles.TouchableOpacityStyle}>
-          <Image
-            source={{
-              uri: 'https://reactnativecode.com/wp-content/uploads/2017/11/Floating_Button.png',
-            }}
-            style={styles.FloatingButtonStyle}
-          />
-        </TouchableOpacity> */}
         <Modal
           transparent={false}
           visible={visibleModal}
@@ -475,20 +483,7 @@ const ListenScreen = ({navigation}) => {
                 size={30}
                 color={'#ff6e6e'}
                 onPress={onCloseModal}></Ionicons>
-
-              {/* <Button title="Back" onPress={onCloseModal}></Button> */}
-              {/* <DefaultButton
-                onPress={onCloseModal}
-                title="취소"
-                type="default"></DefaultButton> */}
-
-              {/* <Text style={{fontSize: 24}}>책</Text> */}
             </Flex>
-            {/* <Picker selectedValue={pickerValue}>
-              <Picker.Item label="라벨" value="1"></Picker.Item>
-              <Picker.Item label="라벨" value="2"></Picker.Item>
-              <Picker.Item label="라벨" value="3"></Picker.Item>
-            </Picker> */}
             <WingBlank size="lg">
               <View
                 style={{
@@ -551,7 +546,9 @@ const ListenScreen = ({navigation}) => {
                 <WhiteSpace size="xl" />
                 <WhiteSpace size="xl" />
                 <DefaultButton
-                  onPress={onAddMusic}
+                  onPress={() => {
+                    setPromptVisible(true);
+                  }}
                   type="register"
                   title="알람용으로 등록"></DefaultButton>
                 <DeleteButton
@@ -561,7 +558,35 @@ const ListenScreen = ({navigation}) => {
               </View>
               {/* <WhiteSpace></WhiteSpace> */}
             </WingBlank>
+            <Prompt
+              visible={promptVisible}
+              title="음악의 용도를 입력해주세요"
+              message={`'알람 설정 > 뮤직'에서 확인할 수 있습니다`}
+              onCancel={() => {
+                setPromptVisible(false);
+              }}
+              onSubmit={text => {
+                if (text.length == 0) {
+                  setSnackbarVisible(true);
+                  setSnackbarContent('이름을 입력해주세요');
+                  return;
+                } else {
+                  //setName(text);
+                  onPressAddMusic(text);
+                  setPromptVisible(false);
+                }
+              }}
+            />
           </SafeAreaView>
+          <Snackbar
+            visible={snackbarVisible}
+            onDismiss={() => {
+              setSnackbarVisible(false);
+              setSnackbarContent('');
+            }}
+            duration={2500}>
+            {snackbarContent}
+          </Snackbar>
         </Modal>
       </SafeAreaView>
     </Provider>

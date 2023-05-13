@@ -37,11 +37,14 @@ import {Snackbar} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {
+  changeMusicFile,
+  changeMusicName,
   createAlarm,
-  createScheduleRepeatInfo,
   deleteAlarm,
   getAllAlarm,
   selectAlarmData,
+  selectAlarmMusicFile,
+  selectAlarmMusicName,
   updateAlarm,
 } from '../utils/redux/alarmSlice';
 
@@ -65,6 +68,8 @@ const AlarmModalScreen = ({ui}) => {
 
   const dispatch = useDispatch();
   const _alarms = useSelector(selectAlarmData);
+  const _musicFile = useSelector(selectAlarmMusicFile);
+  const _musicName = useSelector(selectAlarmMusicName);
   // const _currSound = route.params?.data.file;
   //const _currRepeat = route.params?.data.repeat;
 
@@ -80,6 +85,8 @@ const AlarmModalScreen = ({ui}) => {
   useEffect(() => {
     if (route.params?.type === 'CREATE') {
       //dispatch(initScheduleState());
+      dispatch(changeMusicFile(''));
+      dispatch(changeMusicName(''));
     } else if (route.params?.type === 'EDIT') {
       //dispatch(initEditScheduleState(route.params.data));
       const hours = parseInt(route.params.data.time_id.substring(0, 2));
@@ -89,6 +96,12 @@ const AlarmModalScreen = ({ui}) => {
       const localDate = new Date(
         utcDate.getTime() - utcDate.getTimezoneOffset() * 60000,
       );
+
+      dispatch(changeMusicFile(route.params.data.file));
+
+      console.log('수정 ', route.params.data);
+
+      dispatch(changeMusicName(route.params.data.file));
 
       setName(route.params.data.name);
       setSentence(route.params.data.sentence);
@@ -137,6 +150,7 @@ const AlarmModalScreen = ({ui}) => {
           sentence: sentence,
           state: true,
           repeat: submitRepeat,
+          file: _musicFile,
         }),
       );
     } else if (route.params.type === 'EDIT') {
@@ -157,6 +171,7 @@ const AlarmModalScreen = ({ui}) => {
           state: true,
           name: name,
           id: route.params.data.id,
+          file: _musicFile,
         }),
       )
         .unwrap()
@@ -277,6 +292,8 @@ const AlarmModalScreen = ({ui}) => {
                   TTS
                 </Text>
               </InputItem>
+            </List>
+            <List style={{borderTopWidth: 0}}>
               <List.Item
                 extra={
                   <Text
@@ -300,7 +317,7 @@ const AlarmModalScreen = ({ui}) => {
               <List.Item
                 extra={
                   <Text style={{fontFamily: 'TheJamsilOTF_Regular'}}>
-                    {_currSound?.name}
+                    {_musicName}
                   </Text>
                 }
                 onPress={() => {
@@ -363,6 +380,7 @@ const AlarmModalScreen = ({ui}) => {
             ].map((day, i) => {
               return (
                 <List.Item
+                  key={i}
                   onPress={() => {
                     //setIsChecked(!isChecked);
                     const arr = submitRepeat.split('');

@@ -195,7 +195,8 @@ export const AppNavigator = () => {
         />
         <Tab.Screen
           name="책과음악"
-          component={ListenScreen}
+          children={() => <ListenScreen ui={_ui} />}
+          //component={ListenScreen}
           options={{headerShown: false}}
         />
         {/* <Tab.Screen
