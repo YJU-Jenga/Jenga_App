@@ -47,6 +47,7 @@ import {
   selectAlarmMusicName,
   updateAlarm,
 } from '../utils/redux/alarmSlice';
+import {getAllMusic, getOneMusic} from '../utils/redux/musicSlice';
 
 const AlarmModalScreen = ({ui}) => {
   const navigation = useNavigation();
@@ -101,7 +102,8 @@ const AlarmModalScreen = ({ui}) => {
 
       console.log('수정 ', route.params.data);
 
-      dispatch(changeMusicName(route.params.data.file));
+      dispatch(changeMusicName(route.params.data.name));
+      dispatch(getAllMusic(ui.id));
 
       setName(route.params.data.name);
       setSentence(route.params.data.sentence);
@@ -137,16 +139,12 @@ const AlarmModalScreen = ({ui}) => {
         setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
         return;
       }
-      if (name.length < 1) {
-        setSnackbarVisible(true);
-        setSnackbarContent('알람 이름을 입력하세요');
-        return;
-      }
+
       dispatch(
         createAlarm({
           user_id: ui.id,
           time_id: generateId(),
-          name: name,
+          name: _musicName,
           sentence: sentence,
           state: true,
           repeat: submitRepeat,
@@ -169,7 +167,7 @@ const AlarmModalScreen = ({ui}) => {
           user_id: ui.id,
           sentence: sentence,
           state: true,
-          name: name,
+          name: _musicName,
           id: route.params.data.id,
           file: _musicFile,
         }),
@@ -212,6 +210,26 @@ const AlarmModalScreen = ({ui}) => {
       }
     }
   };
+
+  const onPressDay = i => {
+    const arr = [...submitRepeat];
+    if (arr[i] === '1') {
+      arr[i] = '0';
+    }
+    if (arr[i] === '0') {
+      arr[i] = '1';
+    }
+    setSubmitRepeat(arr.join(''));
+  };
+
+  useEffect(() => {
+    let str = '';
+    ['일', '월', '화', '수', '목', '금', '토'].forEach((day, i) => {
+      str += submitRepeat[i] === '1' ? day + ' ' : '';
+    });
+    setDisplayRepeat(str);
+    console.log('displayRepeat:', displayRepeat);
+  }, [submitRepeat]);
 
   return (
     <Provider locale={enUS}>
@@ -260,22 +278,6 @@ const AlarmModalScreen = ({ui}) => {
               date={valuehours}></DatePicker>
 
             <List>
-              <InputItem
-                value={name}
-                onChange={v => setName(v)}
-                style={{
-                  fontFamily: 'TheJamsilOTF_Regular',
-                }}
-                placeholder="알람의 이름을 입력하세요">
-                <Text
-                  style={{
-                    fontFamily: 'TheJamsilOTF_Regular',
-                    color: 'black',
-                    fontSize: 17,
-                  }}>
-                  제목
-                </Text>
-              </InputItem>
               <InputItem
                 value={sentence}
                 onChange={v => setSentence(v)}
@@ -382,18 +384,7 @@ const AlarmModalScreen = ({ui}) => {
                 <List.Item
                   key={i}
                   onPress={() => {
-                    //setIsChecked(!isChecked);
-                    const arr = submitRepeat.split('');
-                    if (arr[i] === '1') {
-                      arr[i] = '0';
-                      const submitArr = arr.join('');
-                      setSubmitRepeat(submitArr);
-                    }
-                    if (arr[i] === '0') {
-                      arr[i] = '1';
-                      const submitArr = arr.join('');
-                      setSubmitRepeat(submitArr);
-                    }
+                    onPressDay(i);
                   }}
                   thumb={
                     <Checkbox

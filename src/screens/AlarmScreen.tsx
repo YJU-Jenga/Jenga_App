@@ -117,17 +117,6 @@ const AlarmScreen = ({ui}) => {
             ) ? (
               _alarmData.map((item, i) => {
                 let repeat = ['일', '월', '화', '수', '목', '금', '토'];
-                let currRepeat = '';
-                // const repeatData = item.repeat
-                //   .split('')
-                //   .map((isChecked, index) => {
-                //     if (isChecked === '1') {
-                //       currRepeat = currRepeat.concat(repeat[index] + ' ');
-                //       return repeat[index];
-                //     }
-                //     return null;
-                //   })
-                //   .filter(day => day !== null);
 
                 const h = item.time_id.slice(0, 2);
                 const m = item.time_id.slice(2, 4);

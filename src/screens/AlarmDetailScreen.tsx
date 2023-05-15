@@ -37,37 +37,6 @@ interface ISound {
   isRecording?: boolean;
 }
 
-// export const RepeatComponent = ({data, index}) => {
-//   //const [day, setDay] = useState<string>();
-//   const [isChecked, setIsChecked] = useState<boolean>(false);
-//   const dispatch = useDispatch();
-//   return (
-//     <List>
-//       {/* <Text>{_currRepeat}</Text> */}
-//       {_currRepeat && (
-//         <List.Item
-//           onPress={() => {
-//             setIsChecked(!isChecked);
-//             dispatch(createScheduleRepeatInfo({day, isChecked}));
-//           }}
-//           thumb={
-//             <Checkbox
-//               checked={isChecked}
-//               // onChange={() => {
-//               //   setIsChecked(!isChecked);
-//               //   dispatch(createScheduleRepeatInfo({day, isChecked}));
-//               // }}
-//             ></Checkbox>
-//           }>
-//           <Text style={{fontFamily: 'TheJamsilOTF_Regular', color: 'black'}}>
-//             {day}마다 반복
-//           </Text>
-//         </List.Item>
-//       )}
-//     </List>
-//   );
-// };
-
 export const ActionComponent = () => {
   const [soundList, setSoundList] = React.useState([]);
 
@@ -81,10 +50,6 @@ export const ActionComponent = () => {
 
   const getSoundList = async () => {
     dispatch(getAllMusic(_ui.id));
-    // .unwrap()
-    // .then(() => {
-    //   setSoundList(_musicData);
-    // });
   };
 
   const deleteSound = soundId => {
@@ -105,9 +70,7 @@ export const ActionComponent = () => {
   }
 
   async function playSound(sound) {
-    //await sound.setPositionAsync(position);
     await sound.playAsync();
-    //setIsPlaying(true);
   }
 
   async function pauseSound() {
