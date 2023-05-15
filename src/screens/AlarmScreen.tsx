@@ -69,14 +69,17 @@ const AlarmScreen = ({ui}) => {
   };
 
   const onChangeSwitch = React.useCallback(async data => {
-    dispatch(updateAlarm({...data, state: !data.state}));
-    await onLoadSchedules();
+    dispatch(updateAlarm({...data, state: !data.state}))
+      .unwrap()
+      .then(() => {
+        onLoadSchedules();
+      });
   }, []);
 
   const onSwipeDelete = React.useCallback(async data => {
-    const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
-    await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
-    await onLoadSchedules();
+    // const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
+    // await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
+    // await onLoadSchedules();
   }, []);
 
   useFocusEffect(
