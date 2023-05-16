@@ -47,7 +47,11 @@ import {
   selectAlarmMusicName,
   updateAlarm,
 } from '../utils/redux/alarmSlice';
-import {getAllMusic, getOneMusic} from '../utils/redux/musicSlice';
+import {
+  getAllMusic,
+  getOneMusic,
+  selectMusicData,
+} from '../utils/redux/musicSlice';
 
 const AlarmModalScreen = ({ui}) => {
   const navigation = useNavigation();
@@ -71,6 +75,7 @@ const AlarmModalScreen = ({ui}) => {
   const _alarms = useSelector(selectAlarmData);
   const _musicFile = useSelector(selectAlarmMusicFile);
   const _musicName = useSelector(selectAlarmMusicName);
+  const _musicData = useSelector(selectMusicData);
   // const _currSound = route.params?.data.file;
   //const _currRepeat = route.params?.data.repeat;
 
@@ -102,7 +107,17 @@ const AlarmModalScreen = ({ui}) => {
 
       console.log('수정 ', route.params.data);
 
-      dispatch(changeMusicName(route.params.data.name));
+      dispatch(getAllMusic(ui.id))
+        .unwrap()
+        .then(() => {
+          _musicData.forEach((item, idx) => {
+            console.log(item.file == route.params.data.file);
+            if (item.file == route.params.data.file) {
+              dispatch(changeMusicName(item.name));
+            }
+          });
+        });
+
       dispatch(getAllMusic(ui.id));
 
       setName(route.params.data.name);
@@ -149,12 +164,12 @@ const AlarmModalScreen = ({ui}) => {
           state: true,
           repeat: submitRepeat,
           file: _musicFile,
-        })
-          .unwrap()
-          .then(() => {
-            dispatch(getAllAlarm(ui.id));
-          }),
-      );
+        }),
+      )
+        .unwrap()
+        .then(() => {
+          dispatch(getAllAlarm(ui.id));
+        });
     } else if (route.params.type === 'EDIT') {
       if (isDuplicated) {
         setSnackbarVisible(true);
@@ -288,7 +303,7 @@ const AlarmModalScreen = ({ui}) => {
                 style={{
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}
-                placeholder="아이에게 할 말을 입력하세요">
+                placeholder="알람 이름을 입력하세요">
                 <Text
                   style={{
                     fontFamily: 'TheJamsilOTF_Regular',
