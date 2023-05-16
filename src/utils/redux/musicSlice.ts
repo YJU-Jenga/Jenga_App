@@ -118,6 +118,15 @@ export const updateMusic = createAsyncThunk<
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
+    const body = new FormData();
+    body.append('user_id', JSON.stringify({user_id: info.userId}));
+    body.append('name', JSON.stringify({name: info.name}));
+    body.append('file', {
+      uri: info.soundInfo?.uri,
+      name: info.soundInfo?.name,
+      type: info.soundInfo?.mimeType,
+    });
+
     // let body = new FormData();
     // body.append('user_id', JSON.stringify({user_id: info.user_id}));
     // body.append('time_id', JSON.stringify({time_id: info.time_id}));
@@ -125,17 +134,15 @@ export const updateMusic = createAsyncThunk<
     // body.append('sentence', JSON.stringify({sentence: info.sentence}));
     // body.append('state', JSON.stringify({state: info.state}));
     // body.append('repeat', JSON.stringify({repeat: info.repeat})); Multipart/form-data
-    const obj = {
-      user_id: info.user_id,
-      time_id: info.time_id,
-      name: info.name,
-      sentence: info.sentence,
-      file: 'uploads/music/asdf.mp3',
-      state: info.state,
-      repeat: info.repeat,
-    };
-
-    // body.append('file', JSON.stringify({file: 'uploads/music/asdf.mp3'}));
+    // const obj = {
+    //   user_id: info.user_id,
+    //   time_id: info.time_id,
+    //   name: info.name,
+    //   sentence: info.sentence,
+    //   file: 'uploads/music/asdf.mp3',
+    //   state: info.state,
+    //   repeat: info.repeat,
+    // };
 
     const id = info.id;
 

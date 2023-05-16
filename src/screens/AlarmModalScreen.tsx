@@ -144,12 +144,16 @@ const AlarmModalScreen = ({ui}) => {
         createAlarm({
           user_id: ui.id,
           time_id: generateId(),
-          name: _musicName,
+          name: name,
           sentence: sentence,
           state: true,
           repeat: submitRepeat,
           file: _musicFile,
-        }),
+        })
+          .unwrap()
+          .then(() => {
+            dispatch(getAllAlarm(ui.id));
+          }),
       );
     } else if (route.params.type === 'EDIT') {
       if (isDuplicated) {
@@ -167,7 +171,7 @@ const AlarmModalScreen = ({ui}) => {
           user_id: ui.id,
           sentence: sentence,
           state: true,
-          name: _musicName,
+          name: name,
           id: route.params.data.id,
           file: _musicFile,
         }),
@@ -279,6 +283,24 @@ const AlarmModalScreen = ({ui}) => {
 
             <List>
               <InputItem
+                value={name}
+                onChange={v => setName(v)}
+                style={{
+                  fontFamily: 'TheJamsilOTF_Regular',
+                }}
+                placeholder="아이에게 할 말을 입력하세요">
+                <Text
+                  style={{
+                    fontFamily: 'TheJamsilOTF_Regular',
+                    color: 'black',
+                    fontSize: 17,
+                  }}>
+                  알람명
+                </Text>
+              </InputItem>
+            </List>
+            <List>
+              <InputItem
                 value={sentence}
                 onChange={v => setSentence(v)}
                 style={{
@@ -332,7 +354,7 @@ const AlarmModalScreen = ({ui}) => {
                     color: 'black',
                     fontSize: 17,
                   }}>
-                  액션
+                  파일
                 </Text>
               </List.Item>
             </List>
@@ -427,7 +449,7 @@ const AlarmModalScreen = ({ui}) => {
                     color: 'black',
                     fontFamily: 'TheJamsilOTF_Regular',
                   }}>
-                  액션
+                  파일
                 </Text>
               </Flex>
             </WingBlank>

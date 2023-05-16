@@ -48,10 +48,12 @@ export const createAlarm = createAsyncThunk<
     time_id: info.time_id,
     name: info.name,
     sentence: info.sentence,
-    file: 'uploads/music/asdf.mp3',
+    file: info.file,
     state: info.state,
     repeat: info.repeat,
   };
+
+  console.log(info);
 
   // body.append('file', {
   //   uri: 'file:///Users/aedin/Library/Developer/CoreSimulator/Devices/0C76F39F-CEFE-4E03-836E-9F412AFC5F86/data/Containers/Data/Application/29F21345-25DE-4117-AC9A-6851A91E8F60/Library/Caches/DocumentPicker/AE5B3089-BFF1-4951-A9F4-8C14E33FBDA3.mp3',
@@ -138,6 +140,8 @@ export const updateAlarm = createAsyncThunk<
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
+    console.log(info);
+
     // let body = new FormData();
     // body.append('user_id', JSON.stringify({user_id: info.user_id}));
     // body.append('time_id', JSON.stringify({time_id: info.time_id}));
@@ -150,12 +154,10 @@ export const updateAlarm = createAsyncThunk<
       time_id: info.time_id,
       name: info.name,
       sentence: info.sentence,
-      file: 'uploads/music/asdf.mp3',
+      file: info.file,
       state: info.state,
       repeat: info.repeat,
     };
-
-    // body.append('file', JSON.stringify({file: 'uploads/music/asdf.mp3'}));
 
     const id = info.id;
 
