@@ -66,6 +66,7 @@ const AlarmModalScreen = ({ui}) => {
   const [repeatInfo, setRepeatInfo] = React.useState([]);
   const [sentence, setSentence] = React.useState('');
   const [name, setName] = useState<string>('');
+  const [isMusicReady, setisMusicReady] = useState<boolean>(false);
 
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
@@ -125,12 +126,21 @@ const AlarmModalScreen = ({ui}) => {
   }, []);
 
   useEffect(() => {
-    _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
-      if (item.file == route.params.data.file) {
-        console.log(route.params.data.file);
-        dispatch(changeMusicName(item.name));
-      }
-    });
+    if (
+      Array.isArray(_musicData) &&
+      _musicData.length === 0 &&
+      Array.isArray()
+    ) {
+      dispatch(changeMusicName(''));
+    } else {
+      _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
+        if (item.file == route.params.data.file) {
+          console.log(route.params.data.file);
+          dispatch(changeMusicName(item.name));
+        }
+      });
+    }
+    //setisMusicReady(true);
   }, [_musicData]);
 
   const generateId = () => {
@@ -233,8 +243,7 @@ const AlarmModalScreen = ({ui}) => {
     const arr = [...submitRepeat];
     if (arr[i] === '1') {
       arr[i] = '0';
-    }
-    if (arr[i] === '0') {
+    } else if (arr[i] === '0') {
       arr[i] = '1';
     }
     setSubmitRepeat(arr.join(''));
