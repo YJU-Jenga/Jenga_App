@@ -17,7 +17,7 @@ import {
   Toast,
 } from '@ant-design/react-native';
 import axios from 'axios';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 
 import {
   initErrorMessage,
@@ -33,10 +33,6 @@ const LoginScreen = ({route, navigation}) => {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
-  //오류메시지 상태저장
-  const [nameMessage, setNameMessage] = React.useState<string>('');
-  const [emailMessage, setEmailMessage] = React.useState<string>('');
-  const [passwordMessage, setPasswordMessage] = React.useState<string>('');
   const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   // 유효성 검사
@@ -47,8 +43,8 @@ const LoginScreen = ({route, navigation}) => {
   const [visibleSnackbar, setVisibleSnackbar] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
 
-  const _errorMessage = useSelector(selectErrorMsg);
-  const dispatch = useDispatch();
+  const _errorMessage = useAppSelector(selectErrorMsg);
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
     setErrorMessage(_errorMessage);

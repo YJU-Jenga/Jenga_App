@@ -27,7 +27,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
 import {ActionComponent, RepeatComponent} from './AlarmDetailScreen';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import DatePicker from 'react-native-date-picker';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,6 +52,7 @@ import {
   getOneMusic,
   selectMusicData,
 } from '../utils/redux/musicSlice';
+import {IAlarmData} from '../interfaces/alarm';
 
 const AlarmModalScreen = ({ui}) => {
   const navigation = useNavigation();
@@ -71,11 +72,11 @@ const AlarmModalScreen = ({ui}) => {
 
   const mode = route.params?.type === 'EDIT' ? '예약 편집' : '예약 생성';
 
-  const dispatch = useDispatch();
-  const _alarms = useSelector(selectAlarmData);
-  const _musicFile = useSelector(selectAlarmMusicFile);
-  const _musicName = useSelector(selectAlarmMusicName);
-  const _musicData = useSelector(selectMusicData);
+  const dispatch = useAppDispatch();
+  const _alarms = useAppSelector(selectAlarmData);
+  const _musicFile = useAppSelector(selectAlarmMusicFile);
+  const _musicName = useAppSelector(selectAlarmMusicName);
+  const _musicData = useAppSelector(selectMusicData);
   // const _currSound = route.params?.data.file;
   //const _currRepeat = route.params?.data.repeat;
 
@@ -107,17 +108,6 @@ const AlarmModalScreen = ({ui}) => {
 
       console.log('수정 ', route.params.data);
 
-      dispatch(getAllMusic(ui.id))
-        .unwrap()
-        .then(() => {
-          _musicData.forEach((item, idx) => {
-            console.log(item.file == route.params.data.file);
-            if (item.file == route.params.data.file) {
-              dispatch(changeMusicName(item.name));
-            }
-          });
-        });
-
       dispatch(getAllMusic(ui.id));
 
       setName(route.params.data.name);
@@ -133,6 +123,15 @@ const AlarmModalScreen = ({ui}) => {
       setDisplayRepeat(str);
     }
   }, []);
+
+  useEffect(() => {
+    _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
+      if (item.file == route.params.data.file) {
+        console.log(route.params.data.file);
+        dispatch(changeMusicName(item.name));
+      }
+    });
+  }, [_musicData]);
 
   const generateId = () => {
     console.log(valuehours.getHours());
@@ -230,7 +229,7 @@ const AlarmModalScreen = ({ui}) => {
     }
   };
 
-  const onPressDay = i => {
+  const onPressDay = (i: number) => {
     const arr = [...submitRepeat];
     if (arr[i] === '1') {
       arr[i] = '0';
@@ -247,7 +246,6 @@ const AlarmModalScreen = ({ui}) => {
       str += submitRepeat[i] === '1' ? day + ' ' : '';
     });
     setDisplayRepeat(str);
-    console.log('displayRepeat:', displayRepeat);
   }, [submitRepeat]);
 
   return (
@@ -314,7 +312,7 @@ const AlarmModalScreen = ({ui}) => {
                 </Text>
               </InputItem>
             </List>
-            <List>
+            <List style={{borderTopWidth: 0}}>
               <InputItem
                 value={sentence}
                 onChange={v => setSentence(v)}

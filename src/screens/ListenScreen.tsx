@@ -43,7 +43,6 @@ import DefaultButton from '../components/DefaultButton';
 import * as FileSystem from 'expo-file-system';
 
 import {height} from '../config/globalStyles';
-import {useDispatch} from 'react-redux';
 import {createAlarm} from '../utils/redux/alarmSlice';
 import {useNavigation} from '@react-navigation/native';
 import {createMusic, getAllMusic, getOneMusic} from '../utils/redux/musicSlice';
@@ -102,7 +101,7 @@ const ListenScreen = ({ui}) => {
   const [snackbarContent, setSnackbarContent] = useState<string>('');
 
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const updateSearch = search => {
     setSearch(search);

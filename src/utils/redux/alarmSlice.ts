@@ -1,12 +1,10 @@
 import {Platform} from 'react-native';
 import {createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../../store';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {back_address} from '../../config/address';
-
-let SERVER_URL = back_address;
+import {back_address as SERVER_URL} from '../../config/address';
 
 // // Define a type for the slice state
 interface AlarmState {
@@ -17,7 +15,7 @@ interface AlarmState {
   musicFile: string;
   musicName: string;
   error: null;
-  errorMessage: string;
+  errorMessage: string | undefined;
 }
 
 // Define the initial state using that type
@@ -35,12 +33,23 @@ const initialState: AlarmState = {
 
 // // 통신 에러 시 보여줄 에러 메세지의 타입
 interface IError {
-  errorMessage: string;
+  errorMessage: string | undefined;
+}
+
+interface Iinfo {
+  id?: any;
+  user_id: string;
+  time_id: string;
+  name: string;
+  sentence: string;
+  file: string;
+  state: string;
+  repeat: string;
 }
 
 export const createAlarm = createAsyncThunk<
   AlarmState[],
-  object,
+  Iinfo,
   {rejectValue: IError}
 >('alarm/createAlarm', async (info, thunkAPI) => {
   const obj = {
@@ -71,9 +80,9 @@ export const createAlarm = createAsyncThunk<
       withCredentials: true,
     });
     return data;
-  } catch (e) {
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -103,9 +112,9 @@ export const getAllAlarm = createAsyncThunk<
     // );
 
     return data;
-  } catch (e) {
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -125,16 +134,16 @@ export const getOneAlarm = createAsyncThunk<
       withCredentials: true,
     });
     return data;
-  } catch (e) {
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
 
 export const updateAlarm = createAsyncThunk<
   AlarmState[],
-  object,
+  Iinfo,
   {rejectValue: IError}
 >('alarm/updateAlarm', async (info, thunkAPI) => {
   try {
@@ -169,10 +178,9 @@ export const updateAlarm = createAsyncThunk<
     });
 
     return data;
-  } catch (e) {
-    console.log(e.response.data);
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -193,9 +201,9 @@ export const deleteAlarm = createAsyncThunk<
       withCredentials: true,
     });
     return data;
-  } catch (e) {
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -206,28 +214,12 @@ export const scheduleSlice = createSlice({
   // 초기 값
   initialState,
   reducers: {
-    initScheduleState: state => {
-      state.repeatData = '0000000';
-      state.musicData = [];
-    },
-    initEditScheduleState: (state, action) => {
-      console.log(action.payload);
-      state.repeatData = action.payload.repeat;
-      state.musicData = action.payload.soundFile;
-    },
-    createScheduleActionInfo: (state, action) => {
-      state.musicData = action.payload;
-    },
     changeMusicFile: (state, action) => {
       state.musicFile = action.payload;
     },
     changeMusicName: (state, action) => {
       state.musicName = action.payload;
     },
-    // createScheduleRepeatInfo: (state, action) => {
-    //   console.log(action.payload, 'gg');
-    //   state.repeatData = action.payload;
-    // },
   },
   extraReducers: builder => {
     builder
@@ -240,7 +232,6 @@ export const scheduleSlice = createSlice({
       .addCase(createAlarm.fulfilled, (state, {payload}) => {
         state.error = null;
         state.loading = false;
-        state.userData = payload;
         state.msg = 'SUCCESS_LOGIN';
         state.errorMessage = '';
         console.log(payload);
@@ -250,7 +241,6 @@ export const scheduleSlice = createSlice({
         state.loading = false;
         state.msg = 'FAILED_LOGIN';
         state.errorMessage = payload?.errorMessage;
-        console.log(payload);
       })
 
       // GETALL

@@ -20,7 +20,7 @@ import {Ionicons} from '@expo/vector-icons';
 import FloatingButton from '../components/FloatingButton';
 import Title from '../components/Title';
 import {selectUserData} from '../utils/redux/userSlice';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {DateTime} from 'luxon';
 import WriteCalendar from '../components/Calendar/WriteCalendar';
 import {
@@ -42,27 +42,23 @@ import EditCalendar from '../components/Calendar/EditCalendar';
 import {colors} from '../config/globalStyles';
 
 const CalendarScreen = ({ui}) => {
-  const [date, setDate] = React.useState(new Date());
   const [currDate, setCurrDate] = React.useState<string>(
     DateTime.local().toFormat('yyyy-MM-dd'),
   );
-  const [isCurrMonth, setIsCurrMonth] = React.useState(true);
-  const [currDataList, setCurrDataList] = React.useState([]);
 
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
 
   const [mode, setMode] = React.useState<string>();
   const [calendarDots, setCalendarDots] = React.useState<object>({});
 
-  const _errorMessage = useSelector(selectCalendarErrorMsg);
+  const _errorMessage = useAppSelector(selectCalendarErrorMsg);
   const [errorMessage, setErrorMessage] = React.useState('');
-  const _calendarData = useSelector(selectCalendarData);
-  const [calendarData, setCalendarData] = React.useState();
-  const _calendarDateData = useSelector(selectCalendarDateData);
+  const _calendarData = useAppSelector(selectCalendarData);
+  const _calendarDateData = useAppSelector(selectCalendarDateData);
   const [isCalendarMode, setIsCalendarMode] = React.useState(true);
   const [editItem, setEditItem] = React.useState<object>();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
 
   const title = isCalendarMode ? 'Calendar' : 'Management';
@@ -158,42 +154,39 @@ const CalendarScreen = ({ui}) => {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  const generateCalendarDots = React.useCallback(
-    data => {
-      let obj = {};
-      _calendarData.forEach(item => {
-        // let key = item.start;
-        const utcOffset = new Date().getTimezoneOffset() * -1;
+  const generateCalendarDots = React.useCallback(() => {
+    let obj = {};
+    _calendarData.forEach(item => {
+      // let key = item.start;
+      const utcOffset = new Date().getTimezoneOffset() * -1;
 
-        const startDate = new Date(item.start);
-        const endDate = new Date(item.end);
-        const startStr = generateDate(startDate);
+      const startDate = new Date(item.start);
+      const endDate = new Date(item.end);
+      const startStr = generateDate(startDate);
 
-        const endStr = generateDate(endDate);
-        // const startDateStr = item.start.slice(0, 10);
+      const endStr = generateDate(endDate);
+      // const startDateStr = item.start.slice(0, 10);
 
-        // const endDateStr = item.end.slice(0, 10);
-        // const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
-        let currDate = startDate;
+      // const endDateStr = item.end.slice(0, 10);
+      // const formattedDate = startDateObj.toFormat('yyyy-MM-dd');
+      let currDate = startDate;
 
-        if (startStr === endStr) {
-          obj[startStr] = {marked: true};
-          return;
-        } else {
-          const n = new Date(endDate - startDate).getUTCDate();
-          for (let i = 0; i < n; i++) {
-            let formattedDate = generateDate(currDate);
-            // currDate = currDate.setDate(currDate.getUTCDate() + 1);
-            currDate = new Date(currDate.getTime() + 24 * 60 * 60 * 1000);
-            //currDate = currDate.plus({days: 1});
-            obj[formattedDate] = {marked: true};
-          }
+      if (startStr === endStr) {
+        obj[startStr] = {marked: true};
+        return;
+      } else {
+        const n = new Date(endDate - startDate).getUTCDate();
+        for (let i = 0; i < n; i++) {
+          let formattedDate = generateDate(currDate);
+          // currDate = currDate.setDate(currDate.getUTCDate() + 1);
+          currDate = new Date(currDate.getTime() + 24 * 60 * 60 * 1000);
+          //currDate = currDate.plus({days: 1});
+          obj[formattedDate] = {marked: true};
         }
-      });
-      setCalendarDots(obj);
-    },
-    [_calendarData],
-  );
+      }
+    });
+    setCalendarDots(obj);
+  }, [_calendarData]);
 
   React.useEffect(() => {
     // calendarDots 상태 변수가 변경될 때마다 컴포넌트를 다시 렌더링하도록 함

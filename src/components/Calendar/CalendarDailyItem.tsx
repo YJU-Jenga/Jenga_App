@@ -4,7 +4,6 @@ import {View} from 'react-native';
 import {Text} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../../config/globalStyles';
-import {DateTime} from 'luxon';
 const CalendarDailyItem = ({data, removeCalendar, updateCalendar}) => {
   const hour = new Date(data.strat).getHours();
 

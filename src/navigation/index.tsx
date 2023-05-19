@@ -9,7 +9,6 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {useAppDispatch, useAppSelector} from '../../hooks';
-import {useDispatch} from 'react-redux';
 
 // Screens
 import LoginScreen from '../screens/LoginScreen';
@@ -20,7 +19,6 @@ import SettingsScreen from '../screens/SettingsScreen';
 import ListenScreen from '../screens/ListenScreen';
 import RecordScreen from '../screens/RecordScreen';
 import SignUpScreen from '../screens/SignUpScreen';
-import InfoScreen from '../screens/InfoScreen';
 import ShoppingScreen from '../screens/ShoppingScreen';
 
 import {BottomTabNavigatorParamList} from '../types';
@@ -122,7 +120,7 @@ function CalendarStack(props) {
 
 export const AppNavigator = () => {
   const _ui = useSelector(selectUserData);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   React.useEffect(() => {
     const getUI = async () => {
       const accessToken = await AsyncStorage.getItem('access-token');
@@ -222,7 +220,7 @@ export const MainNavigator = () => {
   const _msg = useSelector(selectMsg);
   const _accessToken = useSelector(selectAccessToken);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const Result = () => {
     if (isLoading) {

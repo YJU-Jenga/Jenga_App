@@ -13,13 +13,9 @@ import {Audio} from 'expo-av';
 import {
   changeMusicFile,
   changeMusicName,
-  createScheduleActionInfo,
-  createScheduleRepeatInfo,
   selectAlarmMusicName,
-  selectRepeatInfo,
-  selectSoundInfo,
 } from '../utils/redux/alarmSlice';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   deleteMusic,
@@ -43,10 +39,10 @@ export const ActionComponent = () => {
   const [sound, setSound] = React.useState();
   const [selectedMusic, setSelectedMusic] = useState<string>();
 
-  const dispatch = useDispatch();
-  const _ui = useSelector(selectUserData);
-  const _musicData = useSelector(selectMusicData);
-  const _musicName = useSelector(selectAlarmMusicName);
+  const dispatch = useAppDispatch();
+  const _ui = useAppSelector(selectUserData);
+  const _musicData = useAppSelector(selectMusicData);
+  const _musicName = useAppSelector(selectAlarmMusicName);
 
   const getSoundList = async () => {
     dispatch(getAllMusic(_ui.id));

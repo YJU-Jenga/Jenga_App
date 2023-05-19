@@ -2,7 +2,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
 import {FlatList, Modal, SafeAreaView, Text} from 'react-native';
 import Title from '../components/Title';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {
   deleteCalendar,
   getAllCalendar,
@@ -20,9 +20,9 @@ const ManagementCalendar = () => {
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
   const [editItem, setEditItem] = React.useState<object>();
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const route = useRoute();
-  const _calendarData = useSelector(selectCalendarData);
+  const _calendarData = useAppSelector(selectCalendarData);
 
   React.useEffect(() => {
     getAllCalendarData();

@@ -23,7 +23,7 @@ import DefaultButton from '../components/DefaultButton';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {logout} from '../utils/redux/authSlice';
 import {getUser, selectUserData} from '../utils/redux/userSlice';
 import {
@@ -41,10 +41,10 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 const Item = List.Item;
 
 function SettingsScreen({ui}) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
-  const _userData = useSelector(selectUserData);
-  const _deviceData = useSelector(selectDeviceData);
+  const _userData = useAppSelector(selectUserData);
+  const _deviceData = useAppSelector(selectDeviceData);
   const [userData, setUserData] = React.useState<object>();
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
   const [macAddress, setMacAddress] =

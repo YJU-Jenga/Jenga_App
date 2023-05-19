@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import {Pressable, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {colors, height, width} from '../../config/globalStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {DateTime} from 'luxon';
 
 const DatePickerTitle = ({onPressDate, onPressTime, title, date, isAllDay}) => {
   const [formatDate, setFormatDate] = useState();

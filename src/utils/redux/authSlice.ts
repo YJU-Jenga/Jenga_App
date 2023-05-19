@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {createSlice} from '@reduxjs/toolkit';
 import type {RootState} from '../../../store';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useCookies} from 'react-cookie'; // useCookies import
@@ -52,13 +52,20 @@ interface IError {
   errorMessage: string;
 }
 
+interface IregisterInfo {
+  name: string;
+  password: string;
+  email: string;
+  phone: string | number;
+}
+
 export const registerAccount = createAsyncThunk<
   AuthState[],
   object,
   {rejectValue: IError}
->('auth/register', async (registerInfo, thunkAPI) => {
-  let {name, password, email, phone} = registerInfo;
-  phone = await registerInfo.phone.replace(/\s|_/g, '-');
+>('auth/register', async (IregisterInfo, thunkAPI) => {
+  let {name, password, email, phone} = IregisterInfo;
+  phone = await IregisterInfo.phone.replace(/\s|_/g, '-');
 
   const obj = {email, name, password, phone};
   try {
@@ -68,11 +75,9 @@ export const registerAccount = createAsyncThunk<
     await AsyncStorage.setItem('refresh-token', data.refresh_token);
     await AsyncStorage.setItem('access-token', data.access_token);
     return data;
-  } catch (e) {
-    console.error(e);
-    // rejectWithValue를 사용하여 에러 핸들링이 가능하다
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -96,16 +101,16 @@ export const loginAccount = createAsyncThunk<
     await AsyncStorage.setItem('refresh-token', data.refresh_token);
     await AsyncStorage.setItem('access-token', data.access_token);
     return data;
-  } catch (e) {
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
 
 export const refreshToken = createAsyncThunk<
   AuthState[],
-  object,
+  void,
   {rejectValue: IError}
 >('auth/refresh', async thunkAPI => {
   const token = await AsyncStorage.getItem('refresh-token');
@@ -141,11 +146,9 @@ export const refreshToken = createAsyncThunk<
     //   AsyncStorage.setItem('access-token', data.access_token);
     // }
     return {refresh: 'refresh'};
-  } catch (e) {
-    // rejectWithValue를 사용하여 에러 핸들링이 가능하다
-    console.error(e);
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });
@@ -163,11 +166,9 @@ export const logout = createAsyncThunk<
     }).then(async () => {
       await AsyncStorage.multiRemove(['access-token', 'refresh-token']);
     });
-  } catch (e) {
-    // rejectWithValue를 사용하여 에러 핸들링이 가능하다
-    console.error(e);
+  } catch (error: unknown) {
     return thunkAPI.rejectWithValue({
-      errorMessage: e.response.data.message,
+      errorMessage: (error as AxiosError).response?.data as string,
     });
   }
 });

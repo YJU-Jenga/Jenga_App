@@ -32,7 +32,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {
   createAlarm,
   getAllAlarm,
@@ -40,12 +40,14 @@ import {
   updateAlarm,
 } from '../utils/redux/alarmSlice';
 
+import {IAlarmData} from '../interfaces/alarm';
+
 const AlarmScreen = ({ui}) => {
-  const [scheduleList, setScheduleList] = useState([]);
+  const [scheduleList, setScheduleList] = useState<Array<any>>([]);
   const navigation = useNavigation();
   const route = useRoute();
-  const dispatch = useDispatch();
-  const _alarmData = useSelector(selectAlarmData);
+  const dispatch = useAppDispatch();
+  const _alarmData = useAppSelector(selectAlarmData);
 
   useEffect(() => {
     let sortedData = [..._alarmData].sort(orderFunction);
@@ -68,7 +70,8 @@ const AlarmScreen = ({ui}) => {
     return num1 > num2 ? 1 : -1;
   };
 
-  const onChangeSwitch = React.useCallback(async data => {
+  const onChangeSwitch = React.useCallback(async (data: IAlarmData) => {
+    console.log(data);
     dispatch(updateAlarm({...data, state: !data.state}))
       .unwrap()
       .then(() => {
@@ -76,7 +79,7 @@ const AlarmScreen = ({ui}) => {
       });
   }, []);
 
-  const onSwipeDelete = React.useCallback(async data => {
+  const onSwipeDelete = React.useCallback(async (data: any) => {
     // const filteredSchedules = scheduleList.filter(item => item.id !== data.id);
     // await AsyncStorage.setItem('schedules', JSON.stringify(filteredSchedules));
     // await onLoadSchedules();
@@ -158,7 +161,7 @@ const AlarmScreen = ({ui}) => {
                           onPress={() =>
                             navigation.navigate('alarmModal', {
                               type: 'EDIT',
-                              data: item,
+                              data: item as IAlarmData,
                             })
                           }
                           style={{
@@ -186,20 +189,6 @@ const AlarmScreen = ({ui}) => {
                                   color={colors.iconPink}
                                   name="quote-left"></Icon>
                               )}
-
-                              {/* {repeat.length > 0 && (
-                                <Text
-                                  style={{
-                                    fontSize: 16,
-                                    color: '#333',
-                                    marginTop: 5,
-                                    fontFamily: 'TheJamsilOTF_Regular',
-                                    marginBottom: 3,
-                                  }}>
-                                  {currRepeat}
-                                  {'  '}
-                                </Text>
-                              )} */}
                               {item.name && (
                                 <Text
                                   style={{

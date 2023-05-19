@@ -9,8 +9,8 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import React, {useCallback, useEffect} from 'react';
 import {SafeAreaView, Text, View, StyleSheet, Alert} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {useAppDispatch, useAppSelector} from '../../hooks';
 import {
   initErrorMessage,
   registerAccount,
@@ -26,7 +26,8 @@ interface signUp {
   confirmPassword: string;
 }
 
-const SignUpScreen = ({route, navigation}) => {
+const SignUpScreen = () => {
+  const navigation = useNavigation();
   const [signUpInfo, setSignUpInfo] = React.useState<signUp>({
     email: '',
     name: '',
@@ -52,8 +53,8 @@ const SignUpScreen = ({route, navigation}) => {
   const [isConfirmPassword, setIsConfirmPassword] =
     React.useState<boolean>(false);
 
-  const dispatch = useDispatch();
-  const _errorMessage = useSelector(selectErrorMsg);
+  const dispatch = useAppDispatch();
+  const _errorMessage = useAppSelector(selectErrorMsg);
 
   React.useEffect(() => {
     if (signUpInfo.password === signUpInfo.confirmPassword) {
