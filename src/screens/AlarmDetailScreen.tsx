@@ -25,6 +25,7 @@ import {
 import {selectUserData} from '../utils/redux/userSlice';
 import {back_address as SERVER_URL} from '../config/address';
 import {width} from '../config/globalStyles';
+import {IUser} from '../interfaces/user';
 
 interface ISound {
   mimeType: string;
@@ -36,11 +37,11 @@ interface ISound {
 export const ActionComponent = () => {
   const [soundList, setSoundList] = React.useState([]);
 
-  const [sound, setSound] = React.useState();
+  const [sound, setSound] = React.useState<any>();
   const [selectedMusic, setSelectedMusic] = useState<string>();
 
   const dispatch = useAppDispatch();
-  const _ui = useAppSelector(selectUserData);
+  const _ui = useAppSelector(selectUserData) as IUser;
   const _musicData = useAppSelector(selectMusicData);
   const _musicName = useAppSelector(selectAlarmMusicName);
 
@@ -48,7 +49,7 @@ export const ActionComponent = () => {
     dispatch(getAllMusic(_ui.id));
   };
 
-  const deleteSound = soundId => {
+  const deleteSound = (soundId: any) => {
     dispatch(deleteMusic(soundId))
       .unwrap()
       .then(() => {
@@ -65,7 +66,7 @@ export const ActionComponent = () => {
     await playSound(sound);
   }
 
-  async function playSound(sound) {
+  async function playSound(sound: Audio.Sound) {
     await sound.playAsync();
   }
 
@@ -93,7 +94,10 @@ export const ActionComponent = () => {
     sound.unloadAsync();
   };
 
-  const onSelectCurrentMusic = (name, file) => {
+  const onSelectCurrentMusic = (
+    name: React.SetStateAction<string | undefined>,
+    file: any,
+  ) => {
     setSelectedMusic(name);
     dispatch(changeMusicFile(file));
     dispatch(changeMusicName(name));
@@ -117,9 +121,9 @@ export const ActionComponent = () => {
               display: 'flex',
             }}
             onPress={() => {
-              const soundPath = SERVER_URL + '/' + item.file;
+              //const soundPath = SERVER_URL + '/' + item.file;
               onSelectCurrentMusic(item.name, item.file);
-              loadSound(soundPath);
+              loadSound(SERVER_URL + '/' + item.file);
             }}
             key={item?.name}>
             <Flex style={{marginStart: width * 10}} justify="between">
@@ -142,7 +146,13 @@ export const ActionComponent = () => {
 };
 
 const SelectedSoundItem = React.memo(
-  ({selectedMusic, onDeselect}): JSX.Element => {
+  ({
+    selectedMusic,
+    onDeselect,
+  }: {
+    selectedMusic: string;
+    onDeselect: () => void;
+  }): JSX.Element => {
     return (
       // <WingBlank>
       <View>

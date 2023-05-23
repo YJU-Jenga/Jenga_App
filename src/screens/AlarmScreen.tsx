@@ -1,27 +1,14 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  StatusBar,
-  SafeAreaView,
-  Modal,
-  ScrollView,
-  Image,
-} from 'react-native';
+import {StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
 import {
   Provider,
   Flex,
   WingBlank,
   List,
   SwipeAction,
-  Button,
-  Switch,
 } from '@ant-design/react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Title from '../components/Title';
 import enUS from '@ant-design/react-native/lib/locale-provider/en_US';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {Pressable} from 'react-native';
@@ -41,37 +28,43 @@ import {
 } from '../utils/redux/alarmSlice';
 
 import {IAlarmData} from '../interfaces/alarm';
+import {selectUserData} from '../utils/redux/userSlice';
+import {IUser} from '../interfaces/user';
 
-const AlarmScreen = ({ui}) => {
-  const [scheduleList, setScheduleList] = useState<Array<any>>([]);
+const AlarmScreen = () => {
+  // const [scheduleList, setScheduleList] = useState<Array<any>>([]);
   const navigation = useNavigation();
-  const route = useRoute();
   const dispatch = useAppDispatch();
-  const _alarmData = useAppSelector(selectAlarmData);
+  const _alarmData = useAppSelector(selectAlarmData) as IAlarmData;
+  const _ui = useAppSelector(selectUserData) as IUser;
 
-  useEffect(() => {
-    let sortedData = [..._alarmData].sort(orderFunction);
-    setScheduleList(sortedData);
-  }, [_alarmData]);
+  // useEffect(() => {
+  // let sortedData = [..._alarmData].sort(orderFunction);
+  // let sortedData = [..._alarmData].sort(orderFunction);
+  //setScheduleList(_alarmData);
+  // }, [_alarmData]);
 
   const onLoadSchedules = React.useCallback(async () => {
-    dispatch(getAllAlarm(ui.id));
+    dispatch(getAllAlarm(_ui.id));
     //const orderedScheduleList = JSON.parse(data).sort(orderFunction);
     //setDisplayScheduleList(orderedScheduleList)
   }, []);
 
-  const orderFunction = (a, b) => {
-    const num1 =
-      new Date(a.time).getHours() * 3600 + new Date(a.time).getMinutes() * 60;
+  // const orderFunction = (a, b) => {
+  //   console.log(
+  //     '유후 ',
+  //     new Date(a.time).getHours() * 3600 + new Date(a.time).getMinutes() * 60,
+  //   );
+  //   const num1 =
+  //     new Date(a.time).getHours() * 3600 + new Date(a.time).getMinutes() * 60;
 
-    const num2 =
-      new Date(b.time).getHours() * 3600 + new Date(b.time).getMinutes() * 60;
+  //   const num2 =
+  //     new Date(b.time).getHours() * 3600 + new Date(b.time).getMinutes() * 60;
 
-    return num1 > num2 ? 1 : -1;
-  };
+  //   return num1 > num2 ? 1 : -1;
+  // };
 
   const onChangeSwitch = React.useCallback(async (data: IAlarmData) => {
-    console.log(data);
     dispatch(updateAlarm({...data, state: !data.state}))
       .unwrap()
       .then(() => {
@@ -89,14 +82,14 @@ const AlarmScreen = ({ui}) => {
     React.useCallback(() => {
       const onLoadSchedules = async () => {
         try {
-          dispatch(getAllAlarm(ui.id));
+          dispatch(getAllAlarm(_ui.id));
         } catch (error) {
           console.log(error);
         }
       };
       onLoadSchedules();
       return () => {};
-    }, [ui]),
+    }, [_ui]),
   );
 
   return (
@@ -117,11 +110,11 @@ const AlarmScreen = ({ui}) => {
             contentContainerStyle={{paddingBottom: '30%'}}
             style={{minHeight: '100%'}}>
             {!(
-              (Array.isArray(scheduleList) && scheduleList.length === 0)
+              (Array.isArray(_alarmData) && _alarmData.length === 0)
               // ||
               // !scheduleList
             ) ? (
-              _alarmData.map((item, i) => {
+              _alarmData.map((item: IAlarmData, i: number) => {
                 let repeat = ['일', '월', '화', '수', '목', '금', '토'];
 
                 const h = item.time_id.slice(0, 2);
@@ -231,10 +224,8 @@ const AlarmScreen = ({ui}) => {
         </WingBlank>
         <FloatingButton
           onPress={() => {
-            //dispatch(createAlarm(ui.id));
             navigation.navigate('alarmModal', {
               type: 'CREATE',
-              //data: item,
             });
             //setVisibleModal(true);
           }}></FloatingButton>

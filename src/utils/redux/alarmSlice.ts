@@ -37,14 +37,16 @@ interface IError {
 }
 
 interface Iinfo {
-  id?: any;
-  user_id: string;
-  time_id: string;
+  user_id?: number;
+  file?: string;
+  id: number;
   name: string;
-  sentence: string;
-  file: string;
-  state: string;
   repeat: string;
+  sentence: string;
+  state: boolean;
+  time_id: string;
+  updatedAt?: string;
+  createdAt?: string;
 }
 
 export const createAlarm = createAsyncThunk<

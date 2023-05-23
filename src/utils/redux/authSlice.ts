@@ -98,10 +98,12 @@ export const loginAccount = createAsyncThunk<
         },
       },
     );
+
     await AsyncStorage.setItem('refresh-token', data.refresh_token);
     await AsyncStorage.setItem('access-token', data.access_token);
     return data;
   } catch (error: unknown) {
+    console.log(error);
     return thunkAPI.rejectWithValue({
       errorMessage: (error as AxiosError).response?.data as string,
     });

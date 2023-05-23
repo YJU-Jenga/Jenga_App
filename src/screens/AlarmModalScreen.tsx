@@ -129,18 +129,19 @@ const AlarmModalScreen = ({ui}) => {
     if (
       Array.isArray(_musicData) &&
       _musicData.length === 0 &&
-      Array.isArray()
+      Array.isArray(_musicData) &&
+      _musicData !== undefined &&
+      _musicData == ''
     ) {
       dispatch(changeMusicName(''));
     } else {
-      _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
-        if (item.file == route.params.data.file) {
-          console.log(route.params.data.file);
-          dispatch(changeMusicName(item.name));
-        }
-      });
+      console.log(typeof _musicData, '아아');
+      // _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
+      //   if (item.file == route.params.data?.file) {
+      //     dispatch(changeMusicName(item.name));
+      //   }
+      // });
     }
-    //setisMusicReady(true);
   }, [_musicData]);
 
   const generateId = () => {
