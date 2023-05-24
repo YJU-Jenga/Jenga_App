@@ -50,6 +50,8 @@ export const ActionComponent = () => {
   };
 
   const deleteSound = (soundId: any) => {
+    // dispatch(changeMusicFile(''));
+    // dispatch(changeMusicName(''));
     dispatch(deleteMusic(soundId))
       .unwrap()
       .then(() => {
@@ -91,7 +93,7 @@ export const ActionComponent = () => {
     setSelectedMusic('');
     dispatch(changeMusicFile(''));
     dispatch(changeMusicName(''));
-    sound.unloadAsync();
+    if (sound) sound.unloadAsync();
   };
 
   const onSelectCurrentMusic = (

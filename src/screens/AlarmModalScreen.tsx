@@ -107,14 +107,11 @@ const AlarmModalScreen = ({ui}) => {
 
       dispatch(changeMusicFile(route.params.data.file));
 
-      console.log('수정 ', route.params.data);
-
       dispatch(getAllMusic(ui.id));
 
       setName(route.params.data.name);
       setSentence(route.params.data.sentence);
       setValuehours(utcDate);
-      console.log(route.params.data.repeat);
       let str = '';
 
       ['일', '월', '화', '수', '목', '금', '토'].forEach((day, i) => {
@@ -127,6 +124,7 @@ const AlarmModalScreen = ({ui}) => {
 
   useEffect(() => {
     if (
+      route.params?.type === 'EDIT' &&
       Array.isArray(_musicData) &&
       _musicData.length === 0 &&
       Array.isArray(_musicData) &&
@@ -145,6 +143,7 @@ const AlarmModalScreen = ({ui}) => {
           },
         );
       } catch (error) {
+        console.log('에러요 ', _musicData);
         dispatch(changeMusicName(''));
       }
     }

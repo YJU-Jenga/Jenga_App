@@ -162,7 +162,7 @@ export const deviceSlice = createSlice({
       })
       // 통신 성공
       .addCase(syncDevice.fulfilled, (state, {payload}) => {
-        console.log('통신 성공 : ', payload);
+        console.log('디바이스 업데이트 성공 : ', payload);
         state.loading = false;
         // state.userData = payload;
         state.msg = 'SUCCESS_SYNC_DEVICE';

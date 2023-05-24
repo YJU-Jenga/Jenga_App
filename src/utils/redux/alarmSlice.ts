@@ -151,7 +151,7 @@ export const updateAlarm = createAsyncThunk<
   try {
     const accessToken = await AsyncStorage.getItem('access-token');
 
-    console.log(info);
+    console.log('그동네에서 온 ', info.state);
 
     // let body = new FormData();
     // body.append('user_id', JSON.stringify({user_id: info.user_id}));

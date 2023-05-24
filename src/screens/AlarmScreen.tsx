@@ -37,40 +37,22 @@ const AlarmScreen = () => {
   const dispatch = useAppDispatch();
   const _alarmData = useAppSelector(selectAlarmData) as IAlarmData;
   const _ui = useAppSelector(selectUserData) as IUser;
-
-  // useEffect(() => {
-  // let sortedData = [..._alarmData].sort(orderFunction);
-  // let sortedData = [..._alarmData].sort(orderFunction);
-  //setScheduleList(_alarmData);
-  // }, [_alarmData]);
-
   const onLoadSchedules = React.useCallback(async () => {
     dispatch(getAllAlarm(_ui.id));
-    //const orderedScheduleList = JSON.parse(data).sort(orderFunction);
-    //setDisplayScheduleList(orderedScheduleList)
   }, []);
 
-  // const orderFunction = (a, b) => {
-  //   console.log(
-  //     '유후 ',
-  //     new Date(a.time).getHours() * 3600 + new Date(a.time).getMinutes() * 60,
-  //   );
-  //   const num1 =
-  //     new Date(a.time).getHours() * 3600 + new Date(a.time).getMinutes() * 60;
-
-  //   const num2 =
-  //     new Date(b.time).getHours() * 3600 + new Date(b.time).getMinutes() * 60;
-
-  //   return num1 > num2 ? 1 : -1;
-  // };
-
-  const onChangeSwitch = React.useCallback(async (data: IAlarmData) => {
-    dispatch(updateAlarm({...data, state: !data.state}))
-      .unwrap()
-      .then(() => {
-        onLoadSchedules();
-      });
-  }, []);
+  const onChangeSwitch = React.useCallback(
+    async (data: IAlarmData) => {
+      try {
+        dispatch(updateAlarm({...data, state: !data.state}))
+          .unwrap()
+          .then(() => dispatch(getAllAlarm(_ui.id)));
+      } catch (error) {
+        // 오류 처리
+      }
+    },
+    [_alarmData],
+  );
 
   const onSwipeDelete = React.useCallback(async (data: any) => {
     // const filteredSchedules = scheduleList.filter(item => item.id !== data.id);

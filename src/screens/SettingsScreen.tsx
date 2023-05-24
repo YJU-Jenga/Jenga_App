@@ -50,34 +50,31 @@ function SettingsScreen({ui}) {
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = React.useState<string>('');
-  const [macAddress, setMacAddress] =
-    React.useState<string>('e4:5f:01:74:a7:45');
+  const [macAddress, setMacAddress] = React.useState<string>('');
 
   const macAddrRef = useRef();
 
   React.useEffect(() => {
     setUserData(_userData);
+    setMacAddress('');
   }, [_userData]);
 
   const Logout = () => {
     dispatch(logout());
   };
 
-  const onSyncDevice = useCallback(
-    e => {
-      console.log('ggg ', macAddress);
-      dispatch(syncDevice({userId: ui.id, macAddress: macAddress}))
-        .unwrap()
-        .then(() => {
-          setVisibleModal(false);
-          loadSyncedDeviceData();
-          setSnackbarVisible(true);
-          setSnackbarContent('인형이 연동되었습니다');
-        });
-      // macAddrRef.current!.value,
-    },
-    [macAddrRef],
-  );
+  const onSyncDevice = e => {
+    dispatch(syncDevice({userId: ui.id, macAddress: macAddress}))
+      .unwrap()
+      .then(() => {
+        setVisibleModal(false);
+        loadSyncedDeviceData();
+        setSnackbarVisible(true);
+        setSnackbarContent('인형이 연동되었습니다');
+        setMacAddress('');
+      });
+    // macAddrRef.current!.value,
+  };
 
   const onDeleteDevice = device => {
     dispatch(
@@ -92,6 +89,7 @@ function SettingsScreen({ui}) {
         loadSyncedDeviceData();
         setSnackbarVisible(true);
         setSnackbarContent('인형과의 연결이 해제되었습니다');
+        setMacAddress('');
       });
   };
 
