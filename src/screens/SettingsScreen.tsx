@@ -37,6 +37,7 @@ import Font from 'react-native-vector-icons/AntDesign';
 import {Modal} from 'react-native';
 import {colors, height, width} from '../config/globalStyles';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {Snackbar} from 'react-native-paper';
 
 const Item = List.Item;
 
@@ -47,6 +48,8 @@ function SettingsScreen({ui}) {
   const _deviceData = useAppSelector(selectDeviceData);
   const [userData, setUserData] = React.useState<object>();
   const [visibleModal, setVisibleModal] = React.useState<boolean>(false);
+  const [snackbarVisible, setSnackbarVisible] = React.useState<boolean>(false);
+  const [snackbarContent, setSnackbarContent] = React.useState<string>('');
   const [macAddress, setMacAddress] =
     React.useState<string>('e4:5f:01:74:a7:45');
 
@@ -68,6 +71,8 @@ function SettingsScreen({ui}) {
         .then(() => {
           setVisibleModal(false);
           loadSyncedDeviceData();
+          setSnackbarVisible(true);
+          setSnackbarContent('인형이 연동되었습니다');
         });
       // macAddrRef.current!.value,
     },
@@ -83,7 +88,11 @@ function SettingsScreen({ui}) {
       }),
     )
       .unwrap()
-      .then(() => loadSyncedDeviceData());
+      .then(() => {
+        loadSyncedDeviceData();
+        setSnackbarVisible(true);
+        setSnackbarContent('인형과의 연결이 해제되었습니다');
+      });
   };
 
   const loadSyncedDeviceData = React.useCallback(() => {
@@ -286,6 +295,15 @@ function SettingsScreen({ui}) {
           </WingBlank>
         </SafeAreaView>
       </Modal>
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={() => {
+          setSnackbarVisible(false);
+          setSnackbarContent('');
+        }}
+        duration={2500}>
+        {snackbarContent}
+      </Snackbar>
     </SafeAreaView>
   );
 }

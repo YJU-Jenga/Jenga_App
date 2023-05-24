@@ -573,6 +573,8 @@ const ListenScreen = ({ui}) => {
                   //setName(text);
                   onPressAddMusic(text);
                   setPromptVisible(false);
+                  setSnackbarVisible(true);
+                  setSnackbarContent('알람용 음악이 등록되었습니다');
                 }
               }}
             />

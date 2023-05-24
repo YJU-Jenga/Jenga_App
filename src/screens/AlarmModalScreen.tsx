@@ -136,11 +136,17 @@ const AlarmModalScreen = ({ui}) => {
       dispatch(changeMusicName(''));
     } else {
       console.log(typeof _musicData, '아아');
-      // _musicData?.forEach((item: {file: string; name: string}, idx: number) => {
-      //   if (item.file == route.params.data?.file) {
-      //     dispatch(changeMusicName(item.name));
-      //   }
-      // });
+      try {
+        _musicData?.forEach(
+          (item: {file: string; name: string}, idx: number) => {
+            if (item.file == route.params.data?.file) {
+              dispatch(changeMusicName(item.name));
+            }
+          },
+        );
+      } catch (error) {
+        dispatch(changeMusicName(''));
+      }
     }
   }, [_musicData]);
 

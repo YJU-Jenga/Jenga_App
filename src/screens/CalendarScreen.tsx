@@ -243,7 +243,7 @@ const CalendarScreen = ({ui}) => {
           renderItem={({item, index}) => (
             <CalendarDailyItem
               data={item}
-              index={index}
+              // index={index}
               removeCalendar={() => removeCalendar(item.id)}
               updateCalendar={() => {
                 setEditItem(item);

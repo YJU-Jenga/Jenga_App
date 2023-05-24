@@ -142,7 +142,7 @@ const RecordScreen = ({navigation}) => {
       } else if (e.code === 'E_AUDIO_RECORDERNOTCREATED') {
         Alert.alert('에러', '장치를 확인해주세요');
       } else {
-        Alert.alert('알 수 없는 에러', `제작자에게 문의해주세요`);
+        Alert.alert('알 수 없는 에러', e.code);
       }
       //console.error('에러 해결 안 됨', e.constructor);
       // console.error('Failed to start recording', err);

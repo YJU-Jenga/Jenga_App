@@ -170,8 +170,8 @@ const AlarmScreen = () => {
                             <Text
                               style={{
                                 fontSize: 32,
-                                color: '#444',
-                                fontFamily: 'IMcreSoojinOTF',
+                                color: '#111',
+                                fontFamily: 'Cafe24Ohsquare',
                               }}>
                               {h} {`:`} {m}
                             </Text>
@@ -186,7 +186,7 @@ const AlarmScreen = () => {
                                 <Text
                                   style={{
                                     fontSize: 16,
-                                    color: '#333',
+                                    color: '#222',
                                     marginTop: 5,
                                     fontFamily: 'TheJamsilOTF_Regular',
                                     marginBottom: 3,
