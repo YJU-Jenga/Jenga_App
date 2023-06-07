@@ -56,7 +56,7 @@ function SettingsScreen({ui}) {
 
   React.useEffect(() => {
     setUserData(_userData);
-    setMacAddress('');
+    // setMacAddress('');
   }, [_userData]);
 
   const Logout = () => {
