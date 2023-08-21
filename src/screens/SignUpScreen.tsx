@@ -58,10 +58,10 @@ const SignUpScreen = () => {
 
   React.useEffect(() => {
     if (signUpInfo.password === signUpInfo.confirmPassword) {
-      setConfirmPasswordMessage('비밀번호를 똑같이 입력했어요 : )');
+      setConfirmPasswordMessage('パスワードを同じように入力しました : )');
       setIsConfirmPassword(true);
     } else {
-      setConfirmPasswordMessage('비밀번호가 틀려요. 다시 확인해주세요 ㅜ ㅜ');
+      setConfirmPasswordMessage('パスワードが間違っています。 もう一度確認してください。😭');
       setIsConfirmPassword(false);
     }
   }, [signUpInfo.confirmPassword, signUpInfo.password]);
@@ -76,7 +76,7 @@ const SignUpScreen = () => {
       setSignUpInfo({...signUpInfo, email});
 
       if (!emailRegex.test(e)) {
-        setEmailMessage('이메일을 입력하세요');
+        setEmailMessage('メールを入力してください。');
         setIsEmail(false);
       } else {
         setEmailMessage('');
@@ -91,7 +91,7 @@ const SignUpScreen = () => {
       const name = e;
       setSignUpInfo({...signUpInfo, name});
       if (e.length < 2 || e.length > 5) {
-        setNameMessage('2글자 이상 5글자 미만으로 입력하세요');
+        setNameMessage('2文字以上5文字未満で入力してください');
         setIsName(false);
       } else {
         setNameMessage('');
@@ -109,7 +109,7 @@ const SignUpScreen = () => {
       setSignUpInfo({...signUpInfo, phone});
 
       if (!phoneRegex.test(e)) {
-        setPhoneMessage('휴대폰 번호 (010xxxxxxxx)');
+        setPhoneMessage('電話番号 (010xxxxxxxx)');
         setIsPhone(false);
         console.log(phone.length);
       } else {
@@ -129,7 +129,7 @@ const SignUpScreen = () => {
       setSignUpInfo({...signUpInfo, password});
 
       if (!passwordRegex.test(e)) {
-        setPasswordMessage('숫자, 대문자, 특수문자를 포함하세요');
+        setPasswordMessage('数字、大文字、特殊文字を含めてください');
         setIsPassword(false);
       } else {
         setPasswordMessage('');
@@ -175,7 +175,7 @@ const SignUpScreen = () => {
         duration={2500}>
         {snackbarContent}
       </Snackbar> */}
-        <Text style={styles.header}>회원가입</Text>
+        <Text style={styles.header}>会員登録</Text>
         <WhiteSpace size="xl" />
         <WingBlank size="lg">
           <Flex direction="column">
@@ -239,7 +239,7 @@ const SignUpScreen = () => {
             disabled={!(isName && isEmail && isPassword && isConfirmPassword)}
             type="warning"
             onPress={handleVerifySignUp}>
-            확인
+            確認
           </Button>
 
           <WhiteSpace size="xl" />

@@ -60,11 +60,11 @@ const requestDocumentPermission = async () => {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
       {
-        title: '파일 접근 권한',
-        message: '파일 접근 권한을 허가하세요.',
-        buttonNeutral: '나중에',
-        buttonNegative: '취소',
-        buttonPositive: '허가',
+        title: 'ファイルアクセス権',
+        message: 'ファイルへのアクセス権を許可してください。.',
+        buttonNeutral: 'あとで',
+        buttonNegative: 'キャンセル',
+        buttonPositive: '許可',
       },
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -295,21 +295,21 @@ const ListenScreen = ({ui}) => {
   React.useEffect(() => {
     // return () => fetchGetSoundList();
     navigation.addListener('focus', async () =>
-      getSoundList('알람스크린베끼기'),
+      getSoundList('アラームスクリーンコピー'),
     );
   }, []);
 
   const deleteSound = index => {
-    Alert.alert('삭제', '파일을 삭제하시겠습니까?', [
-      {text: '취소'},
+    Alert.alert('削除', 'ファイルを削除しますか？', [
+      {text: 'キャンセル'},
       {
-        text: '확인',
+        text: '確認',
         onPress: async () => {
           const newSoundList = [...soundList];
           newSoundList.splice(index, 1);
           setSoundList(newSoundList);
           await AsyncStorage.setItem('sounds', JSON.stringify(newSoundList));
-          getSoundList('삭제용');
+          getSoundList('削除用');
           setVisibleModal(false);
 
           if (soundList[index].type === 'record') {
@@ -435,7 +435,7 @@ const ListenScreen = ({ui}) => {
         <Title title="Sounds"></Title>
         <SearchBar
           style={{fontFamily: 'TheJamsilOTF_Light'}}
-          placeholder="오디오의 제목을 입력하세요"
+          placeholder="オーディオのタイトルを入力してください。"
           onChange={updateSearch}
           value={search}
           onSubmit={v => {
@@ -456,7 +456,7 @@ const ListenScreen = ({ui}) => {
                   fontSize: 21,
                   color: '#777',
                 }}>
-                음악, 동화를 업로드해주세요
+                音楽、童話をアップロードしてください。
               </Text>
             </View>
           )}
@@ -549,7 +549,7 @@ const ListenScreen = ({ui}) => {
                     setPromptVisible(true);
                   }}
                   type="register"
-                  title="알람용으로 등록"></DefaultButton>
+                  title="アラーム用に登録"></DefaultButton>
                 <DeleteButton
                   onPress={() => {
                     deleteSound(currIdx);
@@ -559,22 +559,22 @@ const ListenScreen = ({ui}) => {
             </WingBlank>
             <Prompt
               visible={promptVisible}
-              title="음악의 용도를 입력해주세요"
-              message={`'알람 설정 > 뮤직'에서 확인할 수 있습니다`}
+              title="音楽の用途を入力してください"
+              message={`'アラーム設定 > ミュージック」で確認できます`}
               onCancel={() => {
                 setPromptVisible(false);
               }}
               onSubmit={text => {
                 if (text.length == 0) {
                   setSnackbarVisible(true);
-                  setSnackbarContent('이름을 입력해주세요');
+                  setSnackbarContent('名前を入力してください');
                   return;
                 } else {
                   //setName(text);
                   onPressAddMusic(text);
                   setPromptVisible(false);
                   setSnackbarVisible(true);
-                  setSnackbarContent('알람용 음악이 등록되었습니다');
+                  setSnackbarContent('アラーム用の音楽が登録されました');
                 }
               }}
             />

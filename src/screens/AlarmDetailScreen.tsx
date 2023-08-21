@@ -158,7 +158,7 @@ const SelectedSoundItem = React.memo(
     return (
       // <WingBlank>
       <View>
-        <List renderHeader={'선택된 파일'}>
+        <List renderHeader={'選ばれたファイル'}>
           <Flex
             justify="between"
             style={{paddingVertical: 15, marginHorizontal: width * 15}}>
@@ -172,7 +172,7 @@ const SelectedSoundItem = React.memo(
             <Icon onPress={onDeselect} name="delete" size={25} color="#aaa" />
           </Flex>
         </List>
-        <List renderHeader={'목록'}></List>
+        <List renderHeader={'リスト'}></List>
       </View>
       // </WingBlank>
     );
