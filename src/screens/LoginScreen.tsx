@@ -51,7 +51,7 @@ const LoginScreen = ({route, navigation}) => {
     dispatch(initErrorMessage());
     if (_errorMessage !== '') {
       setVisibleSnackbar(true);
-      setSnackbarContent('다시 시도해주세요');
+      setSnackbarContent('もう一度お試しください');
     }
   }, [_errorMessage]);
 
@@ -71,7 +71,7 @@ const LoginScreen = ({route, navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text style={styles.header}>로그인</Text>
+        <Text style={styles.header}>ログイン</Text>
         <WingBlank size="lg">
           <Flex direction="column">
             <InputItem

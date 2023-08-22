@@ -71,7 +71,7 @@ const AlarmModalScreen = ({ui}) => {
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
 
-  const mode = route.params?.type === 'EDIT' ? '예약 편집' : '예약 생성';
+  const mode = route.params?.type === 'EDIT' ? '予約修正' : '予約生成';
 
   const dispatch = useAppDispatch();
   const _alarms = useAppSelector(selectAlarmData);
@@ -114,7 +114,7 @@ const AlarmModalScreen = ({ui}) => {
       setValuehours(utcDate);
       let str = '';
 
-      ['일', '월', '화', '수', '목', '금', '토'].forEach((day, i) => {
+      ['日', '月', '火', '水', '木', '金', '土'].forEach((day, i) => {
         str += submitRepeat[i] === '1' ? day + ' ' : '';
       });
 
@@ -162,11 +162,11 @@ const AlarmModalScreen = ({ui}) => {
     // let loadedSchedules = await JSON.parse(data);
 
     const isDuplicated = checkDuplicationSchedule();
-    console.log('isDuplicated 결과 : ', isDuplicated);
+    console.log('isDuplicated 結果 : ', isDuplicated);
     if (route.params.type === 'CREATE') {
       if (isDuplicated) {
         setSnackbarVisible(true);
-        setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
+        setSnackbarContent('同じ時間に別のスケジュールが登録されています。');
         return;
       }
 
@@ -188,7 +188,7 @@ const AlarmModalScreen = ({ui}) => {
     } else if (route.params.type === 'EDIT') {
       if (isDuplicated) {
         setSnackbarVisible(true);
-        setSnackbarContent('같은 시간에 다른 일정이 등록되어 있습니다');
+        setSnackbarContent('同じ時間に別のスケジュールが登録されています。');
         return;
       }
       // const timeInfo = new Date(
@@ -257,7 +257,7 @@ const AlarmModalScreen = ({ui}) => {
 
   useEffect(() => {
     let str = '';
-    ['일', '월', '화', '수', '목', '금', '토'].forEach((day, i) => {
+    ['日', '月', '火', '水', '木', '金', '土'].forEach((day, i) => {
       str += submitRepeat[i] === '1' ? day + ' ' : '';
     });
     setDisplayRepeat(str);
@@ -300,7 +300,7 @@ const AlarmModalScreen = ({ui}) => {
                 fontFamily: 'TheJamsilOTF_Regular',
               }}
               onPress={onSave}>
-              저장
+              セーブ
             </Text>
           </Flex>
           <WingBlank size="lg">
@@ -316,14 +316,14 @@ const AlarmModalScreen = ({ui}) => {
                 style={{
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}
-                placeholder="알람 이름을 입력하세요">
+                placeholder="アラームタイトルを入力してください。">
                 <Text
                   style={{
                     fontFamily: 'TheJamsilOTF_Regular',
                     color: 'black',
                     fontSize: 17,
                   }}>
-                  알람명
+                  アラームタイトル
                 </Text>
               </InputItem>
             </List>
@@ -334,7 +334,7 @@ const AlarmModalScreen = ({ui}) => {
                 style={{
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}
-                placeholder="아이에게 할 말을 입력하세요">
+                placeholder="子供に言いたいことを入力しなさい。">
                 <Text
                   style={{
                     fontFamily: 'TheJamsilOTF_Regular',
@@ -363,7 +363,7 @@ const AlarmModalScreen = ({ui}) => {
                     fontSize: 17,
                     fontFamily: 'TheJamsilOTF_Regular',
                   }}>
-                  반복
+                  反復
                 </Text>
               </List.Item>
               <List.Item
@@ -382,7 +382,7 @@ const AlarmModalScreen = ({ui}) => {
                     color: 'black',
                     fontSize: 17,
                   }}>
-                  파일
+                  ファイル
                 </Text>
               </List.Item>
             </List>
@@ -417,18 +417,18 @@ const AlarmModalScreen = ({ui}) => {
                   color: 'black',
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}>
-                반복
+                反復
               </Text>
             </Flex>
             <WhiteSpace size="lg" />
             {[
-              '일요일',
-              '월요일',
-              '화요일',
-              '수요일',
-              '목요일',
-              '금요일',
-              '토요일',
+              '日曜日',
+              '月曜日',
+              '火曜日',
+              '水曜日',
+              '木曜日',
+              '金曜日',
+              '土曜日',
             ].map((day, i) => {
               return (
                 <List.Item
@@ -448,7 +448,7 @@ const AlarmModalScreen = ({ui}) => {
                       fontFamily: 'TheJamsilOTF_Regular',
                       color: 'black',
                     }}>
-                    {day}마다 반복
+                    {day}毎に繰り返し
                   </Text>
                 </List.Item>
               );
@@ -477,7 +477,7 @@ const AlarmModalScreen = ({ui}) => {
                     color: 'black',
                     fontFamily: 'TheJamsilOTF_Regular',
                   }}>
-                  파일
+                  ファイル
                 </Text>
               </Flex>
             </WingBlank>

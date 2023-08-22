@@ -129,20 +129,20 @@ const RecordScreen = ({navigation}) => {
     } catch (e) {
       //Linking.openSettings();
       if (e.code === 'E_MISSING_PERMISSION') {
-        Alert.alert('에러', '마이크 권한 접근을 허용하세요', [
+        Alert.alert('エラー', 'マイク権限へのアクセスを許可してください。', [
           {
-            text: '확인',
+            text: '確認',
             style: 'cancel',
           },
           {
-            text: '접근 허용하기',
+            text: 'アクセス許可',
             onPress: () => Linking.openSettings(),
           },
         ]);
       } else if (e.code === 'E_AUDIO_RECORDERNOTCREATED') {
-        Alert.alert('에러', '장치를 확인해주세요');
+        Alert.alert('エラー', 'デバイスを確認してください');
       } else {
-        Alert.alert('에러', '다시 시도해주세요');
+        Alert.alert('エラー', 'もう一度お試しください');
       }
       //console.error('에러 해결 안 됨', e.constructor);
       // console.error('Failed to start recording', err);
@@ -181,7 +181,7 @@ const RecordScreen = ({navigation}) => {
   }
 
   async function deleteRecord() {
-    setSnackbarContent('녹음이 삭제되었습니다');
+    setSnackbarContent('録音が削除されました');
     setModalVisible(false);
     setSnackbarVisible(true);
     setIsPlaying(false);
@@ -195,7 +195,7 @@ const RecordScreen = ({navigation}) => {
   React.useEffect(
     () =>
       navigation.addListener('blur', async () => {
-        console.log('초기화');
+        console.log('初期化');
         setIsPlaying(false);
         setRecordingInfo(null);
         setRecordingUri(null);
@@ -244,7 +244,7 @@ const RecordScreen = ({navigation}) => {
     setRecordingUri(null);
     setSound(null);
     setSoundPath(null);
-    setSnackbarContent('녹음을 저장했습니다');
+    setSnackbarContent('録音を保存しました');
     setModalVisible(false);
     setSnackbarVisible(true);
   }
@@ -299,7 +299,7 @@ const RecordScreen = ({navigation}) => {
   React.useEffect(
     () =>
       navigation.addListener('blur', async () => {
-        console.log('초기화');
+        console.log('初期化');
         setIsPlaying(false);
         setSoundPath(null);
         try {
@@ -488,25 +488,25 @@ const RecordScreen = ({navigation}) => {
                   //   );
                   // }}
                 >
-                  저장
+                  保存
                 </Button>
                 <Button style={{flex: 1}} type="warning" onPress={deleteRecord}>
-                  삭제
+                  削除
                 </Button>
               </Flex>
             </View>
           </View>
           <Prompt
             visible={promptVisible}
-            title="제목을 입력해주세요"
-            message="리스닝 파일로 저장됩니다."
+            title="タイトルを入力してください"
+            message="リスニング ファイルとして保存されます。"
             onCancel={() => {
               setPromptVisible(false);
             }}
             onSubmit={text => {
               if (text.length == 0) {
                 setPromptVisible(false);
-                saveRecord('무제');
+                saveRecord('タイトルなし');
                 return;
               } else {
                 setPromptVisible(false);

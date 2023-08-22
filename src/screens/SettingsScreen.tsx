@@ -70,7 +70,7 @@ function SettingsScreen({ui}) {
         setVisibleModal(false);
         loadSyncedDeviceData();
         setSnackbarVisible(true);
-        setSnackbarContent('인형이 연동되었습니다');
+        setSnackbarContent('人形が連動しました。');
         setMacAddress('');
       });
     // macAddrRef.current!.value,
@@ -88,7 +88,7 @@ function SettingsScreen({ui}) {
       .then(() => {
         loadSyncedDeviceData();
         setSnackbarVisible(true);
-        setSnackbarContent('인형과의 연결이 해제되었습니다');
+        setSnackbarContent('人形との連動が解除されました。');
         setMacAddress('');
       });
   };
@@ -111,11 +111,11 @@ function SettingsScreen({ui}) {
         backgroundColor: 'white',
       }}>
       <Title title="Settings"></Title>
-      <List renderHeader={'내 정보'}>
+      <List renderHeader={'私の情報'}>
         <Item arrow="horizontal">
           {userData && <Text style={{color: 'black'}}>{userData?.name}</Text>}
         </Item>
-        <DefaultButton title="로그아웃" onPress={Logout}></DefaultButton>
+        <DefaultButton title="ログアウト" onPress={Logout}></DefaultButton>
       </List>
       <List renderHeader={'Doll'}>
         <Item
@@ -124,7 +124,7 @@ function SettingsScreen({ui}) {
           }}
           arrow="horizontal">
           <Text style={{color: 'black', fontFamily: 'TheJamsilOTF_Light'}}>
-            인형 연동하기
+            人形連動
           </Text>
         </Item>
         {_deviceData.length >= 1 ? (
@@ -157,7 +157,7 @@ function SettingsScreen({ui}) {
           borderRadius: 30,
           margin: 20,
         }}>
-        <Text style={{color: 'white', fontSize: 18}}>쇼핑하러가기</Text>
+        <Text style={{color: 'white', fontSize: 18}}>買い物に行く</Text>
       </Pressable>
       {/* <List renderHeader={'Setting'}>
         <Item>재녹음</Item>
@@ -184,7 +184,7 @@ function SettingsScreen({ui}) {
                   color: 'black',
                   fontFamily: 'TheJamsilOTF_Regular',
                 }}>
-                인형 연동하기
+                人形連動
               </Text>
             </Flex>
 
@@ -199,7 +199,7 @@ function SettingsScreen({ui}) {
                   marginTop: 4,
                   marginBottom: height * 20,
                 }}>
-                기기 주소 입력
+                デバイスMACアドレス入力
               </Text>
 
               <InputItem
@@ -208,7 +208,7 @@ function SettingsScreen({ui}) {
                   console.log(e);
                 }}
                 value={macAddress}
-                placeholder="기기 주소를 입력해주세요">
+                placeholder="MACアドレスを入力してください">
                 <Icon name="smileo" size={20} color="#555" />
               </InputItem>
             </View>
@@ -228,7 +228,7 @@ function SettingsScreen({ui}) {
                   marginTop: 4,
                   marginBottom: height * 20,
                 }}>
-                주의할 점
+                注意すべき点
               </Text>
               <Flex style={{gap: width * 15, marginBottom: height * 15}}>
                 <Icon name="pushpino" size={20} color={colors.red} />
@@ -238,13 +238,13 @@ function SettingsScreen({ui}) {
                     color: 'black',
                     fontFamily: 'TheJamsilOTF_Light',
                   }}>
-                  인형을 먹으면 안 돼요
+                  人形を食べてはいけません
                 </Text>
               </Flex>
               <Flex style={{gap: width * 15, marginBottom: height * 15}}>
                 <Icon name="pushpino" size={20} color={colors.red} />
                 <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
-                  고온의 장소나 물이 있는 곳에 두지마세요
+                  高温の場所や水のある場所に置かないでください
                 </Text>
               </Flex>
               <Flex style={{gap: width * 15, marginBottom: height * 15}}>
@@ -255,19 +255,19 @@ function SettingsScreen({ui}) {
                     fontFamily: 'TheJamsilOTF_Light',
                     flexWrap: 'wrap',
                   }}>
-                  구매 후 1년간 무상으로 AS를 제공합니다
+                  購入後1年間無償でASを提供します
                 </Text>
               </Flex>
               <Flex style={{gap: width * 15, marginBottom: height * 15}}>
                 <Icon name="pushpino" size={20} color={colors.red} />
                 <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
-                  터질 수도 있으니 조심하세요
+                  爆発するかもしれないので気をつけてください
                 </Text>
               </Flex>
               <Flex style={{gap: width * 15, marginBottom: height * 15}}>
                 <Icon name="pushpino" size={20} color={colors.red} />
                 <Text style={{fontSize: 16, fontFamily: 'TheJamsilOTF_Light'}}>
-                  부부싸움 할 때 던지지 마세요
+                  夫婦喧嘩をする時に投げないでください
                 </Text>
               </Flex>
             </View>
@@ -281,14 +281,14 @@ function SettingsScreen({ui}) {
                   fontFamily: 'TheJamsilOTF_Regular',
                   color: 'black',
                 }}>
-                상기 사항을 잘 숙지했으면
+                上記の事項をよく熟知したならば
               </Text>
               <Icon name="arrowdown" size={20} color={colors.iconPink} />
             </Flex>
 
             <DefaultButton
               onPress={e => onSyncDevice(e)}
-              title="기기 등록하기"
+              title="デバイス登録"
               type="default"></DefaultButton>
           </WingBlank>
         </SafeAreaView>

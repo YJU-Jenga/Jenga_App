@@ -97,7 +97,7 @@ const AlarmScreen = () => {
               // !scheduleList
             ) ? (
               _alarmData.map((item: IAlarmData, i: number) => {
-                let repeat = ['일', '월', '화', '수', '목', '금', '토'];
+                let repeat = ['日', '月', '火', '水', '木', '金', '土'];
 
                 const h = item.time_id.slice(0, 2);
                 const m = item.time_id.slice(2, 4);
@@ -198,7 +198,7 @@ const AlarmScreen = () => {
                     color: '#555',
                     marginVertical: 'auto',
                   }}>
-                  추가해주세요
+                  追加してください
                 </Text>
               </View>
             )}
