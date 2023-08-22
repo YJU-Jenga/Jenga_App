@@ -95,7 +95,7 @@ const LoginScreen = ({route, navigation}) => {
             type="warning"
             disabled={isEmail && isPassword}
             onPress={handleVerifyLogin}>
-            Sign In
+            로그인
           </Button>
 
           <WhiteSpace size="xl" />
