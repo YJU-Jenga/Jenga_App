@@ -7,10 +7,10 @@ const DeleteButton = ({onPress}) => {
         style={{
           textAlign: 'center',
           color: 'red',
-          fontSize: 18,
+          fontSize: 19,
           fontFamily: 'TheJamsilOTF_Regular',
         }}>
-        삭제
+        削除
       </Text>
     </TouchableOpacity>
   );

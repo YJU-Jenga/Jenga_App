@@ -50,6 +50,7 @@
 	<string>Allow $(PRODUCT_NAME) to access your microphone</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string></string>
 		<string>Dovemayo_gothic.ttf</string>
 		<string>TAEBAEK-milkyway.otf</string>
 		<string>AntDesign.ttf</string>

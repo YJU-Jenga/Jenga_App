@@ -38,7 +38,7 @@ const Prompt = ({visible, title, message, onCancel, onSubmit}) => {
           style={{
             width: '100%',
             borderRadius: 20,
-            height: height * 150,
+            height: height * 160,
             shadowColor: '#000',
             shadowOpacity: 0.3,
             shadowRadius: 4,
@@ -78,8 +78,10 @@ const Prompt = ({visible, title, message, onCancel, onSubmit}) => {
               flexDirection: 'row',
               justifyContent: 'space-between',
             }}>
-            <DefaultButton onPress={handleCancel} title="취소"></DefaultButton>
-            <DefaultButton onPress={handleSubmit} title="저장"></DefaultButton>
+            <DefaultButton
+              onPress={handleCancel}
+              title="キャンセル"></DefaultButton>
+            <DefaultButton onPress={handleSubmit} title="保存"></DefaultButton>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>

@@ -71,7 +71,7 @@ const AlarmModalScreen = ({ui}) => {
   const [snackbarVisible, setSnackbarVisible] = useState<boolean>(false);
   const [snackbarContent, setSnackbarContent] = useState<string>('');
 
-  const mode = route.params?.type === 'EDIT' ? '予約修正' : '予約生成';
+  const mode = route.params?.type === 'EDIT' ? '予約修正' : '予約作成';
 
   const dispatch = useAppDispatch();
   const _alarms = useAppSelector(selectAlarmData);
@@ -300,30 +300,34 @@ const AlarmModalScreen = ({ui}) => {
                 fontFamily: 'TheJamsilOTF_Regular',
               }}
               onPress={onSave}>
-              セーブ
+              保存
             </Text>
           </Flex>
           <WingBlank size="lg">
-            <DatePicker
-              onDateChange={e => setValuehours(e)}
-              mode="time"
-              date={valuehours}></DatePicker>
+            <WingBlank
+              size="sm"
+              style={{display: 'flex', justifyContent: 'center'}}>
+              <DatePicker
+                onDateChange={e => setValuehours(e)}
+                mode="time"
+                date={valuehours}></DatePicker>
+            </WingBlank>
 
             <List>
               <InputItem
                 value={name}
                 onChange={v => setName(v)}
                 style={{
-                  fontFamily: 'TheJamsilOTF_Regular',
+                  fontFamily: 'TheJamsilOTF_Light',
                 }}
-                placeholder="アラームタイトルを入力してください。">
+                placeholder="タイトルを入力してください。">
                 <Text
                   style={{
                     fontFamily: 'TheJamsilOTF_Regular',
                     color: 'black',
                     fontSize: 17,
                   }}>
-                  アラームタイトル
+                  タイトル
                 </Text>
               </InputItem>
             </List>
@@ -332,7 +336,7 @@ const AlarmModalScreen = ({ui}) => {
                 value={sentence}
                 onChange={v => setSentence(v)}
                 style={{
-                  fontFamily: 'TheJamsilOTF_Regular',
+                  fontFamily: 'TheJamsilOTF_Light',
                 }}
                 placeholder="子供に言いたいことを入力しなさい。">
                 <Text
@@ -363,7 +367,7 @@ const AlarmModalScreen = ({ui}) => {
                     fontSize: 17,
                     fontFamily: 'TheJamsilOTF_Regular',
                   }}>
-                  反復
+                  繰り返す
                 </Text>
               </List.Item>
               <List.Item
@@ -382,7 +386,7 @@ const AlarmModalScreen = ({ui}) => {
                     color: 'black',
                     fontSize: 17,
                   }}>
-                  ファイル
+                  サウンド
                 </Text>
               </List.Item>
             </List>

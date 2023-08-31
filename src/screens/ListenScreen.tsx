@@ -435,7 +435,7 @@ const ListenScreen = ({ui}) => {
         <Title title="Sounds"></Title>
         <SearchBar
           style={{fontFamily: 'TheJamsilOTF_Light'}}
-          placeholder="オーディオのタイトルを入力してください。"
+          placeholder="サウンドのタイトルを入力してください。"
           onChange={updateSearch}
           value={search}
           onSubmit={v => {
@@ -456,7 +456,7 @@ const ListenScreen = ({ui}) => {
                   fontSize: 21,
                   color: '#777',
                 }}>
-                音楽、童話をアップロードしてください。
+                音楽や童話をアップロードしてください。
               </Text>
             </View>
           )}
@@ -560,7 +560,7 @@ const ListenScreen = ({ui}) => {
             <Prompt
               visible={promptVisible}
               title="音楽の用途を入力してください"
-              message={`'アラーム設定 > ミュージック」で確認できます`}
+              message={`「アラーム設定 > ミュージック」で確認できます`}
               onCancel={() => {
                 setPromptVisible(false);
               }}
@@ -574,7 +574,7 @@ const ListenScreen = ({ui}) => {
                   onPressAddMusic(text);
                   setPromptVisible(false);
                   setSnackbarVisible(true);
-                  setSnackbarContent('アラーム用の音楽が登録されました');
+                  setSnackbarContent('アラーム用のサウンドが登録されました');
                 }
               }}
             />

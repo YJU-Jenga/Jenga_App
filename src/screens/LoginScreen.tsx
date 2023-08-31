@@ -51,7 +51,7 @@ const LoginScreen = ({route, navigation}) => {
     dispatch(initErrorMessage());
     if (_errorMessage !== '') {
       setVisibleSnackbar(true);
-      setSnackbarContent('もう一度お試しください');
+      setSnackbarContent('メールアドレスまたパスワードが正しくありません');
     }
   }, [_errorMessage]);
 
@@ -95,7 +95,7 @@ const LoginScreen = ({route, navigation}) => {
             type="warning"
             disabled={isEmail && isPassword}
             onPress={handleVerifyLogin}>
-            로그인
+            ログイン
           </Button>
 
           <WhiteSpace size="xl" />

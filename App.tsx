@@ -96,19 +96,17 @@ export default function App() {
         });
 
         await Font.loadAsync({
-          TAEBAEK_milkyway: require('./src/assets/fonts/TAEBAEK-milkyway.otf'),
-        });
-
-        await Font.loadAsync({
           IMcreSoojinOTF: require('./src/assets/fonts/ImcreSoojinOTFRegular.otf'),
         });
 
         await Font.loadAsync({
-          TheJamsilOTF_Regular: require('./src/assets/fonts/TheJamsilOTF3Regular.otf'),
+          // TheJamsilOTF_Regular: require('./src/assets/fonts/TheJamsilOTF3Regular.otf'),
+          TheJamsilOTF_Regular: require('./src/assets/fonts/LINESeedJP_OTF_Bd.otf'),
         });
 
         await Font.loadAsync({
-          TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
+          // TheJamsilOTF_Light: require('./src/assets/fonts/TheJamsilOTF2Light.otf'),
+          TheJamsilOTF_Light: require('./src/assets/fonts/LINESeedJP_OTF_Rg.otf'),
         });
         await new Promise(resolve => setTimeout(resolve, 1000));
       } catch (e) {

@@ -215,7 +215,7 @@ function SettingsScreen({ui}) {
 
             <View
               style={{
-                marginHorizontal: 10,
+                marginHorizontal: 6,
                 marginTop: 20,
                 marginBottom: height * 40,
               }}>

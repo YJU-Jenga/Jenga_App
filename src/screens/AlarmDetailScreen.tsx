@@ -158,7 +158,7 @@ const SelectedSoundItem = React.memo(
     return (
       // <WingBlank>
       <View>
-        <List renderHeader={'選ばれたファイル'}>
+        <List renderHeader={'選択したサウンド'}>
           <Flex
             justify="between"
             style={{paddingVertical: 15, marginHorizontal: width * 15}}>

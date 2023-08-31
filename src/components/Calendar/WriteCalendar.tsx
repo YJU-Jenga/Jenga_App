@@ -139,13 +139,13 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
 
   const onSubmitCalendarForm = () => {
     if (calendarForm.title === '') {
-      setSnackbarContent('제목을 입력해주세요.');
+      setSnackbarContent('タイトルを入力してください');
       setVisibleSnackbar(true);
       return;
     }
 
     if (calendarForm.description === '') {
-      setSnackbarContent('설명을 입력해주세요.');
+      setSnackbarContent('ラベルを入力してください');
       setVisibleSnackbar(true);
       return;
     }
@@ -229,7 +229,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
               color: 'black',
               fontFamily: 'TheJamsilOTF_Regular',
             }}>
-            일정 생성
+            カレンダー作成
           </Text>
           <Pressable
             style={{
@@ -244,7 +244,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 fontWeight: '600',
                 fontFamily: 'TheJamsilOTF_Regular',
               }}>
-              저장
+              保存
             </Text>
           </Pressable>
         </Flex>
@@ -259,12 +259,12 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 <Icon name="heart" size={18} color={colors.iconPink} />
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 21,
                     color: 'black',
                     fontFamily: 'TheJamsilOTF_Regular',
                     paddingVertical: 10,
                   }}>
-                  일정 정보
+                  情報
                 </Text>
               </Flex>
 
@@ -275,7 +275,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 value={calendarForm?.title}
                 placeholderTextColor={'#666'}
                 style={styles.inputStyle}
-                placeholder="제목"></TextInput>
+                placeholder="タイトル"></TextInput>
               <TextInput
                 onChangeText={e => {
                   setCalendarForm({...calendarForm, description: e});
@@ -283,7 +283,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 value={calendarForm?.description}
                 placeholderTextColor={'#666'}
                 style={styles.inputStyle}
-                placeholder="설명"></TextInput>
+                placeholder="ラベル"></TextInput>
               <TextInput
                 onChangeText={e => {
                   setCalendarForm({...calendarForm, location: e});
@@ -291,7 +291,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 value={calendarForm?.location}
                 placeholderTextColor={'#666'}
                 style={styles.inputStyle}
-                placeholder="장소"></TextInput>
+                placeholder="場所"></TextInput>
             </View>
             <Flex
               justify="between"
@@ -300,12 +300,12 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
                 <Icon name="heart" size={18} color={colors.iconPink} />
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: 21,
                     color: 'black',
                     fontFamily: 'TheJamsilOTF_Regular',
                     marginStart: 15,
                   }}>
-                  하루종일
+                  一日中
                 </Text>
               </Flex>
 
@@ -318,7 +318,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
             </Flex>
             <DatePickerTitle
               isAllDay={isAllDay}
-              title="시작"
+              title="開始"
               date={calendarForm?.start}
               onPressDate={() =>
                 switchVisible(!visibleStartDate, false, false, false)
@@ -347,7 +347,7 @@ const WriteCalendar = ({onClose, currDate, ui, mode, editItem}) => {
             )}
 
             <DatePickerTitle
-              title="종료"
+              title="終了"
               isAllDay={isAllDay}
               date={calendarForm?.end}
               onPressDate={() => {
