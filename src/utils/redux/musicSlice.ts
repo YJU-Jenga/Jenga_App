@@ -4,9 +4,10 @@ import type {RootState} from '../../../store';
 import axios from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {back_address} from '../../config/address';
+import {back_address, back_file_address} from '../../config/address';
 
 let SERVER_URL = back_address;
+let FILE_URL = back_file_address;
 
 // // Define a type for the slice state
 interface MusicState {
@@ -77,8 +78,6 @@ export const getAllMusic = createAsyncThunk<
       },
       withCredentials: true,
     });
-
-    console.log(data);
 
     return data;
   } catch (e) {

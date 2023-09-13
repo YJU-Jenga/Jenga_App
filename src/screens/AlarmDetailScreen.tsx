@@ -23,7 +23,7 @@ import {
   selectMusicData,
 } from '../utils/redux/musicSlice';
 import {selectUserData} from '../utils/redux/userSlice';
-import {back_address as SERVER_URL} from '../config/address';
+import {back_file_address as SERVER_URL} from '../config/address';
 import {width} from '../config/globalStyles';
 import {IUser} from '../interfaces/user';
 
@@ -125,7 +125,7 @@ export const ActionComponent = () => {
             onPress={() => {
               //const soundPath = SERVER_URL + '/' + item.file;
               onSelectCurrentMusic(item.name, item.file);
-              loadSound(SERVER_URL + '/' + item.file);
+              loadSound(SERVER_URL + item.file);
             }}
             key={item?.name}>
             <Flex style={{marginStart: width * 10}} justify="between">

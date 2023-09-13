@@ -9,5 +9,7 @@
 
 export const web_address = 'http://13.125.180.187';
 export const back_address = 'http://13.125.180.187:5000';
+export const back_file_address =
+  'https://ichigobucket.s3.ap-northeast-2.amazonaws.com/';
 export const android_address = 'http://192.168.0.6:5001';
 export const ios_address = 'http://127.0.0.1:5001';
